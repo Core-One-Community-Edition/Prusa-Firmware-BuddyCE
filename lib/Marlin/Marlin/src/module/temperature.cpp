@@ -1713,7 +1713,7 @@ void Temperature::suspend_heatbreak_fan(millis_t ms) {
 #endif // HOTENDS
 #if HAS_HEATED_BED
 
-#if PRINTER_IS_PRUSA_MK3_5() || PRINTER_IS_PRUSA_MK4() || PRINTER_IS_PRUSA_COREONE()
+#if PRINTER_IS_PRUSA_MK3_5() || PRINTER_IS_PRUSA_MK4()
 constexpr float compensate_bed_temperature(float celsius) {
   float _offset = 10;
   float _offset_center = 50;
@@ -1730,7 +1730,7 @@ constexpr float compensate_bed_temperature(float celsius) {
   }
   return celsius;
 }
-#elif PRINTER_IS_PRUSA_MINI() || PRINTER_IS_PRUSA_XL() || PRINTER_IS_PRUSA_iX() || PRINTER_IS_PRUSA_XL_DEV_KIT() || PRINTER_IS_PRUSA_COREONEL()
+#elif PRINTER_IS_PRUSA_MINI() || PRINTER_IS_PRUSA_XL() || PRINTER_IS_PRUSA_iX() || PRINTER_IS_PRUSA_XL_DEV_KIT() || PRINTER_IS_PRUSA_COREONE() || PRINTER_IS_PRUSA_COREONEL()
 constexpr float compensate_bed_temperature(float celsius) {
   return celsius;
 }
