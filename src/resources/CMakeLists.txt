@@ -95,7 +95,11 @@ if(HAS_ESP)
               ${ESP_FW_BINARY_DIR}/stub_data.bin ${CMAKE_SOURCE_DIR}/utils/gen_esp_parts.py
       )
   endif()
-  add_custom_target(esp-parts DEPENDS ${ESP_PARTS})
+  if(TARGET esp-nic-fw)
+    add_custom_target(esp-parts DEPENDS ${ESP_PARTS} esp-nic-fw)
+  else()
+    add_custom_target(esp-parts DEPENDS ${ESP_PARTS})
+  endif()
 endif()
 
 if(HAS_AC_CONTROLLER)
