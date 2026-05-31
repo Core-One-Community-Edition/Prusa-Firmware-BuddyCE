@@ -8,7 +8,7 @@
 # The Docker image is rebuilt only when the Dockerfile changes; the firmware is rebuilt only when
 # the ESP NIC source files change.
 
-if(NOT HAS_ESP_FLASH_TASK)
+if(NOT HAS_ESP)
   return()
 endif()
 
