@@ -281,9 +281,10 @@ class Temperature {
 
     #if HAS_HEATED_BED
       static bed_info_t temp_bed;
-      // Estimated temperature of the bed frame as a rate-limited (linear)
-      // value that converges to the real bed temperature at a slow rate.
-      // Emulates heat propagation from the bed to the frame.
+      // Estimated temperature of the bed frame using an exponential thermal
+      // model (Newton's law of cooling). Converges toward a point offset below
+      // the bed temperature due to ambient heat losses. The offset and time
+      // constant are chosen to model heat propagation from bed surface to frame.
       static float bed_frame_est_celsius;
       static uint32_t bed_frame_millis;
     #endif
