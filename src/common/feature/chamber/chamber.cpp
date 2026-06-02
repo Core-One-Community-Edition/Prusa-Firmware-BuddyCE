@@ -35,8 +35,13 @@
 #endif
 
 #if PRINTER_IS_PRUSA_COREONE()
+    #include <timing.h>
+    #include <Marlin/src/module/temperature.h>
+#endif
+
+#if PRINTER_IS_PRUSA_COREONE()
 namespace {
-constexpr buddy::Temperature chamber_maxtemp = 60;
+constexpr buddy::Temperature chamber_maxtemp = 65;
 constexpr buddy::Temperature chamber_maxtemp_safety_margin = 5;
 } // namespace
 #elif PRINTER_IS_PRUSA_COREONEL()
@@ -62,8 +67,52 @@ void Chamber::step() {
     thermistor_temperature_ = xl_enclosure.getEnclosureTemperature();
 
 #elif HAS_XBUDDY_EXTENSION()
-    // Dummy, untested implementation.
     thermistor_temperature_ = xbuddy_extension().chamber_temperature();
+#endif
+
+#if PRINTER_IS_PRUSA_COREONE()
+    // --- Heatbreak proxy for chamber temperature ---
+    // The heatbreak thermistor tracks chamber air temperature (plus a constant hotend conduction offset)
+    // and is NOT affected by chamber cooling fan airflow. This eliminates the oscillation feedback loop
+    // caused by the XBE thermistor being cooled by the very fans it controls.
+    //
+    // Safety margin analysis (heatbreak proxy, offset=10°C):
+    //   overheating (70°C reported) → loveboard ~60°C → 5°C margin ✓
+    //   critical    (75°C reported) → loveboard ~65°C → 0°C margin (acceptable: print kill + heaters off)
+    constexpr float heatbreak_chamber_offset = 10.0f; // empirical: hotend conduction offset (needs calibration)
+    constexpr float heatbreak_switch_point = 36.0f; // heatbreak PID target (DEFAULT_HEATBREAK_TEMPERATURE)
+    constexpr float heatbreak_switch_hysteresis = 5.0f; // latch activation threshold: switch_point + hysteresis = 41°C
+    constexpr float heatbreak_ema_tau = 30.0f; // EMA time constant (seconds) — filters PID cycling & part cooling transients
+    constexpr float heatbreak_min_valid = 5.0f; // below this, heatbreak reading is invalid (HEATBREAK_MINTEMP)
+
+    const float raw_heatbreak = thermalManager.degHeatbreak(0);
+
+    if (raw_heatbreak >= heatbreak_min_valid) {
+        const uint32_t now_ms = ticks_ms();
+
+        if (heatbreak_ema_ < 0.0f) {
+            // First valid reading — initialize EMA directly (follows init_bed_frame_est_celsius pattern)
+            heatbreak_ema_ = raw_heatbreak;
+        } else {
+            const float dt_s = ticks_diff(now_ms, last_heatbreak_ema_ms_) / 1000.0f;
+            if (dt_s > 0.0f) {
+                const float alpha = 1.0f - expf(-dt_s / heatbreak_ema_tau);
+                heatbreak_ema_ += alpha * (raw_heatbreak - heatbreak_ema_);
+            }
+        }
+        last_heatbreak_ema_ms_ = now_ms;
+
+        // One-way latch: once heatbreak sensor activates, it stays active until reset()
+        // This prevents sensor-source toggling during warm-up/cool-down transitions
+        if (!using_heatbreak_sensor_ && heatbreak_ema_ > heatbreak_switch_point + heatbreak_switch_hysteresis) {
+            using_heatbreak_sensor_ = true;
+        }
+
+        if (using_heatbreak_sensor_) {
+            thermistor_temperature_ = heatbreak_ema_ - heatbreak_chamber_offset;
+        }
+    }
+    // else: heatbreak sensor invalid (disconnected or pre-ISR) → keep XBE value, degrade gracefully
 #endif
 
     METRIC_DEF(metric_chamber_temp, "chamber_temp", METRIC_VALUE_FLOAT, 1000, METRIC_ENABLED);
@@ -127,9 +176,19 @@ Chamber::Backend Chamber::backend() const {
 }
 
 std::optional<Temperature> Chamber::current_temperature() const {
-    const auto chamber_tempearture = thermistor_temperature();
+    std::lock_guard _lg(mutex_);
+
+#if PRINTER_IS_PRUSA_COREONE()
+    // When using heatbreak proxy, the offset is already baked into the value
+    // stored in thermistor_temperature_ (heatbreak_ema - heatbreak_chamber_offset)
+    if (using_heatbreak_sensor_) {
+        return thermistor_temperature_;
+    }
+#endif
+
+    // XBE thermistor path — apply position offset
+    const auto chamber_tempearture = thermistor_temperature_;
 #if HAS_CHAMBER_TEMPERATURE_THERMISTOR_POSITION_OFFSET()
-    #if PRINTER_IS_PRUSA_COREONE() || PRINTER_IS_PRUSA_COREONEL()
     const auto bed_temperature = thermalManager.degBed();
     static constexpr Temperature min_temp = 20.f;
     if (chamber_tempearture.has_value() && bed_temperature > *chamber_tempearture && *chamber_tempearture > min_temp) {
@@ -142,9 +201,6 @@ std::optional<Temperature> Chamber::current_temperature() const {
         #endif
         return chamber_tempearture.value() + offset * (bed_temperature - chamber_tempearture.value()) * std::sqrt(chamber_tempearture.value() - min_temp);
     }
-    #else
-        #error
-    #endif
 #endif
     return chamber_tempearture;
 }
@@ -180,6 +236,12 @@ std::optional<Temperature> Chamber::set_target_temperature(std::optional<Tempera
 void Chamber::reset() {
     std::lock_guard _lg(mutex_);
     target_temperature_ = std::nullopt;
+
+#if PRINTER_IS_PRUSA_COREONE()
+    using_heatbreak_sensor_ = false;
+    heatbreak_ema_ = -1.0f;
+    last_heatbreak_ema_ms_ = 0;
+#endif
 
 #if HAS_XBUDDY_EXTENSION()
     xbuddy_extension().set_fan_target_pwm(XBuddyExtension::Fan::cooling_fan_1, pwm_auto);

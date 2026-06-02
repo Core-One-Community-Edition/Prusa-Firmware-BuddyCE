@@ -101,6 +101,12 @@ private:
     VentState vent_state_ = VentState::unknown;
 #endif
 
+#if PRINTER_IS_PRUSA_COREONE()
+    bool using_heatbreak_sensor_ = false;
+    float heatbreak_ema_ = -1.0f; // sentinel: <0 means uninitialized (follows bed_frame_est_celsius pattern)
+    uint32_t last_heatbreak_ema_ms_ = 0;
+#endif
+
     Capabilities capabilities_nolock() const;
 };
 
