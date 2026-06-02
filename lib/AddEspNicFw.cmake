@@ -1,9 +1,9 @@
 # AddEspNicFw.cmake
 #
-# Handles ESP NIC firmware for printers with HAS_ESP_FLASH_TASK.
+# Handles ESP NIC firmware for printers with HAS_ESP.
 #
-# By default the pre-built binaries checked into src/resources/<chip> are used. Set
-# ESP_FW_BINARY_DIR to empty to build the firmware from source via Docker.
+# By default the firmware is built from source via Docker. Set ESP_FW_USE_PREBUILT=ON
+# to use the pre-built binaries checked into src/resources/<chip> instead.
 #
 # The Docker image is rebuilt only when the Dockerfile changes; the firmware is rebuilt only when
 # the ESP NIC source files change.
@@ -21,12 +21,15 @@ else()
   set(ESP_SDK_EXPORT_SH "/ESP8266_RTOS_SDK/export.sh")
 endif()
 
-set(ESP_FW_BINARY_DIR
-    "${CMAKE_SOURCE_DIR}/src/resources/${ESP_CHIP}"
-    CACHE PATH "Directory with ESP NIC firmware binaries (uart_wifi.bin, bootloader.bin, \
-partition-table.bin). Defaults to the pre-built binaries in src/resources. \
-Set to empty to build from source via Docker."
-    )
+option(ESP_FW_USE_PREBUILT "Use pre-built ESP NIC binaries from src/resources instead of building from source" OFF)
+
+if(ESP_FW_USE_PREBUILT)
+  set(ESP_FW_BINARY_DIR
+      "${CMAKE_SOURCE_DIR}/src/resources/${ESP_CHIP}"
+      CACHE PATH "Directory with ESP NIC firmware binaries (uart_wifi.bin, bootloader.bin, \
+partition-table.bin)."
+      )
+endif()
 
 if(NOT ESP_FW_BINARY_DIR)
   set(ESP_FW_SOURCE_DIR
