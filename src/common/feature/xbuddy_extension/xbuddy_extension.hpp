@@ -74,6 +74,17 @@ public: // Fans
         chamber_cooling.regulator_legacy = false;
     };
 
+    /// Sets the maximum allowed heatbreak temperature (M9160). nullopt disables the limiter.
+    /// When the heatbreak temperature exceeds the limit, the chamber cooling is gradually
+    /// ramped up (possibly beyond the user max fan limit) until the heatbreak recovers.
+    void set_heatbreak_max_temp(std::optional<Temperature> temp);
+
+    /// \returns the maximum allowed heatbreak temperature, nullopt = heatbreak limiter disabled
+    std::optional<Temperature> heatbreak_max_temp() const;
+
+    /// \returns the current PWM boost the heatbreak limiter applies to the chamber cooling
+    FanPWM heatbreak_pwm_boost() const;
+
     /// A convenience function returning a structure of data to be used in the Connect interface
     /// The key idea here is to avoid locking the internal mutex for every member while providing a consistent state of values.
     struct FanState {

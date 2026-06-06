@@ -16,6 +16,7 @@
 #include <option/has_door_sensor_calibration.h>
 #include <option/has_bed_level_probe.h>
 #include <option/has_chamber_vents.h>
+#include <option/xbuddy_extension_variant.h>
 
 #include <gcode/gcode_parser.hpp>
 
@@ -162,6 +163,10 @@ void M1981(); //< Filament sensors selftest
 void M9140(); //< Set normal (non-stealth) mode
 void M9141(); //< Get stealth mode status
 void M9150(); //< Set stealth mode
+
+#if XBUDDY_EXTENSION_VARIANT_IS_STANDARD()
+void M9160(); //< Set maximum heatbreak temperature (limits it via chamber cooling)
+#endif
 
 void M9200(); //< Re-load IS settings from config store
 void M9201(); //< Reset to default motion parameters (accelerations, feedrates, ...)

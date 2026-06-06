@@ -52,21 +52,33 @@ public:
 
     // Compute at what PWM the fan(s) should be driven
     // !!!!!!!! this function should be called in regular time intervals given by dt_s !!!!!!!!
-    [[nodiscard]] FanPWM compute_pwm_step(Temperature current_temperature, std::optional<Temperature> target_temperature, FanPWMOrAuto target_pwm, FanPWM max_auto_pwm);
+    [[nodiscard]] FanPWM compute_pwm_step(Temperature current_temperature, std::optional<Temperature> target_temperature, FanPWMOrAuto target_pwm, FanPWM max_auto_pwm, std::optional<Temperature> heatbreak_temperature);
 
     constexpr bool get_overheating_temp_flag() { return overheating_temp_flag; };
     constexpr bool get_critical_temp_flag() { return critical_temp_flag; };
 
+    constexpr FanPWM get_heatbreak_pwm_boost() const { return FanPWM { static_cast<FanPWM::Value>(heatbreak_pwm_boost) }; };
+
     uint8_t ramp_breakpoint_pwm = 0;
     float ramp_slope = 10.0f;
     bool regulator_legacy = true; // Legacy regulator for old gcode compatibility
+
+    /// Maximum allowed heatbreak temperature, set via M9160. nullopt = heatbreak limiter disabled.
+    std::optional<Temperature> heatbreak_max_temp;
 
 private:
     /// Computes a PWM ramping function
     FanPWM compute_auto_regulation_step(Temperature current_temperature, Temperature target_temperature, FanPWM max_auto_pwm);
     FanPWM compute_auto_regulation_step_legacy(Temperature current_temperature, Temperature target_temperature, FanPWM max_auto_pwm);
 
+    /// Integrates the heatbreak limiter boost, see compute_pwm_step
+    FanPWM compute_heatbreak_boost_step(std::optional<Temperature> heatbreak_temperature);
+
+    // integration constant for the heatbreak limiter boost, in PWM per (°C * dt_s)
+    static constexpr float heatbreak_boost_integration_constant = 0.5f * dt_s;
+
     float last_regulation_output = 0.0f;
+    float heatbreak_pwm_boost = 0.0f;
 
     bool overheating_temp_flag = false;
     bool critical_temp_flag = false;
