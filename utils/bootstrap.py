@@ -184,7 +184,7 @@ def download_and_unzip(url: str, directory: Path):
     # Check if tar or zip
     if any(
             url.endswith(ext)
-            for ext in ['.tar.bz2', '.tar.gz', '.tar.xz', 'tar.xzg']):
+            for ext in ['.tar.bz2', '.tar.gz', '.tar.xz']):
         with tarfile.open(filename) as obj:
             obj.extractall(path=extract_dir)
     else:
