@@ -5,9 +5,12 @@
 
 #include <option/has_esp.h>
 
+static const char default_ntp_server[] = "prusa3d.pool.ntp.org";
+
 static uint32_t sntp_running = 0; // describes if sntp is currently running or not
 void sntp_client_init(void) {
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, default_ntp_server);
 
     sntp_init();
 }

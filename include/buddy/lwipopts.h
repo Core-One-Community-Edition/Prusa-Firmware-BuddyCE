@@ -19,6 +19,8 @@ extern "C" {
 #define LWIP_DNS_SECURE      7
 #define DNS_MAX_NAME_LENGTH  128
 #define LWIP_RAW             1
+// Parse NTP servers (option 42) from DHCP responses (delivered to the SNTP client).
+#define LWIP_DHCP_GET_NTP_SRV 1
 
 #if MDNS()
     #define MDNS_MAX_STORED_PKTS 1
