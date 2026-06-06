@@ -43,6 +43,7 @@ public:
 
 protected:
     void update_list();
+    void focus_loaded_filament();
     void setup_item(ItemVariant &variant, int index) final;
 
 protected:

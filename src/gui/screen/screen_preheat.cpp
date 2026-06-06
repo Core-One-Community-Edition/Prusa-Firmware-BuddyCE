@@ -4,6 +4,7 @@
 #include "marlin_client.hpp"
 #include "stdlib.h"
 #include "i18n.h"
+#include <algorithm>
 #include <limits>
 #include <filament_gui.hpp>
 #include <utils/string_builder.hpp>
@@ -52,6 +53,7 @@ void WindowMenuPreheat::set_data(const PreheatData &data) {
     }
 
     update_list();
+    focus_loaded_filament();
 }
 
 void WindowMenuPreheat::set_show_all_filaments(bool set) {
@@ -88,6 +90,36 @@ void WindowMenuPreheat::update_list() {
     index_mapping.set_section_size<Item::filament_section>(filament_list.size());
     index_mapping.set_item_enabled<Item::show_all>(!show_all_filaments_);
     setup_items();
+}
+
+void WindowMenuPreheat::focus_loaded_filament() {
+    const FilamentType target_filament = config_store().get_filament_type(extruder_index);
+    if (target_filament == FilamentType::none) {
+        return;
+    }
+
+    const auto focus_or_show = [this](int index) {
+        if (should_focus_item_on_init()) {
+            move_focus_to_index(index);
+        } else {
+            // Touch input - don't focus (matches the on-init behavior), just scroll the item into view
+            ensure_item_on_screen(index);
+        }
+    };
+
+    // Ad-hoc filaments are not in filament_list - preselect the "Custom" item instead
+    if (std::holds_alternative<AdHocFilamentType>(target_filament)) {
+        focus_or_show(index_mapping.to_index<Item::adhoc_filament>());
+        return;
+    }
+
+    const auto it = std::find(filament_list.begin(), filament_list.end(), target_filament);
+    if (it == filament_list.end()) {
+        // Filament type is hidden in the filament list settings -> keep default focus
+        return;
+    }
+
+    focus_or_show(index_mapping.to_index<Item::filament_section>(it - filament_list.begin()));
 }
 
 void WindowMenuPreheat::setup_item(ItemVariant &variant, int index) {
