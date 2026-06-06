@@ -115,6 +115,43 @@ LOG_COMPONENT_REF(MarlinServer);
 // Rough estimate of room temperature
 static constexpr float room_temperature = 25.0f;
 
+#if HAS_HEATED_BED
+  // Two-source first-order thermal model of the bed frame: the frame exchanges heat
+  // with the bed through spacers (weak direct contact) and with the surrounding
+  // chamber air. In the equilibrium state the frame temperature therefore sits much
+  // closer to the chamber temperature than to the bed temperature.
+  // Coupling constants fitted to a reference measurement of a 33->100 degC bed ramp
+  // with the chamber at ~25 degC (frame 25->40 degC in ~5.5 minutes).
+  static constexpr float bed_frame_bed_coupling_time_constant = 560.0f; // seconds
+  static constexpr float bed_frame_chamber_coupling_time_constant = 240.0f; // seconds
+
+  // The frame estimate is considered converged when within this margin of its equilibrium.
+  static constexpr float bed_frame_convergence_celsius = 3.0f;
+
+  // Response time constant of the frame estimate to a step change (parallel couplings).
+  static constexpr float bed_frame_response_time_constant =
+      bed_frame_bed_coupling_time_constant * bed_frame_chamber_coupling_time_constant
+      / (bed_frame_bed_coupling_time_constant + bed_frame_chamber_coupling_time_constant);
+
+  // Temperature of the air surrounding the bed frame.
+  static float frame_ambient_celsius() {
+    #if HAS_CHAMBER_API()
+      if (auto chamber_temperature = buddy::chamber().current_temperature(); chamber_temperature.has_value()) {
+          return *chamber_temperature;
+      }
+    #endif
+      return room_temperature;
+  }
+
+  // Frame temperature the model converges to with the given bed and ambient temperatures.
+  static float bed_frame_equilibrium_celsius(float bed, float ambient) {
+      constexpr float bed_weight = bed_frame_chamber_coupling_time_constant
+          / (bed_frame_bed_coupling_time_constant + bed_frame_chamber_coupling_time_constant);
+
+      return bed * bed_weight + ambient * (1.0f - bed_weight);
+  }
+#endif
+
 Temperature thermalManager;
 
 /**
@@ -1881,14 +1918,15 @@ void Temperature::updateTemperaturesFromRawValues() {
       if (bed_frame_est_celsius < 0.0f) {
         init_bed_frame_est_celsius();
       } else {
-        float dt = (now_millis - bed_frame_millis) / 1000.0f;
+        // Clamp dt to keep the explicit Euler step stable across scheduler stalls.
+        const float dt = std::clamp((now_millis - bed_frame_millis) / 1000.0f, 0.0f, 5.0f);
 
-        // A linear function that reaches estimated bed frame temperature after
-        // about 150s for 60C and about 10 minutes for 100C if starting with a
-        // cold bed. With a bed already partially warmed, the time is
-        // proportionally shorter.
-        float step = (0.06f + (100.0f - temp_bed.celsius) * 0.0015f) * dt;
-        bed_frame_est_celsius += std::clamp(temp_bed.celsius - bed_frame_est_celsius, -step, step);
+        // Two-source first-order thermal lag: the frame exchanges heat with the bed
+        // and with the surrounding chamber air, each with its own coupling.
+        const float bed_delta = temp_bed.celsius - bed_frame_est_celsius;
+        const float ambient_delta = frame_ambient_celsius() - bed_frame_est_celsius;
+        bed_frame_est_celsius += bed_delta * (dt / bed_frame_bed_coupling_time_constant)
+            + ambient_delta * (dt / bed_frame_chamber_coupling_time_constant);
       }
     }
 
@@ -3288,22 +3326,18 @@ void Temperature::isr() {
     }
 
     void Temperature::init_bed_frame_est_celsius() {
-        if (temp_bed.celsius < room_temperature) {
-          // If around room temperature, init directly to bed temperature
-          bed_frame_est_celsius = temp_bed.celsius;
-        } else {
-          // If over room temp, init with a fraction of the current temp that's
-          // over room temperature, as a crude estimation of how the bed frame
-          // has been heated up
-          bed_frame_est_celsius = room_temperature + (temp_bed.celsius - room_temperature) * 0.7f;
-        }
+        // Assume the frame has settled to the equilibrium of the current temperatures.
+        bed_frame_est_celsius = bed_frame_equilibrium_celsius(temp_bed.celsius, frame_ambient_celsius());
     }
 
     void Temperature::wait_for_frame_heatup() {
         // Keep everything heated up when absorbing heat
         buddy::SafetyTimerBlocker safety_timer_blocker;
       
-        if (fabs(temp_bed.target - bed_frame_est_celsius) < 0.5f) {
+        if (bed_frame_est_celsius >= bed_frame_equilibrium_celsius(temp_bed.target, frame_ambient_celsius()) - bed_frame_convergence_celsius) {
+            // Covers both an already heated up frame and a target lower than the current frame
+            // temperature. Cooling is slow and propagated evenly across the bed, it won't warp
+            // the bed differently.
             log_info(MarlinServer, "Absorbing heat: already stable, continuing");
             return;
         }
@@ -3311,12 +3345,6 @@ void Temperature::isr() {
         if (marlin_debug_flags & MARLIN_DEBUG_DRYRUN) {
             // In dry run, the bed is left cold. The temperature would never stabilize.
             return;
-        }
-
-        if (temp_bed.target < bed_frame_est_celsius) {
-          // Do not wait for cooldown. Cooling is slow and propagated evenly across the bed, it won't warp the bed differently.
-          log_info(MarlinServer, "Absorbing heat: target lower than actual temp, continuing");
-          return;
         }
 
         if (temp_bed.target <= room_temperature) {
@@ -3327,24 +3355,44 @@ void Temperature::isr() {
         SkippableGCode::Guard skippable_operation;
         PrintStatusMessageGuard status_guard;
 
-        float start_target = temp_bed.target;
-        float start_diff = fabs(start_target - bed_frame_est_celsius);
-        while (fabs(temp_bed.target - bed_frame_est_celsius) > 0.5f && !skippable_operation.is_skip_requested()) {
+        int16_t print_target = temp_bed.target;
+
+        // The frame temperature the absorbing converges to; moves as the chamber heats up.
+        const auto target_equilibrium = [&]() {
+            return bed_frame_equilibrium_celsius(print_target, frame_ambient_celsius());
+        };
+
+        float start_gap = target_equilibrium() - bed_frame_est_celsius;
+        float max_progress = 0.0f;
+
+        while (!skippable_operation.is_skip_requested()) {
             // Check if we're aborting
             if (planner.draining()) {
                 break;
             }
-            if (start_target != temp_bed.target) {
-              //Target changed -> recalculate start_diff
-              start_target = temp_bed.target;
-              start_diff = fabs(start_target - bed_frame_est_celsius);
+
+            if (temp_bed.target != print_target) {
+                // Target changed externally -> the new owner decides the bed temperature,
+                // absorb heat towards the new target without interfering.
+                print_target = temp_bed.target;
+                if (print_target <= room_temperature || target_equilibrium() - bed_frame_est_celsius < bed_frame_convergence_celsius) {
+                    break;
+                }
+                start_gap = target_equilibrium() - bed_frame_est_celsius;
+            }
+
+            if (bed_frame_est_celsius >= target_equilibrium() - bed_frame_convergence_celsius) {
+                break;
             }
 
             idle(true);
 
-            auto progress = std::clamp(100 - (fabs(temp_bed.target - bed_frame_est_celsius) / start_diff) * 100, 0.f, 100.f);
+            // The equilibrium moves as the chamber heats up; keep the reported progress monotone.
+            const float remaining = std::max(target_equilibrium() - bed_frame_est_celsius, 0.0f);
+            const float progress = std::clamp(100 - (remaining / start_gap) * 100, 0.f, 100.f);
+            max_progress = std::max(max_progress, progress);
 
-            status_guard.update<PrintStatusMessage::absorbing_heat>({ .current = progress, .target = 100 });
+            status_guard.update<PrintStatusMessage::absorbing_heat>({ .current = max_progress, .target = 100 });
         }
 
         MarlinUI::reset_status();
