@@ -249,6 +249,7 @@ bool Pause::should_park() {
     case Pause::LoadType::unload_from_gears:
         return false;
     case Pause::LoadType::unload:
+    case Pause::LoadType::unload_confirm:
 #if HAS_AUTO_RETRACT()
         if (auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(active_extruder))) {
             return false;
@@ -265,7 +266,7 @@ bool Pause::is_target_temperature_safe() {
     buddy::safety_timer().reset_restore_nonblocking();
 
 #if HAS_AUTO_RETRACT()
-    if (load_type == LoadType::unload && auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(active_extruder))) {
+    if ((load_type == LoadType::unload || load_type == LoadType::unload_confirm) && auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(active_extruder))) {
         return true; // Its safe to unload even if the temp is too low if we are retracted
     }
 #endif
