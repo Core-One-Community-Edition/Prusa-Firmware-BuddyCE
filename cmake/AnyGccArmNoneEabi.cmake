@@ -90,6 +90,18 @@ set(CMAKE_ASM_COMPILE_OBJECT
     CACHE STRING "" FORCE
     )
 
+# use the gcc wrappers for ar/ranlib so that archives of LTO objects get a
+# proper symbol index even when binutils does not auto-load the LTO plugin
+# (the darwin-arm64 toolchain ships without it in lib/bfd-plugins)
+set(CMAKE_AR
+    "${BINUTILS_PATH}/${TOOLCHAIN_PREFIX}gcc-ar${EXECUTABLE_SUFFIX}"
+    CACHE FILEPATH "" FORCE
+    )
+set(CMAKE_RANLIB
+    "${BINUTILS_PATH}/${TOOLCHAIN_PREFIX}gcc-ranlib${EXECUTABLE_SUFFIX}"
+    CACHE FILEPATH "" FORCE
+    )
+
 set(CMAKE_OBJCOPY
     "${BINUTILS_PATH}/${TOOLCHAIN_PREFIX}objcopy${EXECUTABLE_SUFFIX}"
     CACHE INTERNAL "objcopy tool"
