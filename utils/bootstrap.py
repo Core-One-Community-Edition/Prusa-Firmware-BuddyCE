@@ -60,6 +60,7 @@ dependencies = {
             'Linux-aarch64': 'https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-aarch64-arm-none-eabi.tar.xz',
             'Windows': 'https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-mingw-w64-i686-arm-none-eabi.zip',
             'Darwin': 'https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-darwin-x86_64-arm-none-eabi.tar.xz',
+            'Darwin-arm64': 'https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-darwin-arm64-arm-none-eabi.tar.xz',
         }
     },
     'clang-format': {
@@ -183,7 +184,7 @@ def download_and_unzip(url: str, directory: Path):
     # Check if tar or zip
     if any(
             url.endswith(ext)
-            for ext in ['.tar.bz2', '.tar.gz', '.tar.xz', 'tar.xzg']):
+            for ext in ['.tar.bz2', '.tar.gz', '.tar.xz']):
         with tarfile.open(filename) as obj:
             obj.extractall(path=extract_dir)
     else:

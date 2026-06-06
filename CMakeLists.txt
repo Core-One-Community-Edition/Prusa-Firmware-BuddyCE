@@ -331,7 +331,12 @@ endif()
 
 # split and gc sections
 add_compile_options(-ffunction-sections -fdata-sections)
-add_link_options(-Wl,--gc-sections)
+if(APPLE AND NOT CMAKE_CROSSCOMPILING)
+  # Apple's linker doesn't support --gc-sections, use its equivalent instead
+  add_link_options(-Wl,-dead_strip)
+else()
+  add_link_options(-Wl,--gc-sections)
+endif()
 
 # support _DEBUG macro (some code uses to recognize debug builds)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
