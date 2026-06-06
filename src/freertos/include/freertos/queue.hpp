@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <array>
+#include <type_traits>
 #include <freertos/config.hpp>
 
 // We formward declare QueueDefinition here to not include all the freertos hell
