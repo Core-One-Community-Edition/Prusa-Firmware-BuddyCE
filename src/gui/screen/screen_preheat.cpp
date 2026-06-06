@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <limits>
 #include <filament_gui.hpp>
+#include <filament_to_load.hpp>
 #include <utils/string_builder.hpp>
 #include <gui/screen/filament/screen_filament_detail.hpp>
 #include <ScreenHandler.hpp>
@@ -93,7 +94,14 @@ void WindowMenuPreheat::update_list() {
 }
 
 void WindowMenuPreheat::focus_loaded_filament() {
-    const FilamentType target_filament = config_store().get_filament_type(extruder_index);
+    FilamentType target_filament = config_store().get_filament_type(extruder_index);
+
+    // Nothing loaded, but if a preheat is active, the user is most likely
+    // about to load the filament they preheated for
+    if (target_filament == FilamentType::none && marlin_vars().hotend(extruder_index).target_nozzle.get() > 0) {
+        target_filament = filament::get_preheated_type();
+    }
+
     if (target_filament == FilamentType::none) {
         return;
     }

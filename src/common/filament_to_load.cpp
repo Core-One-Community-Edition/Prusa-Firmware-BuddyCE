@@ -19,3 +19,13 @@ std::optional<Color> filament::get_color_to_load() {
 void filament::set_color_to_load(std::optional<Color> color) {
     color_to_load = color;
 }
+
+static FilamentType preheated_type = FilamentType::none;
+
+FilamentType filament::get_preheated_type() {
+    return preheated_type;
+}
+
+void filament::set_preheated_type(FilamentType filament) {
+    preheated_type = filament;
+}
