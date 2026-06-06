@@ -235,6 +235,11 @@
 #define TEMP_BED_WINDOW 1 // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_BED_HYSTERESIS 3 // (°C) Temperature proximity considered "close enough" to the target
 
+// (°C) During the absorbing-heat phase, drive the bed this many degrees above the print
+// target to speed up heat transfer into the bed frame and chamber, then let it cool back
+// to the target. The overshot target is clamped to BED_MAXTEMP - BED_MAXTEMP_SAFETY_MARGIN.
+#define BED_ABSORB_HEAT_OVERSHOOT 15
+
 #define TEMP_CHAMBER_HYSTERESIS 3 // (°C) Temperature proximity considered "close enough" to the target
 
 // Below this temperature the heater will be switched off

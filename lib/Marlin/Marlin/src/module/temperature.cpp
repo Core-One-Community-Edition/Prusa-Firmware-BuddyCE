@@ -133,6 +133,12 @@ static constexpr float room_temperature = 25.0f;
       bed_frame_bed_coupling_time_constant * bed_frame_chamber_coupling_time_constant
       / (bed_frame_bed_coupling_time_constant + bed_frame_chamber_coupling_time_constant);
 
+  #ifdef BED_ABSORB_HEAT_OVERSHOOT
+    // First-order time constant of the bed passively cooling towards the chamber air,
+    // used to predict when to hand the overshot bed target back to the print target.
+    static constexpr float bed_passive_cooling_time_constant = 400.0f; // seconds
+  #endif
+
   // Temperature of the air surrounding the bed frame.
   static float frame_ambient_celsius() {
     #if HAS_CHAMBER_API()
@@ -3365,15 +3371,41 @@ void Temperature::isr() {
         float start_gap = target_equilibrium() - bed_frame_est_celsius;
         float max_progress = 0.0f;
 
+        #ifdef BED_ABSORB_HEAT_OVERSHOOT
+          // Drive the bed above the print target to speed up heat transfer into the
+          // frame and chamber. setTargetBed clamps to BED_MAXTEMP - BED_MAXTEMP_SAFETY_MARGIN.
+          setTargetBed(print_target + BED_ABSORB_HEAT_OVERSHOOT);
+          const int16_t overshoot_target = temp_bed.target;
+          bool overshoot_active = overshoot_target > print_target;
+          if (overshoot_active) {
+            log_info(MarlinServer, "Absorbing heat: overshooting bed to %d", overshoot_target);
+          }
+
+          // Make sure the print target is restored on every exit (skip, abort).
+          ScopeGuard restore_target_guard = [&] {
+            if (overshoot_active) {
+              setTargetBed(print_target);
+            }
+          };
+        #endif
+
         while (!skippable_operation.is_skip_requested()) {
             // Check if we're aborting
             if (planner.draining()) {
                 break;
             }
 
-            if (temp_bed.target != print_target) {
+            const int16_t expected_target =
+            #ifdef BED_ABSORB_HEAT_OVERSHOOT
+                overshoot_active ? overshoot_target :
+            #endif
+                print_target;
+            if (temp_bed.target != expected_target) {
                 // Target changed externally -> the new owner decides the bed temperature,
                 // absorb heat towards the new target without interfering.
+                #ifdef BED_ABSORB_HEAT_OVERSHOOT
+                  overshoot_active = false;
+                #endif
                 print_target = temp_bed.target;
                 if (print_target <= room_temperature || target_equilibrium() - bed_frame_est_celsius < bed_frame_convergence_celsius) {
                     break;
@@ -3381,7 +3413,45 @@ void Temperature::isr() {
                 start_gap = target_equilibrium() - bed_frame_est_celsius;
             }
 
-            if (bed_frame_est_celsius >= target_equilibrium() - bed_frame_convergence_celsius) {
+            #ifdef BED_ABSORB_HEAT_OVERSHOOT
+              if (overshoot_active) {
+                const float bed = temp_bed.celsius;
+                const float settle_point = print_target + TEMP_BED_WINDOW;
+                const float ambient = frame_ambient_celsius();
+
+                // Conservative estimate of the time left for the frame estimate to converge:
+                // during the cooldown the bed stays above the settle point, so the estimate
+                // rises at least as fast as it would with the bed at the settle point.
+                const float settle_gap = bed_frame_equilibrium_celsius(settle_point, ambient) - bed_frame_est_celsius;
+                const float remaining_absorb = (settle_gap > bed_frame_convergence_celsius)
+                    ? bed_frame_response_time_constant * logf(settle_gap / bed_frame_convergence_celsius)
+                    : 0.0f;
+                // Time for the bed to passively cool down to the settle point
+                const float cooldown = (bed > settle_point && settle_point > ambient)
+                    ? bed_passive_cooling_time_constant * logf((bed - ambient) / (settle_point - ambient))
+                    : 0.0f;
+
+                // Hand the target back early, so that the bed cools down to the print
+                // target at the same time the frame estimate converges.
+                if (cooldown >= remaining_absorb) {
+                    log_info(MarlinServer, "Absorbing heat: cooling down to print target");
+                    setTargetBed(print_target);
+                    overshoot_active = false;
+                }
+              }
+            #endif
+
+            const bool frame_converged = bed_frame_est_celsius >= target_equilibrium() - bed_frame_convergence_celsius;
+            #ifdef BED_ABSORB_HEAT_OVERSHOOT
+              // The bed must also cool back to the print target before the print starts. If the
+              // chamber air is hotter than the settle point, the bed cannot passively cool below
+              // it - do not wait for that.
+              const bool bed_settled = temp_bed.celsius <= print_target + TEMP_BED_WINDOW
+                  || temp_bed.celsius <= frame_ambient_celsius() + 1.0f;
+            #else
+              const bool bed_settled = true;
+            #endif
+            if (frame_converged && bed_settled) {
                 break;
             }
 
