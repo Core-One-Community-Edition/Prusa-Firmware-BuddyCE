@@ -1,0 +1,260 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - devel
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  esp-firmware:
+    name: ESP NIC firmware (${{ matrix.chip }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - chip: esp8266
+            sdk_export: /ESP8266_RTOS_SDK/export.sh
+          - chip: esp32
+            sdk_export: /esp-idf/export.sh
+    steps:
+      - uses: actions/checkout@v4
+
+      # If the NIC sources are unchanged, reuse the previously built binaries
+      # and skip the Docker build entirely.
+      - name: Restore built firmware cache
+        id: fw-cache
+        uses: actions/cache@v4
+        with:
+          path: esp-fw-output
+          key: esp-fw-${{ matrix.chip }}-${{ hashFiles(format('lib/{0}-nic/**', matrix.chip)) }}
+
+      - name: Restore SDK Docker image cache
+        if: steps.fw-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: /tmp/buddy-${{ matrix.chip }}-nic-build.tar.zst
+          key: esp-docker-${{ matrix.chip }}-${{ hashFiles(format('lib/{0}-nic/Dockerfile', matrix.chip)) }}
+
+      - name: Load or build SDK Docker image
+        if: steps.fw-cache.outputs.cache-hit != 'true'
+        run: |
+          image_tar="/tmp/buddy-${{ matrix.chip }}-nic-build.tar.zst"
+          if [ -f "$image_tar" ]; then
+            zstd -d --stdout "$image_tar" | docker load
+          else
+            docker build -t "buddy-${{ matrix.chip }}-nic-build" "lib/${{ matrix.chip }}-nic"
+            docker save "buddy-${{ matrix.chip }}-nic-build" | zstd -T0 -o "$image_tar"
+          fi
+
+      # Mirrors the container invocation in lib/AddEspNicFw.cmake.
+      - name: Build ESP NIC firmware
+        if: steps.fw-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p esp-build esp-fw-output
+          docker run --rm --user "$(id -u):$(id -g)" \
+            -v "$PWD/lib/${{ matrix.chip }}-nic:/project" \
+            -v "$PWD/esp-build:/build" \
+            "buddy-${{ matrix.chip }}-nic-build" bash -c \
+            "source ${{ matrix.sdk_export }} && cmake -DIDF_TARGET=${{ matrix.chip }} -B /build -S /project && cmake --build /build"
+          cp esp-build/uart_wifi.bin esp-fw-output/
+          cp esp-build/bootloader/bootloader.bin esp-fw-output/
+          cp esp-build/partition_table/partition-table.bin esp-fw-output/
+
+      # The esp8266 flasher stub comes from a separate pre-built esptool repo
+      # (see lib/AddEspNicFw.cmake); include it so the artifact is self-contained.
+      - name: Add esp8266 flasher stubs
+        if: matrix.chip == 'esp8266'
+        run: cp src/resources/esp8266/stub_text.bin src/resources/esp8266/stub_data.bin esp-fw-output/
+
+      - name: Upload ESP NIC firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: esp-${{ matrix.chip }}-firmware
+          path: esp-fw-output/
+          if-no-files-found: error
+
+  firmware:
+    name: Firmware (coreone)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: esp-firmware
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libjpeg-dev gettext
+
+      - name: Get Python version
+        id: python
+        run: echo "version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache buddy dependencies
+        uses: actions/cache@v4
+        with:
+          path: .dependencies
+          key: buddy-deps-${{ runner.os }}-${{ hashFiles('utils/bootstrap.py') }}
+
+      - name: Cache Python virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: buddy-venv-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Download ESP NIC firmware
+        uses: actions/download-artifact@v4
+        with:
+          name: esp-esp8266-firmware
+          path: esp-fw/esp8266
+
+      - name: Determine version suffix
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          if [ "$REF_TYPE" = "tag" ]; then
+            base="${REF_NAME#v}"
+            base="${base%%-*}"
+            file_version="$(tr -d '[:space:]' < version.txt)"
+            if [ "$base" != "$file_version" ]; then
+              echo "::error::Tag version $base does not match version.txt ($file_version)"
+              exit 1
+            fi
+            suffix=""
+            case "$REF_NAME" in
+              *-*) suffix="-${REF_NAME#*-}" ;;
+            esac
+            echo "suffix=$suffix" >> "$GITHUB_OUTPUT"
+            echo "suffix_short=$suffix" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            echo "suffix=-DEV+${RUN_NUMBER}.PR${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+            echo "suffix_short=-DEV+${RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          else
+            branch="${REF_NAME//\//-}"
+            echo "suffix=-DEV+${RUN_NUMBER}.${branch}" >> "$GITHUB_OUTPUT"
+            echo "suffix_short=-DEV+${RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build firmware
+        run: |
+          python3 utils/build.py \
+            --preset coreone \
+            --build-type release \
+            --bootloader yes \
+            --generate-dfu \
+            --version-suffix="${{ steps.version.outputs.suffix }}" \
+            --version-suffix-short="${{ steps.version.outputs.suffix_short }}" \
+            -DBUILD_NUMBER:STRING="${{ github.run_number }}" \
+            -DESP_FW_BINARY_DIR:PATH="$GITHUB_WORKSPACE/esp-fw/esp8266"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-coreone
+          path: build/products/*
+          if-no-files-found: error
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      # gettext provides msgfmt, used by the translator tests to generate .mo files.
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gettext
+
+      - name: Get Python version
+        id: python
+        run: echo "version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache buddy dependencies
+        uses: actions/cache@v4
+        with:
+          path: .dependencies
+          key: buddy-deps-${{ runner.os }}-${{ hashFiles('utils/bootstrap.py') }}
+
+      - name: Cache Python virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: buddy-venv-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Bootstrap dependencies
+        run: python3 utils/bootstrap.py
+
+      - name: Build unit tests
+        run: |
+          source .venv/bin/activate
+          export PATH="$(python3 utils/bootstrap.py --print-dependency-directory cmake)/bin:$PATH"
+          export PATH="$(python3 utils/bootstrap.py --print-dependency-directory ninja):$PATH"
+          cmake -B build-tests -G Ninja -DBOARD=BUDDY -DCMAKE_BUILD_TYPE=Debug
+          ninja -C build-tests tests
+
+      - name: Run unit tests
+        run: |
+          export PATH="$(python3 utils/bootstrap.py --print-dependency-directory cmake)/bin:$PATH"
+          cd build-tests
+          ctest --output-on-failure
+
+  release:
+    name: Release
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - esp-firmware
+      - firmware
+      - unit-tests
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Package ESP NIC firmware archives
+        run: |
+          for chip in esp8266 esp32; do
+            (cd "artifacts/esp-${chip}-firmware" && zip -r "$GITHUB_WORKSPACE/${chip}-nic-firmware-${GITHUB_REF_NAME}.zip" .)
+          done
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prerelease_flag=""
+          case "$GITHUB_REF_NAME" in
+            *-*) prerelease_flag="--prerelease" ;;
+          esac
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --generate-notes \
+            $prerelease_flag \
+            artifacts/firmware-coreone/* \
+            "esp8266-nic-firmware-${GITHUB_REF_NAME}.zip" \
+            "esp32-nic-firmware-${GITHUB_REF_NAME}.zip"
