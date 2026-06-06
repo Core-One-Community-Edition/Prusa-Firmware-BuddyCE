@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+# The ESP8266_RTOS_SDK toolchain (xtensa-lx106-elf) is only published for x86 platforms,
+# so force an amd64 image; on arm64 hosts (e.g. Apple Silicon) it runs under emulation.
+FROM --platform=linux/amd64 ubuntu:22.04
 
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
