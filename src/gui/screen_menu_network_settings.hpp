@@ -17,6 +17,8 @@ using ScreenMenuEthernetSettings_ = ScreenMenu<EFooter::Off, MI_RETURN, //
     WMI_NET<MI_IP4_NMSK, NETDEV_ETH_ID>,
     WMI_NET<MI_IP4_GWAY, NETDEV_ETH_ID>,
     MI_HOSTNAME,
+    MI_NTP_MODE,
+    MI_NTP_SERVER,
     WMI_NET<MI_MAC_ADDR, NETDEV_ETH_ID> //
     >;
 
@@ -39,6 +41,8 @@ using ScreenMenuWifiSettings_ = ScreenMenu<EFooter::Off, MI_RETURN, //
     WMI_NET<MI_IP4_NMSK, NETDEV_ESP_ID>,
     WMI_NET<MI_IP4_GWAY, NETDEV_ESP_ID>,
     MI_HOSTNAME,
+    MI_NTP_MODE,
+    MI_NTP_SERVER,
     WMI_NET<MI_MAC_ADDR, NETDEV_ESP_ID> //
     >;
 

@@ -91,6 +91,26 @@ protected:
     void click(IWindowMenu &menu) override;
 };
 
+/// Where the NTP client gets the NTP server from (ntp_mode_t)
+class MI_NTP_MODE : public MenuItemSwitch {
+public:
+    MI_NTP_MODE();
+    virtual void OnChange(size_t old_index) override;
+};
+
+/// Custom NTP server, used when the NTP mode is set to Custom
+class MI_NTP_SERVER : public WiInfo<HAS_MINI_DISPLAY() ? 16 : config_store_ns::ntp_server_max_len + 1> {
+    constexpr static const char *const label = N_("NTP Server");
+
+public:
+    MI_NTP_SERVER();
+
+    void Loop() override;
+
+protected:
+    void click(IWindowMenu &menu) override;
+};
+
 /// Use WMI_NET as a wrapper to provide the device_id
 class MI_NET_IP : public MenuItemSwitch {
 public:

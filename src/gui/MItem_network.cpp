@@ -197,6 +197,59 @@ void MI_HOSTNAME::click(IWindowMenu &) {
     notify_reconfigure();
 }
 
+static constexpr const char *ntp_mode_items[] = {
+    "Prusa",
+    "DHCP",
+    "Custom",
+};
+
+MI_NTP_MODE::MI_NTP_MODE()
+    : MenuItemSwitch(_("NTP"), ntp_mode_items, config_store().ntp_mode.get()) //
+{
+    set_translate_items(false);
+}
+
+void MI_NTP_MODE::OnChange([[maybe_unused]] size_t old_index) {
+    config_store().ntp_mode.set(static_cast<uint8_t>(this->get_index()));
+}
+
+MI_NTP_SERVER::MI_NTP_SERVER()
+    : WiInfo(_(label)) {
+}
+
+void MI_NTP_SERVER::Loop() {
+    const auto server = config_store().ntp_server.get();
+
+    ChangeInformation(server[0] == '\0' ? "-" : server.data());
+}
+
+void MI_NTP_SERVER::click(IWindowMenu &) {
+    std::array<char, config_store_ns::ntp_server_max_len + 1> server = config_store().ntp_server.get();
+
+    for (bool server_is_valid = false; !server_is_valid;) {
+        if (!DialogTextInput::exec(_(label), server)) {
+            return;
+        }
+
+        server_is_valid = [&] {
+            for (char *chp = server.data(); *chp; chp++) {
+                const char ch = *chp;
+                if (!isalnum(ch) && ch != '-' && ch != '.') {
+                    return false;
+                }
+            }
+
+            return true;
+        }();
+
+        if (!server_is_valid) {
+            MsgBoxError(_("NTP server is not valid. It must be a hostname or an IP address containing only characters 'a-z A-Z 0-9 - .'"), Responses_Ok);
+        }
+    }
+
+    config_store().ntp_server.set(server);
+}
+
 static constexpr const char *net_ip_values[] = {
     "DHCP",
     "static",
