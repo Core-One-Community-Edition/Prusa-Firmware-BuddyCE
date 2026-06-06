@@ -153,11 +153,12 @@ static bool set_special_fan_speed(uint8_t fan, int8_t tool, uint8_t speed, bool 
  * - `C` - Chamber temperature threshold for automatic control (°C, P5 only)
  *
  *#### XBuddyExtension Chamber Fan Auto Control Logic (fans 3 & 4 on CORE ONE printers)
- * For compatibility reasons, two chamber fan regulators are implemented. New algorithm is more oriented on airflow stability,
- * while legacy algorithm is more oriented on absolute temperature control. On print start and end, the regulator is switched
- * to legacy mode to keep compatibility with old gcodes. When M106 with parameters N or G is sent, the regulator is switched to new algorithm.
+ * The ramp regulator below is always used. Parameters N and G of M106 tune it for the current print,
+ * the tuning is reset back to defaults on print start and end.
+ * (Fork note: upstream defaults to a legacy regulator - PID with only I component - which effectively
+ * bang-bangs between 0% and the user fan limit. The legacy code path is kept dormant only to minimize
+ * divergence from upstream, see FanCooling::regulator_legacy.)
  *
- *##### New algorithm
  * - Chamber Fan control algorithm is ramp function with hysteresis on top of it
  * - If temperature is below target, ramp function output is ramp_breakpoint_pwm (Parameter N)
  *   The minimal PWM is to ensure good airflow to cool the extruded material fast enough, which is necessary even when the chamber is on the target temperature.
@@ -166,9 +167,6 @@ static bool set_special_fan_speed(uint8_t fan, int8_t tool, uint8_t speed, bool 
  * - If temperature is above target, ramp function output is proportional to the error with slope ramp_slope (Parameter G)
  * - Hysteresis is applied on top of the ramp function to avoid fan premature kick-start and reduce kick-starts frequency
  * - The PWM output is also modified based on the filtration backend to adjust for different fan configurations
- *
- *##### Legacy algorithm
- * - Legacy Fan control algorithm is PID regulator with only I component used.
  *
  * !! This comment is also doubled in the FanCooling::compute_auto_regulation_step. If you do changes here, update the other one, too.
  *

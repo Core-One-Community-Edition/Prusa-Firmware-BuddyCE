@@ -59,9 +59,18 @@ public: // Fans
     /// * Please note than PWM control for the cooling fans is shared (so calling this with Fan::cooling_fan_1 does the same as with Fan::cooling_fan_2)
     void set_fan_target_pwm(Fan fan, FanPWMOrAuto target);
 
-    // called on print start to use legacy chamber regulator for compatibility with old gcodes
+    // Fork note: dormant switch to the upstream legacy chamber regulator, nothing calls it anymore
+    // (see FanCooling::regulator_legacy) - candidate for future cleanup
     void set_chamber_regulator_legacy(bool legacy) {
         chamber_cooling.regulator_legacy = legacy;
+    };
+
+    // called on print start and end so that per-print M106 N/G tuning does not leak
+    // into the next print or idle cooling
+    void reset_chamber_regulator() {
+        chamber_cooling.ramp_breakpoint_pwm = FanCooling::default_ramp_breakpoint_pwm;
+        chamber_cooling.ramp_slope = FanCooling::default_ramp_slope;
+        chamber_cooling.regulator_legacy = false;
     };
 
     void set_chamber_regulator_ramp_breakpoint_pwm(uint8_t pwm) {
