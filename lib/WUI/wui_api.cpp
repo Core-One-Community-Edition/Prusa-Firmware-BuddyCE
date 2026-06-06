@@ -11,6 +11,7 @@
 #include "wui_api.h"
 #include "netdev.h"
 #include "ini_handler.h"
+#include "sntp_client.h"
 #include "stm32f4xx_hal.h"
 #include "print_utils.hpp"
 #include "marlin_client.hpp"
@@ -110,6 +111,16 @@ static int ini_handler_func(void *user, const char *section, const char *name, c
                 tmp_config->var_mask |= ETHVAR_MSK(ETHVAR_DNS1_IP4);
             }
         }
+    } else if (ini_string_match(section, "network", name, "ntp4")) {
+        if (strcasecmp(value, "prusa") == 0) {
+            tmp_config->ntp_mode = NTP_MODE_PRUSA;
+        } else if (strcasecmp(value, "dhcp") == 0) {
+            tmp_config->ntp_mode = NTP_MODE_DHCP;
+        } else {
+            tmp_config->ntp_mode = NTP_MODE_CUSTOM;
+            strlcpy(tmp_config->ntp_server, value, NTP_SERVER_LEN + 1);
+        }
+        tmp_config->var_mask |= ETHVAR_MSK(ETHVAR_NTP);
     }
 
     if (def->ap) {
@@ -177,6 +188,14 @@ void save_net_params(netif_config_t *ethconfig, [[maybe_unused]] ap_entry_t *ap,
     if (ethconfig->var_mask & ETHVAR_MSK(ETHVAR_HOSTNAME)) {
         store.hostname.set(ethconfig->hostname);
     }
+    if (ethconfig->var_mask & ETHVAR_MSK(ETHVAR_NTP)) {
+        static_assert(NTP_SERVER_LEN == config_store_ns::ntp_server_max_len);
+
+        store.ntp_mode.set(ethconfig->ntp_mode);
+        if (ethconfig->ntp_mode == NTP_MODE_CUSTOM) {
+            store.ntp_server.set(ethconfig->ntp_server);
+        }
+    }
 
 #if HAS_ESP()
     if (ap != NULL) {
@@ -221,6 +240,8 @@ void load_net_params(netif_config_t *ethconfig, [[maybe_unused]] ap_entry_t *ap,
     }
 
     strlcpy(ethconfig->hostname, store.hostname.get_c_str(), HOSTNAME_LEN + 1);
+    ethconfig->ntp_mode = store.ntp_mode.get();
+    strlcpy(ethconfig->ntp_server, store.ntp_server.get_c_str(), NTP_SERVER_LEN + 1);
 
 #if HAS_ESP()
     if (ap != NULL) {

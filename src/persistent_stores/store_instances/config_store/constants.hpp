@@ -25,6 +25,7 @@ inline constexpr size_t connect_token_size { old_eeprom::CONNECT_TOKEN_SIZE };
 inline constexpr size_t pl_password_size { old_eeprom::PL_PASSWORD_SIZE };
 inline constexpr size_t wifi_max_ssid_len { old_eeprom::WIFI_MAX_SSID_LEN };
 inline constexpr size_t wifi_max_passwd_len { old_eeprom::WIFI_MAX_PASSWD_LEN };
+inline constexpr size_t ntp_server_max_len { 63 };
 
 inline constexpr size_t metrics_host_size { connect_host_size }; ///< Size of metrics host string
 inline constexpr int16_t stallguard_sensitivity_unset { std::numeric_limits<int16_t>::max() };
