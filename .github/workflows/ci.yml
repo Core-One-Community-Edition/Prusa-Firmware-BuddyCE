@@ -24,11 +24,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Core One uses the esp8266 NIC; add esp32 (sdk_export: /esp-idf/export.sh)
+        # here if esp32-based builds are ever needed again.
         include:
           - chip: esp8266
             sdk_export: /ESP8266_RTOS_SDK/export.sh
-          - chip: esp32
-            sdk_export: /esp-idf/export.sh
     steps:
       - uses: actions/checkout@v4
 
@@ -235,11 +235,9 @@ jobs:
         with:
           path: artifacts
 
-      - name: Package ESP NIC firmware archives
+      - name: Package ESP NIC firmware archive
         run: |
-          for chip in esp8266 esp32; do
-            (cd "artifacts/esp-${chip}-firmware" && zip -r "$GITHUB_WORKSPACE/${chip}-nic-firmware-${GITHUB_REF_NAME}.zip" .)
-          done
+          (cd artifacts/esp-esp8266-firmware && zip -r "$GITHUB_WORKSPACE/esp8266-nic-firmware-${GITHUB_REF_NAME}.zip" .)
 
       - name: Create release
         env:
@@ -256,5 +254,4 @@ jobs:
             --generate-notes \
             $prerelease_flag \
             artifacts/firmware-coreone/* \
-            "esp8266-nic-firmware-${GITHUB_REF_NAME}.zip" \
-            "esp32-nic-firmware-${GITHUB_REF_NAME}.zip"
+            "esp8266-nic-firmware-${GITHUB_REF_NAME}.zip"
