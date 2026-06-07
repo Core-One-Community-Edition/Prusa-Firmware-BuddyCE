@@ -76,10 +76,11 @@
 /** Set this to 1 to support DNS names (or IP address strings) to set sntp servers
  * One server address/name can be defined as default if SNTP_SERVER_DNS == 1:
  * \#define SNTP_SERVER_ADDRESS "pool.ntp.org"
+ * Note: SNTP_SERVER_ADDRESS is intentionally not defined - the server is set
+ * by sntp_client.c instead.
  */
 #if !defined SNTP_SERVER_DNS || defined __DOXYGEN__
-    #define SNTP_SERVER_DNS     1
-    #define SNTP_SERVER_ADDRESS "prusa3d.pool.ntp.org"
+    #define SNTP_SERVER_DNS 1
 #endif
 
 /**

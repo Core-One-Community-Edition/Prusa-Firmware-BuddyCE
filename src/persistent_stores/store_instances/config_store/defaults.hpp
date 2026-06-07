@@ -85,6 +85,7 @@ namespace defaults {
     inline constexpr time_tools::TimezoneOffsetSummerTime timezone_summer { time_tools::TimezoneOffsetSummerTime::no_summertime };
     inline constexpr std::array<char, wifi_max_ssid_len + 1> wifi_ap_ssid { "" };
     inline constexpr std::array<char, wifi_max_passwd_len + 1> wifi_ap_password { "" };
+    inline constexpr std::array<char, ntp_server_max_len + 1> ntp_server { "" };
 
     inline constexpr eSOUND_MODE sound_mode { eSOUND_MODE::_undef };
     inline constexpr uint8_t sound_volume { 5 };

@@ -216,6 +216,9 @@ struct CurrentStore
 
     // General network settings
     StoreItem<std::array<char, lan_hostname_max_len + 1>, defaults::net_hostname, ItemFlag::network, journal::hash("Hostname")> hostname;
+    // Where to get the NTP server from, values are ntp_mode_t (lib/WUI/sntp/sntp_client.h): 0 = Prusa pool, 1 = DHCP (option 42), 2 = custom (ntp_server)
+    StoreItem<uint8_t, 0, ItemFlag::network, journal::hash("NTP Mode")> ntp_mode;
+    StoreItem<std::array<char, ntp_server_max_len + 1>, defaults::ntp_server, ItemFlag::network, journal::hash("NTP Server")> ntp_server;
 
     StoreItem<eSOUND_MODE, defaults::sound_mode, ItemFlag::user_interface, journal::hash("Sound Mode")> sound_mode;
     StoreItem<uint8_t, defaults::sound_volume, ItemFlag::user_interface, journal::hash("Sound Volume")> sound_volume;

@@ -501,7 +501,10 @@ private:
                 // TODO: This does some code gymnastics inside to track changes
                 // of network configuration. Consider cleaning that up and
                 // integrating into some kind of up/down mechanism.
-                sntp_client_step();
+                const auto ntp_mode = static_cast<ntp_mode_t>(config_store().ntp_mode.get());
+                const auto ntp_server = config_store().ntp_server.get();
+
+                sntp_client_step(ntp_mode, ntp_server.data());
             }
 
 #if HAS_ESP()
