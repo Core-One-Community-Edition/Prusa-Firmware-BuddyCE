@@ -495,6 +495,8 @@ set_feature_for_printers(HAS_UNEVEN_BED_PROMPT "COREONE" "COREONEL")
 
 set_feature_for_printers(HAS_DOOR_SENSOR_CALIBRATION "COREONE" "COREONEL")
 
+set_feature_for_printers(HAS_BED_LEVEL_PROBE "COREONE" "COREONEL")
+
 # Set GUI settings
 set(PRINTERS_WITH_GUI
     "COREONE"

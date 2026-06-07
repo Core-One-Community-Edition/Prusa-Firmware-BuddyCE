@@ -15,6 +15,7 @@
 #include <option/has_chamber_api.h>
 #include <option/has_uneven_bed_prompt.h>
 #include <option/has_door_sensor_calibration.h>
+#include <option/has_bed_level_probe.h>
 #include <option/has_manual_belt_tuning.h>
 
 #include <inc/MarlinConfigPre.h>
@@ -63,6 +64,9 @@ enum class ClientFSM : uint8_t {
     #endif
     #if HAS_DOOR_SENSOR_CALIBRATION()
     DoorSensorCalibration,
+    #endif
+    #if HAS_BED_LEVEL_PROBE()
+    BedLevelProbe,
     #endif
     #if HAS_LOADCELL()
     NozzleCleaningFailed,
