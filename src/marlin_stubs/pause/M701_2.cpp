@@ -44,19 +44,24 @@ using namespace filament_gcodes;
  * Shared code for load/unload filament
  */
 static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
+#if HAS_AUTO_RETRACT()
+    const bool is_unload = load_type == Pause::LoadType::unload || load_type == Pause::LoadType::unload_confirm || load_type == Pause::LoadType::unload_from_gears;
+    const bool cold_unload = is_unload && buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(rSettings.GetExtruder()));
+#else
+    const bool cold_unload = false;
+#endif
+
     float disp_temp = marlin_vars().active_hotend().display_nozzle;
     float targ_temp = Temperature::degTargetHotend(rSettings.GetExtruder());
 
-    if (disp_temp > targ_temp) {
+    if (disp_temp > targ_temp && !cold_unload) {
         thermalManager.setTargetHotend(disp_temp, rSettings.GetExtruder());
     }
 
     bool res;
     {
 #if ENABLED(PREVENT_COLD_EXTRUSION) && HAS_AUTO_RETRACT()
-        const bool is_unload = load_type == Pause::LoadType::unload || load_type == Pause::LoadType::unload_confirm || load_type == Pause::LoadType::unload_from_gears;
-        const bool allow_cold = is_unload && buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(rSettings.GetExtruder()));
-        AutoRestore ar_ce(thermalManager.allow_cold_extrude, true, allow_cold);
+        AutoRestore ar_ce(thermalManager.allow_cold_extrude, true, cold_unload);
 #endif
 
         // Load/Unload filament
@@ -70,7 +75,7 @@ static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
         return false;
     }
 
-    if (disp_temp > targ_temp) {
+    if (disp_temp > targ_temp && !cold_unload) {
         thermalManager.setTargetHotend(targ_temp, rSettings.GetExtruder());
     }
     return res;
@@ -79,6 +84,7 @@ static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
 void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::optional<float> &fast_load_length, float z_min_pos, std::optional<RetAndCool_t> op_preheat, uint8_t target_extruder, int8_t mmu_slot, std::optional<Color> color_to_be_loaded, ResumePrint_t resume_print_request) {
     InProgress progress;
 
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
     const bool do_purge_only = fast_load_length.has_value() && fast_load_length <= 0.0f;
 
     if (op_preheat) {
@@ -126,6 +132,7 @@ void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::o
     if (load_unload(do_purge_only ? Pause::LoadType::load_purge : Pause::LoadType::load, settings)) {
         if (!do_resume_print) {
             M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+            retrigger_preheat_after_load(pre_load_preheat_state, filament_to_be_loaded, target_extruder);
         }
     } else {
         M70X_process_user_response(PreheatStatus::Result::DidNotFinish, target_extruder);
@@ -140,11 +147,14 @@ void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::o
 void filament_gcodes::M702_unload(std::optional<float> unload_length, float z_min_pos, std::optional<RetAndCool_t> op_preheat, uint8_t target_extruder, bool ask_unloaded) {
     InProgress progress;
 
+    // Has to be captured before the unload, the unload itself invalidates the retracted state
 #if HAS_AUTO_RETRACT()
-    if (op_preheat && !buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(target_extruder))) {
+    const bool cold_unload = buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(target_extruder));
 #else
-    if (op_preheat) {
+    const bool cold_unload = false;
 #endif
+
+    if (op_preheat && !cold_unload) {
         PreheatData data = PreheatData::make(PreheatMode::Unload, target_extruder, *op_preheat); // TODO do I need PreheatMode::Unload_askUnloaded
         // avoid preheating bed in this case
         auto preheat_ret = preheat(data, target_extruder, PreheatBehavior::force_preheat_only_extruder());
@@ -179,7 +189,8 @@ void filament_gcodes::M702_unload(std::optional<float> unload_length, float z_mi
 
     // Unload
     load_unload(ask_unloaded ? Pause::LoadType::unload_confirm : Pause::LoadType::unload, settings);
-    M70X_process_user_response(PreheatStatus::Result::CooledDown, target_extruder);
+    // A cold unload did not need any heating, so do not cool down to keep a possibly running preheat untouched
+    M70X_process_user_response(cold_unload ? PreheatStatus::Result::DoneNoFilament : PreheatStatus::Result::CooledDown, target_extruder);
     planner.set_e_position_mm((destination.e = current_position.e = current_position_tmp.e));
 }
 
@@ -252,6 +263,7 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
     };
     settings.SetParkPoint(pos);
 
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
     const uint16_t orig_temp = Temperature::degTargetHotend(active_extruder);
 
     ScopeGuard fail_guard = [&] {
@@ -294,10 +306,6 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
         filament::set_type_to_load(filament);
         filament::set_color_to_load(std::nullopt);
 
-        mapi::ParkingPosition park_position({ mapi::ParkingPosition::unchanged, mapi::ParkingPosition::unchanged, std::max({ current_position.z + Z_NOZZLE_PARK_RISE, z_min_pos, planner.max_printed_z + Z_NOZZLE_PARK_RISE }) });
-        // Returning to previous position is unwanted outside of printing (M1701 should be used only outside of printing)
-        settings.SetParkPoint(park_position);
-
         if (!Pause::Instance().perform(Pause::LoadType::autoload, settings)) {
             // This is a bit problematic, since we dont know how far the autoload has gotten (if only waiting for preheat or already loading to nozzle) -> therefore we have to always do the full unload even if it was stoped during wait_temp (where only unload from gears would suffice)
             // This could possibly be solved if we move preheating and the whole autoload process into pause (so that is wouldn't be seperated to two operations (load_to_gears and autoload)) and then we could tell apart when the autoload was stopped
@@ -309,11 +317,19 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
 
     // at this point autoload is considered successful so fail guard is not to be triggered and we report DoneHasFilament as status
     fail_guard.disarm();
-    PreheatStatus::SetResult(PreheatStatus::Result::DoneHasFilament);
+    if constexpr (option::has_human_interactions) {
+        // Drop the nozzle to the standby temperature, same as M701
+        M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+        retrigger_preheat_after_load(pre_load_preheat_state, config_store().get_filament_type(target_extruder), target_extruder);
+    } else {
+        PreheatStatus::SetResult(PreheatStatus::Result::DoneHasFilament);
+    }
 }
 
 void filament_gcodes::M1600_change_filament(FilamentType filament_to_be_loaded, uint8_t target_extruder, RetAndCool_t preheat, AskFilament_t ask_filament, std::optional<Color> color_to_be_loaded) {
     InProgress progress;
+
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
 
     FilamentType filament = config_store().get_filament_type(target_extruder);
     if (filament == FilamentType::none && ask_filament == AskFilament_t::Never) {
@@ -398,6 +414,7 @@ void filament_gcodes::M1600_change_filament(FilamentType filament_to_be_loaded, 
 
     if (load_unload(Pause::LoadType::load, settings)) {
         M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+        retrigger_preheat_after_load(pre_load_preheat_state, filament_to_be_loaded, target_extruder);
     } else {
         M70X_process_user_response(PreheatStatus::Result::DidNotFinish, target_extruder);
     }
