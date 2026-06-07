@@ -1,4 +1,7 @@
 # The ESP32 firmware
 
-Firmware comes from <https://github.com/prusa3d/Prusa-ESP32-Nic-FW/>.
-Current version is built from `8bdad358fce0a05695183240d950b73b04727a70`.
+The firmware is built from source (`lib/esp32-nic`) via Docker as part of the regular build;
+no pre-built binaries are checked in to prevent accidentally shipping stale builds.
+
+To use locally built binaries instead, place `uart_wifi.bin`, `bootloader.bin` and
+`partition-table.bin` into this directory and configure with `ESP_FW_USE_PREBUILT=ON`.

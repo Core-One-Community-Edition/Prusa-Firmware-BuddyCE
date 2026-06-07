@@ -3,7 +3,8 @@
 # Handles ESP NIC firmware for printers with HAS_ESP.
 #
 # By default the firmware is built from source via Docker. Set ESP_FW_USE_PREBUILT=ON
-# to use the pre-built binaries checked into src/resources/<chip> instead.
+# to use binaries from src/resources/<chip> instead; no binaries are checked in there,
+# so this requires placing locally built ones into that directory first.
 #
 # The Docker image is rebuilt only when the Dockerfile changes; the firmware is rebuilt only when
 # the ESP NIC source files change.
@@ -21,7 +22,9 @@ else()
   set(ESP_SDK_EXPORT_SH "/ESP8266_RTOS_SDK/export.sh")
 endif()
 
-option(ESP_FW_USE_PREBUILT "Use pre-built ESP NIC binaries from src/resources instead of building from source" OFF)
+option(ESP_FW_USE_PREBUILT
+       "Use ESP NIC binaries placed in src/resources/<chip> instead of building from source" OFF
+       )
 
 if(ESP_FW_USE_PREBUILT)
   set(ESP_FW_BINARY_DIR
