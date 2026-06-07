@@ -1,6 +1,7 @@
 #include "config_features.h"
 #include <feature/filament_sensor/filament_sensors_handler.hpp>
 #include <config_store/store_instance.hpp>
+#include <filament_to_load.hpp>
 
 // clang-format off
 #if (!ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)) || \
@@ -180,6 +181,10 @@ void filament_gcodes::M1700_preheat(const M1700Args &args) {
     const FilamentType filament = response_variant.value_or<FilamentType>(FilamentType::none);
     const FilamentTypeParameters fil_cnf = filament.parameters();
 
+    // Remember what the user is preheating for, so that a subsequent load can preselect it.
+    // Cooldown yields FilamentType::none, clearing the hint.
+    filament::set_preheated_type(filament);
+
     const auto set_extruder_temp = [&](uint8_t extruder) {
         thermalManager.setTargetHotend(args.enforce_target_temp ? fil_cnf.nozzle_temperature : fil_cnf.nozzle_preheat_temperature, extruder);
         marlin_server::set_temp_to_display(fil_cnf.nozzle_temperature, extruder);
@@ -241,7 +246,4 @@ void filament_gcodes::M1700_preheat(const M1700Args &args) {
 
     // store result, so other threads can see it
     PreheatStatus::SetResult(PreheatStatus::Result::DoneNoFilament);
-
-    // we might want to set filament type even with preheat, if so do:
-    // Filaments::SetToBeLoaded(filament);
 }
