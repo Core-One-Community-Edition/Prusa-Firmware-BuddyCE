@@ -145,11 +145,14 @@ void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::o
 void filament_gcodes::M702_unload(std::optional<float> unload_length, float z_min_pos, std::optional<RetAndCool_t> op_preheat, uint8_t target_extruder, bool ask_unloaded) {
     InProgress progress;
 
+    // Has to be captured before the unload, the unload itself invalidates the retracted state
 #if HAS_AUTO_RETRACT()
-    if (op_preheat && !buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(target_extruder))) {
+    const bool cold_unload = buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(target_extruder));
 #else
-    if (op_preheat) {
+    const bool cold_unload = false;
 #endif
+
+    if (op_preheat && !cold_unload) {
         PreheatData data = PreheatData::make(PreheatMode::Unload, target_extruder, *op_preheat); // TODO do I need PreheatMode::Unload_askUnloaded
         // avoid preheating bed in this case
         auto preheat_ret = preheat(data, target_extruder, PreheatBehavior::force_preheat_only_extruder());
@@ -184,7 +187,8 @@ void filament_gcodes::M702_unload(std::optional<float> unload_length, float z_mi
 
     // Unload
     load_unload(ask_unloaded ? Pause::LoadType::unload_confirm : Pause::LoadType::unload, settings);
-    M70X_process_user_response(PreheatStatus::Result::CooledDown, target_extruder);
+    // A cold unload did not need any heating, so do not cool down to keep a possibly running preheat untouched
+    M70X_process_user_response(cold_unload ? PreheatStatus::Result::DoneNoFilament : PreheatStatus::Result::CooledDown, target_extruder);
     planner.set_e_position_mm((destination.e = current_position.e = current_position_tmp.e));
 }
 
