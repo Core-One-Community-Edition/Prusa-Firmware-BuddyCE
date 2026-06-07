@@ -44,19 +44,24 @@ using namespace filament_gcodes;
  * Shared code for load/unload filament
  */
 static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
+#if HAS_AUTO_RETRACT()
+    const bool is_unload = load_type == Pause::LoadType::unload || load_type == Pause::LoadType::unload_confirm || load_type == Pause::LoadType::unload_from_gears;
+    const bool cold_unload = is_unload && buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(rSettings.GetExtruder()));
+#else
+    const bool cold_unload = false;
+#endif
+
     float disp_temp = marlin_vars().active_hotend().display_nozzle;
     float targ_temp = Temperature::degTargetHotend(rSettings.GetExtruder());
 
-    if (disp_temp > targ_temp) {
+    if (disp_temp > targ_temp && !cold_unload) {
         thermalManager.setTargetHotend(disp_temp, rSettings.GetExtruder());
     }
 
     bool res;
     {
 #if ENABLED(PREVENT_COLD_EXTRUSION) && HAS_AUTO_RETRACT()
-        const bool is_unload = load_type == Pause::LoadType::unload || load_type == Pause::LoadType::unload_confirm || load_type == Pause::LoadType::unload_from_gears;
-        const bool allow_cold = is_unload && buddy::auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(rSettings.GetExtruder()));
-        AutoRestore ar_ce(thermalManager.allow_cold_extrude, true, allow_cold);
+        AutoRestore ar_ce(thermalManager.allow_cold_extrude, true, cold_unload);
 #endif
 
         // Load/Unload filament
@@ -70,7 +75,7 @@ static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
         return false;
     }
 
-    if (disp_temp > targ_temp) {
+    if (disp_temp > targ_temp && !cold_unload) {
         thermalManager.setTargetHotend(targ_temp, rSettings.GetExtruder());
     }
     return res;

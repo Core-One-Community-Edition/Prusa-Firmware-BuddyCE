@@ -638,6 +638,14 @@ void Pause::load_wait_temp_process([[maybe_unused]] Response response) {
 }
 
 void Pause::unload_wait_temp_process([[maybe_unused]] Response response) {
+#if HAS_AUTO_RETRACT()
+    if (auto_retract().is_safely_retracted_for_unload(hotend_from_extruder(active_extruder))) {
+        // The filament is retracted out of the melt zone -> no need to heat up the nozzle for unloading
+        set(LoadState::ram_sequence);
+        return;
+    }
+#endif
+
     if (!ensureSafeTemperatureNotifyProgress()) {
         return;
     }
