@@ -17,6 +17,7 @@
 #include "pause_stubbed.hpp"
 #include <feature/filament_sensor/filament_sensors_handler.hpp>
 #include "M70X.hpp"
+#include <marlin_vars.hpp>
 
 #if HAS_CHAMBER_API()
     #include <feature/chamber/chamber.hpp>
@@ -83,6 +84,17 @@ std::pair<std::optional<PreheatStatus::Result>, FilamentType> filament_gcodes::p
     }
 }
 
+static uint8_t display_temp_extruder([[maybe_unused]] uint8_t target_extruder) {
+#if HAS_MMU2()
+    // MMU has multiple slots (target_extruder can be >0) but only a single nozzle
+    // -> we need the correct temperature per active slot
+    // but we also need marlin_server::set_temp_to_display not to crash due to target_extruder > 0
+    return 0;
+#else
+    return target_extruder;
+#endif
+}
+
 void filament_gcodes::preheat_to(FilamentType filament, uint8_t target_extruder, PreheatBehavior preheat_arg) {
     const FilamentTypeParameters fil_cnf = filament.parameters();
 
@@ -111,18 +123,7 @@ void filament_gcodes::preheat_to(FilamentType filament, uint8_t target_extruder,
     if (preheat_arg.force_temp || thermalManager.degTargetHotend(target_extruder) < target_temp) {
         thermalManager.setTargetHotend(target_temp, target_extruder);
 
-        const uint8_t extruder =
-#if HAS_MMU2()
-            // MMU has multiple slots (target_extruder can be >0) but only a single nozzle
-            // -> we need the correct temperature per active slot
-            // but we also need marlin_server::set_temp_to_display not to crash due to target_extruder > 0
-            0;
-
-#else
-            target_extruder;
-#endif
-
-        marlin_server::set_temp_to_display(target_temp, extruder);
+        marlin_server::set_temp_to_display(target_temp, display_temp_extruder(target_extruder));
         if (preheat_arg.preheat_bed && (preheat_arg.force_temp || (thermalManager.degTargetBed() < fil_cnf.heatbed_temperature))) {
             thermalManager.setTargetBed(fil_cnf.heatbed_temperature);
         }
@@ -137,6 +138,45 @@ void filament_gcodes::preheat_to(FilamentType filament, uint8_t target_extruder,
 #if HAS_FILAMENT_HEATBREAK_PARAM()
     thermalManager.setTargetHeatbreak(fil_cnf.heatbreak_temperature, target_extruder);
 #endif
+}
+
+filament_gcodes::NozzlePreheatState filament_gcodes::capture_nozzle_preheat_state(uint8_t target_extruder) {
+    return NozzlePreheatState {
+        .target = static_cast<float>(thermalManager.degTargetHotend(target_extruder)),
+        .display = marlin_vars().hotend(display_temp_extruder(target_extruder)).display_nozzle,
+    };
+}
+
+void filament_gcodes::retrigger_preheat_after_load(const NozzlePreheatState &pre_load_state, FilamentType loaded_filament, uint8_t target_extruder) {
+    // The preheat must have been for the filament that was just loaded
+    if (filament::get_preheated_type() != loaded_filament) {
+        return;
+    }
+
+    // ... and must have still been active before the load: nozzle held at the standby temperature
+    // with the full temperature on display (e.g. not ended by the safety timer or a manual temperature change)
+    const FilamentTypeParameters fil_cnf = loaded_filament.parameters();
+    const bool preheat_was_active = pre_load_state.target == static_cast<float>(fil_cnf.nozzle_preheat_temperature)
+        && pre_load_state.display == static_cast<float>(fil_cnf.nozzle_temperature);
+    if (!preheat_was_active) {
+        return;
+    }
+
+    // The load ended in the standby state, trigger the preheat again so the preheat sequence continues
+    M1700_apply_preheat(loaded_filament, M1700Args {
+        .preheat = RetAndCool_t::Neither,
+        .mode = PreheatMode::None,
+        .target_extruder = static_cast<int8_t>(target_extruder),
+        .save = false,
+        .enforce_target_temp = false,
+        .preheat_bed = true,
+#if HAS_CHAMBER_API()
+        .preheat_chamber = true,
+#endif
+#if HAS_FILAMENT_HEATBREAK_PARAM()
+        .set_heatbreak = true,
+#endif
+    });
 }
 
 std::pair<std::optional<PreheatStatus::Result>, FilamentType> filament_gcodes::preheat_for_change_load(PreheatData data, uint8_t target_extruder) {
@@ -163,22 +203,7 @@ std::pair<std::optional<PreheatStatus::Result>, FilamentType> filament_gcodes::p
     }
 }
 
-void filament_gcodes::M1700_preheat(const M1700Args &args) {
-    InProgress progress;
-    const FSMResponseVariant response_variant = preheatTempUnKnown(PreheatData::make(args.mode, args.target_extruder, args.preheat), true);
-
-    // autoload ocurred
-    if (!response_variant) {
-        return;
-    }
-
-    const Response response = response_variant.value_or<Response>(Response::_none);
-    if (response == Response::Abort) {
-        PreheatStatus::SetResult(PreheatStatus::Result::Aborted);
-        return;
-    }
-
-    const FilamentType filament = response_variant.value_or<FilamentType>(FilamentType::none);
+void filament_gcodes::M1700_apply_preheat(FilamentType filament, const M1700Args &args) {
     const FilamentTypeParameters fil_cnf = filament.parameters();
 
     // Remember what the user is preheating for, so that a subsequent load can preselect it.
@@ -190,9 +215,9 @@ void filament_gcodes::M1700_preheat(const M1700Args &args) {
         marlin_server::set_temp_to_display(fil_cnf.nozzle_temperature, extruder);
     };
 
-    if (response == Response::Cooldown || args.target_extruder < 0) {
+    if (filament == FilamentType::none || args.target_extruder < 0) {
         // Set temperature to all tools
-        // Cooldown is always applied to all tools
+        // Cooldown (filament none) is always applied to all tools
         for (int8_t e = 0; e < HOTENDS; e++) {
 #if ENABLED(PRUSA_TOOLCHANGER)
             if (!prusa_toolchanger.is_tool_enabled(e)) {
@@ -225,6 +250,26 @@ void filament_gcodes::M1700_preheat(const M1700Args &args) {
         thermalManager.setTargetHeatbreak(fil_cnf.heatbreak_temperature, args.target_extruder);
     }
 #endif
+}
+
+void filament_gcodes::M1700_preheat(const M1700Args &args) {
+    InProgress progress;
+    const FSMResponseVariant response_variant = preheatTempUnKnown(PreheatData::make(args.mode, args.target_extruder, args.preheat), true);
+
+    // autoload ocurred
+    if (!response_variant) {
+        return;
+    }
+
+    const Response response = response_variant.value_or<Response>(Response::_none);
+    if (response == Response::Abort) {
+        PreheatStatus::SetResult(PreheatStatus::Result::Aborted);
+        return;
+    }
+
+    const FilamentType filament = response_variant.value_or<FilamentType>(FilamentType::none);
+
+    M1700_apply_preheat(filament, args);
 
     // cooldown pressed
     if (filament == FilamentType::none) {

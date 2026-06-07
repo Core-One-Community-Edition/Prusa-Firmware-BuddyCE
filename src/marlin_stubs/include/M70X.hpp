@@ -89,6 +89,11 @@ struct M1700Args {
 /// Standalone preheat
 void M1700_preheat(const M1700Args &args);
 
+/// Applies the preheat temperatures for \param filament (or cooldown for FilamentType::none):
+/// nozzle held at the standby temperature (or full temperature if enforce_target_temp) with the full temperature on display,
+/// plus bed/chamber/heatbreak targets according to \param args
+void M1700_apply_preheat(FilamentType filament, const M1700Args &args);
+
 void M1701_autoload(const std::optional<float> &fast_load_length, float z_min_pos, uint8_t target_extruder);
 
 void mmu_load(uint8_t data);
@@ -142,6 +147,19 @@ struct PreheatBehavior {
 std::pair<std::optional<PreheatStatus::Result>, FilamentType> preheat(PreheatData preheat_data, uint8_t target_extruder, PreheatBehavior preheat_arg);
 std::pair<std::optional<PreheatStatus::Result>, FilamentType> preheat_for_change_load(PreheatData data, uint8_t target_extruder);
 void preheat_to(FilamentType filament, uint8_t target_extruder, PreheatBehavior preheat_arg);
+
+/// Nozzle temperatures captured before a load operation, used to detect an armed preheat sequence
+struct NozzlePreheatState {
+    float target;
+    float display;
+};
+
+NozzlePreheatState capture_nozzle_preheat_state(uint8_t target_extruder);
+
+/// Triggers the preheat for \param loaded_filament again after a load
+/// if the state captured in \param pre_load_state shows a preheat was active for that filament,
+/// so loading the preheated filament does not cancel the preheat sequence
+void retrigger_preheat_after_load(const NozzlePreheatState &pre_load_state, FilamentType loaded_filament, uint8_t target_extruder);
 } // namespace filament_gcodes
 
 namespace PreheatStatus {

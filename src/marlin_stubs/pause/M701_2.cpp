@@ -84,6 +84,7 @@ static bool load_unload(Pause::LoadType load_type, pause::Settings &rSettings) {
 void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::optional<float> &fast_load_length, float z_min_pos, std::optional<RetAndCool_t> op_preheat, uint8_t target_extruder, int8_t mmu_slot, std::optional<Color> color_to_be_loaded, ResumePrint_t resume_print_request) {
     InProgress progress;
 
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
     const bool do_purge_only = fast_load_length.has_value() && fast_load_length <= 0.0f;
 
     if (op_preheat) {
@@ -131,6 +132,7 @@ void filament_gcodes::M701_load(FilamentType filament_to_be_loaded, const std::o
     if (load_unload(do_purge_only ? Pause::LoadType::load_purge : Pause::LoadType::load, settings)) {
         if (!do_resume_print) {
             M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+            retrigger_preheat_after_load(pre_load_preheat_state, filament_to_be_loaded, target_extruder);
         }
     } else {
         M70X_process_user_response(PreheatStatus::Result::DidNotFinish, target_extruder);
@@ -261,6 +263,7 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
     };
     settings.SetParkPoint(pos);
 
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
     const uint16_t orig_temp = Temperature::degTargetHotend(active_extruder);
 
     ScopeGuard fail_guard = [&] {
@@ -317,6 +320,7 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
     if constexpr (option::has_human_interactions) {
         // Drop the nozzle to the standby temperature, same as M701
         M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+        retrigger_preheat_after_load(pre_load_preheat_state, config_store().get_filament_type(target_extruder), target_extruder);
     } else {
         PreheatStatus::SetResult(PreheatStatus::Result::DoneHasFilament);
     }
@@ -324,6 +328,8 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
 
 void filament_gcodes::M1600_change_filament(FilamentType filament_to_be_loaded, uint8_t target_extruder, RetAndCool_t preheat, AskFilament_t ask_filament, std::optional<Color> color_to_be_loaded) {
     InProgress progress;
+
+    const NozzlePreheatState pre_load_preheat_state = capture_nozzle_preheat_state(target_extruder);
 
     FilamentType filament = config_store().get_filament_type(target_extruder);
     if (filament == FilamentType::none && ask_filament == AskFilament_t::Never) {
@@ -408,6 +414,7 @@ void filament_gcodes::M1600_change_filament(FilamentType filament_to_be_loaded, 
 
     if (load_unload(Pause::LoadType::load, settings)) {
         M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+        retrigger_preheat_after_load(pre_load_preheat_state, filament_to_be_loaded, target_extruder);
     } else {
         M70X_process_user_response(PreheatStatus::Result::DidNotFinish, target_extruder);
     }
