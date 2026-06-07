@@ -36,7 +36,7 @@
 
 #if PRINTER_IS_PRUSA_COREONE()
 namespace {
-constexpr buddy::Temperature chamber_maxtemp = 60;
+constexpr buddy::Temperature chamber_maxtemp = 70;
 constexpr buddy::Temperature chamber_maxtemp_safety_margin = 5;
 } // namespace
 #elif PRINTER_IS_PRUSA_COREONEL()
@@ -134,10 +134,13 @@ std::optional<Temperature> Chamber::current_temperature() const {
     static constexpr Temperature min_temp = 20.f;
     if (chamber_tempearture.has_value() && bed_temperature > *chamber_tempearture && *chamber_tempearture > min_temp) {
         static constexpr Temperature bed_max = BED_MAXTEMP - BED_MAXTEMP_SAFETY_MARGIN;
-        static constexpr Temperature chamber_max = chamber_maxtemp;
+        // Calibration anchor of the offset model - intentionally not chamber_maxtemp,
+        // so raising the limit does not change the measured temperature.
         #if PRINTER_IS_PRUSA_COREONEL()
+        static constexpr Temperature chamber_max = 65;
         static constexpr Temperature offset = 8.f / ((bed_max - min_temp) * std::sqrt(chamber_max - min_temp));
         #else
+        static constexpr Temperature chamber_max = 60;
         static constexpr Temperature offset = 6.f / ((bed_max - min_temp) * std::sqrt(chamber_max - min_temp));
         #endif
         return chamber_tempearture.value() + offset * (bed_temperature - chamber_tempearture.value()) * std::sqrt(chamber_tempearture.value() - min_temp);
