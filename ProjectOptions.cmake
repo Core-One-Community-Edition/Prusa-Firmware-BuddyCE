@@ -81,6 +81,12 @@ set(BUILD_NUMBER
     ""
     CACHE STRING "Build number of the firmware. Resolved automatically if not specified."
     )
+set(CUSTOM_VERSION
+    ""
+    CACHE
+      STRING
+      "COREONE++ project release number on top of the Prusa base version (the 'a' in x.y.z.a). When set, the printer shows 'COREONE++ x.y.z.a'. Empty means this is not a COREONE++ release."
+    )
 set(CUSTOM_COMPILE_OPTIONS
     ""
     CACHE STRING "Allows adding custom C/C++ flags"

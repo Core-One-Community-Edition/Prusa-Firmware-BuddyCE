@@ -15,6 +15,12 @@ target_compile_definitions(
           PRINTER_CODE=${PRINTER_CODE}
   )
 
+# COREONE++ project release number (the 'a' in x.y.z.a). Only defined for COREONE++ release builds
+# so that PR/dev builds keep the stock version display untouched.
+if(CUSTOM_VERSION)
+  target_compile_definitions(version PRIVATE FW_CUSTOM_VERSION=${CUSTOM_VERSION})
+endif()
+
 target_link_libraries(version PRIVATE options printers)
 
 target_include_directories(version PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

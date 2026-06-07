@@ -78,7 +78,7 @@ ScreenSplash::ScreenSplash()
     text_progress.SetAlignment(Align_t::Center());
     text_progress.SetTextColor(COLOR_GRAY);
 
-    snprintf(text_progress_buffer, sizeof(text_progress_buffer), "Firmware %s", version::project_version_full);
+    snprintf(text_progress_buffer, sizeof(text_progress_buffer), "Firmware %s%s", version::project_version_full, version::custom_version_suffix);
     text_progress.SetText(string_view_utf8::MakeRAM(text_progress_buffer));
     progress.set_progress_percent(50);
 

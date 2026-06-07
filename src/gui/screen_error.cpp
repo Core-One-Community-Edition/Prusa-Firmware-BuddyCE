@@ -78,7 +78,7 @@ ScreenError::ScreenError()
 
     const char *signed_str = signature_exist() ? " [S]" : "";
     const char *apendix_str = appendix_exist() ? " [A]" : "";
-    StringBuilder(fw_version_buff).append_printf("%s %s%s%s", PrinterModelInfo::current().id_str, version::project_version_full, signed_str, apendix_str);
+    StringBuilder(fw_version_buff).append_printf("%s%s %s%s%s%s", PrinterModelInfo::current().id_str, version::custom_build_marker, version::project_version_full, version::custom_version_suffix, signed_str, apendix_str);
     txt_fw_version.SetText(string_view_utf8::MakeRAM(fw_version_buff.data()));
 
     if (config_store().devhash_in_qr.get()) {

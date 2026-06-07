@@ -30,6 +30,16 @@ const char project_version_suffix_short[] = STR(FW_VERSION_SUFFIX_SHORT);
 
 const int project_build_number = FW_BUILD_NUMBER;
 
+#ifdef FW_CUSTOM_VERSION
+const int custom_version = FW_CUSTOM_VERSION;
+const char custom_build_marker[] = "++";
+const char custom_version_suffix[] = "." STR(FW_CUSTOM_VERSION);
+#else
+const int custom_version = 0;
+const char custom_build_marker[] = "";
+const char custom_version_suffix[] = "";
+#endif
+
 const BuildIdentification project_build_identification {
     .commit_hash = STR(FW_COMMIT_HASH),
     .project_version_full = STR(FW_VERSION_FULL),

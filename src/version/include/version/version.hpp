@@ -25,6 +25,18 @@ extern const char project_version_suffix_short[];
 /// Project's build number (number of commits in a branch)
 extern const int project_build_number;
 
+/// COREONE++ project release number on top of the Prusa base version (the 'a' in x.y.z.a).
+/// Zero for PR/dev builds that are not COREONE++ releases.
+extern const int custom_version;
+
+/// Marker ("++") appended to the printer model name for COREONE++ releases, "" otherwise.
+/// Display only - never used in machine-readable contexts.
+extern const char custom_build_marker[];
+
+/// Release suffix (".<a>", e.g. ".1") appended to the displayed version for COREONE++ releases,
+/// "" otherwise. Display only - kept out of the semver fed to the .bbf packer.
+extern const char custom_version_suffix[];
+
 // !!! DO NOT MODIFY, THIS IS USED TO IDENTIFY CRASH DUMPS
 // !!! IF THIS IS TO BE MODIFIED, CHANGE THE MAGIC AND ADD A CASE TO THE crash_dump_info.py SCRIPT
 struct __attribute__((packed)) BuildIdentification {

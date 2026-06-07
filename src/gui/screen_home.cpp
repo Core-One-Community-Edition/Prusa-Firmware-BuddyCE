@@ -230,10 +230,12 @@ screen_home_data_t::screen_home_data_t()
 #else
         sb.append_string("PRUSA ");
         sb.append_string(PrinterModelInfo::current().id_str);
+        sb.append_string(version::custom_build_marker);
         sb.append_string(" ");
 #endif
         sb.append_string(version::project_version);
         sb.append_string(version::project_version_suffix_short);
+        sb.append_string(version::custom_version_suffix);
 #if DEVELOPER_MODE()
         sb.append_string(" DEV");
 #endif
