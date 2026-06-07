@@ -299,10 +299,6 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
         filament::set_type_to_load(filament);
         filament::set_color_to_load(std::nullopt);
 
-        mapi::ParkingPosition park_position({ mapi::ParkingPosition::unchanged, mapi::ParkingPosition::unchanged, std::max({ current_position.z + Z_NOZZLE_PARK_RISE, z_min_pos, planner.max_printed_z + Z_NOZZLE_PARK_RISE }) });
-        // Returning to previous position is unwanted outside of printing (M1701 should be used only outside of printing)
-        settings.SetParkPoint(park_position);
-
         if (!Pause::Instance().perform(Pause::LoadType::autoload, settings)) {
             // This is a bit problematic, since we dont know how far the autoload has gotten (if only waiting for preheat or already loading to nozzle) -> therefore we have to always do the full unload even if it was stoped during wait_temp (where only unload from gears would suffice)
             // This could possibly be solved if we move preheating and the whole autoload process into pause (so that is wouldn't be seperated to two operations (load_to_gears and autoload)) and then we could tell apart when the autoload was stopped
@@ -314,7 +310,12 @@ void filament_gcodes::M1701_autoload(const std::optional<float> &fast_load_lengt
 
     // at this point autoload is considered successful so fail guard is not to be triggered and we report DoneHasFilament as status
     fail_guard.disarm();
-    PreheatStatus::SetResult(PreheatStatus::Result::DoneHasFilament);
+    if constexpr (option::has_human_interactions) {
+        // Drop the nozzle to the standby temperature, same as M701
+        M70X_process_user_response(PreheatStatus::Result::DoneHasFilament, target_extruder);
+    } else {
+        PreheatStatus::SetResult(PreheatStatus::Result::DoneHasFilament);
+    }
 }
 
 void filament_gcodes::M1600_change_filament(FilamentType filament_to_be_loaded, uint8_t target_extruder, RetAndCool_t preheat, AskFilament_t ask_filament, std::optional<Color> color_to_be_loaded) {
