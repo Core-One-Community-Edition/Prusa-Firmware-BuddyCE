@@ -1,10 +1,14 @@
 #include "client_response.hpp"
 #include <option/has_manual_belt_tuning.h>
 #include <option/has_bed_level_probe.h>
+#include <option/has_motor_vibration.h>
 #include <fsm/safety_timer_phases.hpp>
 
 #if HAS_MANUAL_BELT_TUNING()
     #include <fsm/manual_belt_tuning_phases.hpp>
+#endif
+#if HAS_MOTOR_VIBRATION()
+    #include <fsm/motor_vibration_phases.hpp>
 #endif
 #if HAS_LOADCELL()
     #include <fsm/nozzle_cleaning_failed_phases.hpp>
@@ -40,6 +44,9 @@ constinit const EnumArray<ClientFSM, std::span<const PhaseResponses>, ClientFSM:
 #endif
 #if HAS_MANUAL_BELT_TUNING()
         { ClientFSM::ManualBeltTuning, manual_belt_tuning_responses },
+#endif
+#if HAS_MOTOR_VIBRATION()
+        { ClientFSM::MotorVibration, motor_vibration_responses },
 #endif
 #if HAS_PHASE_STEPPING_CALIBRATION()
         { ClientFSM::PhaseSteppingCalibration, phase_stepping_calibration_responses },

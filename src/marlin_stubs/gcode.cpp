@@ -16,6 +16,7 @@
 #include <option/has_side_leds.h>
 #include <option/has_leds.h>
 #include <option/has_manual_belt_tuning.h>
+#include <option/has_motor_vibration.h>
 #include <option/has_door_sensor_calibration.h>
 #include <option/has_chamber_vents.h>
 
@@ -244,6 +245,14 @@ bool GcodeSuite::process_parsed_command_custom(bool no_ok) {
 #if HAS_MANUAL_BELT_TUNING()
         case 961:
             PrusaGcodeSuite::M961();
+            break;
+#endif
+#if HAS_MOTOR_VIBRATION()
+        case 962:
+            PrusaGcodeSuite::M962();
+            break;
+        case 963:
+            PrusaGcodeSuite::M963();
             break;
 #endif
         case 997:

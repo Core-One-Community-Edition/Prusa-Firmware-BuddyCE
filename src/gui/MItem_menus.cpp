@@ -47,7 +47,7 @@
     #include <screen_menu_bed_level_correction.hpp>
 #endif
 
-#if HAS_BED_LEVEL_PROBE()
+#if HAS_BED_LEVEL_PROBE() || HAS_MOTOR_VIBRATION()
     #include <screen_menu_advanced_calibration.hpp>
 #endif
 
@@ -161,7 +161,7 @@ template struct MI_SCREEN_CTOR<ScreenMenuSTSCalibrations>;
 template struct MI_SCREEN_CTOR<ScreenMenuBedLevelCorrection>;
 #endif
 
-#if HAS_BED_LEVEL_PROBE()
+#if HAS_BED_LEVEL_PROBE() || HAS_MOTOR_VIBRATION()
 template struct MI_SCREEN_CTOR<ScreenMenuAdvancedCalibration>;
 #endif
 

@@ -15,6 +15,7 @@
 #include <option/has_dwarf.h>
 #include <option/has_filament_sensors_menu.h>
 #include <option/has_coldpull.h>
+#include <option/has_motor_vibration.h>
 #include <option/has_leds.h>
 #include <option/has_side_leds.h>
 #include <option/buddy_enable_connect.h>
@@ -626,6 +627,10 @@ using MI_SHIM_CALIBRATION = WithConstructorArgs<MenuItemGcodeAction, N_("Bed Lev
 using MI_BED_LEVEL_PROBE = WithConstructorArgs<MenuItemGcodeAction, N_("Bed Flatness Map"), "M1963"_tstr>;
 #endif
 
+#if HAS_MOTOR_VIBRATION()
+using MI_MOTOR_VIBRATION_MANUAL = WithConstructorArgs<MenuItemGcodeAction, N_("Manual Resonance Finder"), "M962"_tstr>;
+using MI_MOTOR_VIBRATION_SWEEP = WithConstructorArgs<MenuItemGcodeAction, N_("IS Measure and Export"), "M963"_tstr>;
+#endif
 #if HAS_ILI9488_DISPLAY()
 class MI_DISPLAY_BAUDRATE : public MenuItemSwitch {
 public:

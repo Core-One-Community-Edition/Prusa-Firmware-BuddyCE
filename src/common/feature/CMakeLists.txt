@@ -8,6 +8,10 @@ if(HAS_MANUAL_BELT_TUNING)
   add_subdirectory(manual_belt_tuning)
 endif()
 
+if(HAS_MOTOR_VIBRATION)
+  add_subdirectory(motor_vibration)
+endif()
+
 if(HAS_XBUDDY_EXTENSION)
   add_subdirectory(xbuddy_extension)
 endif()
