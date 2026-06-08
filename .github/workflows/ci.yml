@@ -315,6 +315,17 @@ jobs:
           path: .venv
           key: buddy-venv-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('requirements.txt') }}
 
+      # Separate key from the firmware build: this uses the host compiler, not the
+      # arm-none-eabi cross-compiler, so the two caches must not be shared.
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ccache-tests
+          max-size: 500M
+
+      - name: Configure ccache
+        run: ccache --set-config sloppiness=time_macros
+
       - name: Bootstrap dependencies
         run: python3 utils/bootstrap.py
 
@@ -323,7 +334,8 @@ jobs:
           source .venv/bin/activate
           export PATH="$(python3 utils/bootstrap.py --print-dependency-directory cmake)/bin:$PATH"
           export PATH="$(python3 utils/bootstrap.py --print-dependency-directory ninja):$PATH"
-          cmake -B build-tests -G Ninja -DBOARD=BUDDY -DCMAKE_BUILD_TYPE=Debug
+          cmake -B build-tests -G Ninja -DBOARD=BUDDY -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           ninja -C build-tests tests
 
       - name: Run unit tests
