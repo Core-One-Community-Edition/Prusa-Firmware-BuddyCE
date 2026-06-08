@@ -118,6 +118,21 @@ jobs:
           path: .venv
           key: buddy-venv-${{ runner.os }}-${{ steps.python.outputs.version }}-${{ hashFiles('requirements.txt') }}
 
+      # Cache compiled objects across runs. The version/build-number defines change
+      # every run but are isolated to a single TU (src/version/version.cpp), so almost
+      # everything else hits the cache. PRs read the base branch's cache, so an
+      # unchanged tree recompiles only what actually differs.
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ccache-coreone
+          max-size: 750M
+
+      # __DATE__/__TIME__ is used in a single firmware TU (Marlin.cpp); treat it as
+      # cacheable so a new day doesn't force that object to recompile.
+      - name: Configure ccache
+        run: ccache --set-config sloppiness=time_macros
+
       - name: Download ESP NIC firmware
         uses: actions/download-artifact@v4
         with:
@@ -193,6 +208,8 @@ jobs:
             --version-suffix-short="${{ steps.version.outputs.suffix_short }}" \
             -DBUILD_NUMBER:STRING="${{ github.run_number }}" \
             -DESP_FW_BINARY_DIR:PATH="$GITHUB_WORKSPACE/esp-fw/esp8266" \
+            -DCMAKE_C_COMPILER_LAUNCHER:STRING=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache \
             "${extra_args[@]}"
 
       # The .bbf is the only file flashed to the printer, so it gets its own artifact
