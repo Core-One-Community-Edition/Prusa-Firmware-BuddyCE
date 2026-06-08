@@ -91,6 +91,10 @@ if(HAS_DOOR_SENSOR_CALIBRATION)
   target_sources(firmware PRIVATE M1980.cpp)
 endif()
 
+if(HAS_BED_LEVEL_PROBE)
+  target_sources(firmware PRIVATE M1962.cpp M1963.cpp)
+endif()
+
 if(HAS_PRECISE_HOMING_COREXY)
   target_sources(firmware PRIVATE M9202.cpp)
 endif()

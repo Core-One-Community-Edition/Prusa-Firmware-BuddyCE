@@ -7,3 +7,7 @@ endif()
 if(HAS_DOOR_SENSOR_CALIBRATION)
   add_subdirectory(door_sensor_calibration)
 endif()
+
+if(HAS_BED_LEVEL_PROBE)
+  add_subdirectory(bed_level_probe)
+endif()
