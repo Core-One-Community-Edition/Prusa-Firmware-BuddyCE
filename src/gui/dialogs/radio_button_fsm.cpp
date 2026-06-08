@@ -4,6 +4,10 @@ RadioButtonFSM::RadioButtonFSM(window_t *parent, Rect16 rect, FSMAndPhase fsm_ph
     : RadioButton(parent, rect, ClientResponses::get_fsm_responses(fsm_phase.fsm, fsm_phase.phase))
     , fsm_and_phase_(fsm_phase) {}
 
+RadioButtonFSM::RadioButtonFSM(window_t *parent, Rect16 rect, FSMAndPhase fsm_phase, Responses_t resp, const PhaseTexts *labels)
+    : RadioButton(parent, rect, resp, labels)
+    , fsm_and_phase_(fsm_phase) {}
+
 void RadioButtonFSM::set_fsm_and_phase(FSMAndPhase target) {
     if (fsm_and_phase_ == target) {
         return;
