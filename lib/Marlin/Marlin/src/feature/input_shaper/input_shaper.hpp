@@ -111,6 +111,8 @@ typedef struct input_shaper_state_t {
 
 void create_null_input_shaper_pulses(input_shaper_pulses_t &is_pulses);
 
+void create_cascaded_input_shaper_pulses(input_shaper_pulses_t &is_pulses, const input_shaper::AxisConfig &primary_config, const std::optional<input_shaper::AxisConfig> &cascade_config);
+
 void create_zv_input_shaper_pulses(input_shaper_pulses_t &is_pulses, float shaper_freq, float damping_ratio);
 
 void create_zvd_input_shaper_pulses(input_shaper_pulses_t &is_pulses, float shaper_freq, float damping_ratio);

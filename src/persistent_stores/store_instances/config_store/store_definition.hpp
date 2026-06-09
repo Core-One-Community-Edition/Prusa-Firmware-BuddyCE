@@ -158,7 +158,7 @@ struct CurrentStore
     void perform_config_check();
 
     /// Config store "version", gets incremented each time we need to add a new config migration
-    static constexpr uint8_t newest_config_version = 5;
+    static constexpr uint8_t newest_config_version = 6;
 
     /// Stores newest_migration_version of the previous firmware
     StoreItem<uint8_t, 0, ItemFlag::special, journal::hash("Config Version")> config_version;
@@ -605,6 +605,10 @@ struct CurrentStore
     StoreItem<input_shaper::AxisConfig, input_shaper::axis_x_default, ItemFlag::calibrations, journal::hash("Input Shaper Axis X Config")> input_shaper_axis_x_config;
     StoreItem<bool, true, ItemFlag::features, journal::hash("Input Shaper Axis Y Enabled")> input_shaper_axis_y_enabled;
     StoreItem<input_shaper::AxisConfig, input_shaper::axis_y_default, ItemFlag::calibrations, journal::hash("Input Shaper Axis Y Config")> input_shaper_axis_y_config;
+    StoreItem<bool, false, ItemFlag::calibrations, journal::hash("Input Shaper Axis X Cascade Enabled")> input_shaper_axis_x_cascade_enabled;
+    StoreItem<input_shaper::AxisConfig, input_shaper::cascade_disabled_default, ItemFlag::calibrations, journal::hash("Input Shaper Axis X Cascade Config")> input_shaper_axis_x_cascade_config;
+    StoreItem<bool, false, ItemFlag::calibrations, journal::hash("Input Shaper Axis Y Cascade Enabled")> input_shaper_axis_y_cascade_enabled;
+    StoreItem<input_shaper::AxisConfig, input_shaper::cascade_disabled_default, ItemFlag::calibrations, journal::hash("Input Shaper Axis Y Cascade Config")> input_shaper_axis_y_cascade_config;
     StoreItem<bool, input_shaper::weight_adjust_enabled_default, ItemFlag::calibrations, journal::hash("Input Shaper Weight Adjust Y Enabled V2")> input_shaper_weight_adjust_y_enabled;
     StoreItem<input_shaper::WeightAdjustConfig, input_shaper::weight_adjust_y_default, ItemFlag::calibrations, journal::hash("Input Shaper Weight Adjust Y Config")> input_shaper_weight_adjust_y_config;
 

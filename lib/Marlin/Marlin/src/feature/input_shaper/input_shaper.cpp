@@ -249,6 +249,63 @@ void create_null_input_shaper_pulses(input_shaper_pulses_t &is_pulses) {
     init_input_shaper_pulses(shaper.a, shaper.t, shaper.num_pulses, &is_pulses);
 }
 
+void create_cascaded_input_shaper_pulses(input_shaper_pulses_t &is_pulses, const input_shaper::AxisConfig &primary_config, const std::optional<input_shaper::AxisConfig> &cascade_config) {
+    // Create the primary shaper
+    input_shaper::Shaper shaper1 = input_shaper::get(
+        primary_config.damping_ratio, primary_config.frequency, primary_config.vibration_reduction, primary_config.type);
+
+    if (!cascade_config.has_value() || cascade_config->type == input_shaper::Type::null || cascade_config->frequency <= 0.f) {
+        // No cascade — just use the primary shaper
+        init_input_shaper_pulses(shaper1.a, shaper1.t, shaper1.num_pulses, &is_pulses);
+        return;
+    }
+
+    // Create the second shaper
+    input_shaper::Shaper shaper2 = input_shaper::get(
+        cascade_config->damping_ratio, cascade_config->frequency, cascade_config->vibration_reduction, cascade_config->type);
+
+    // Convolve the two shapers: cascade impulse response = convolution of both
+    // For FIR shapers: combined pulse at (t1_i + t2_j) has amplitude (a1_i * a2_j)
+    const int n1 = shaper1.num_pulses;
+    const int n2 = shaper2.num_pulses;
+    const int n_combined = n1 * n2;
+
+    if (n_combined > INPUT_SHAPER_MAX_PULSES) {
+        // This should not happen if cascade configurations are validated,
+        // but protect against buffer overflow
+        bsod("Cascaded shaper pulse count exceeds buffer");
+    }
+
+    // Build combined pulse arrays
+    float combined_a[INPUT_SHAPER_MAX_PULSES];
+    float combined_t[INPUT_SHAPER_MAX_PULSES];
+    int idx = 0;
+    for (int i = 0; i < n1; ++i) {
+        for (int j = 0; j < n2; ++j) {
+            combined_a[idx] = shaper1.a[i] * shaper2.a[j];
+            combined_t[idx] = shaper1.t[i] + shaper2.t[j];
+            ++idx;
+        }
+    }
+
+    // Sort by time (ascending) — required by init_input_shaper_pulses
+    // Simple insertion sort (n_combined is small, max ~6-9)
+    for (int i = 1; i < n_combined; ++i) {
+        float key_a = combined_a[i];
+        float key_t = combined_t[i];
+        int j = i - 1;
+        while (j >= 0 && combined_t[j] > key_t) {
+            combined_a[j + 1] = combined_a[j];
+            combined_t[j + 1] = combined_t[j];
+            --j;
+        }
+        combined_a[j + 1] = key_a;
+        combined_t[j + 1] = key_t;
+    }
+
+    init_input_shaper_pulses(combined_a, combined_t, n_combined, &is_pulses);
+}
+
 void input_shaper_step_generator_init(const move_t &move, input_shaper_step_generator_t &step_generator, step_generator_state_t &step_generator_state) {
     const uint8_t axis = step_generator.axis;
     assert(axis == X_AXIS || axis == Y_AXIS || axis == Z_AXIS);

@@ -94,6 +94,7 @@ struct __attribute__((packed)) WeightAdjustConfig {
 
 struct Config {
     std::optional<AxisConfig> axis[3];
+    std::optional<AxisConfig> cascade[3]; ///< Cascade second shaper per axis (nullopt = disabled)
     std::optional<WeightAdjustConfig> weight_adjust_y;
 };
 
@@ -159,6 +160,14 @@ inline constexpr AxisConfig axis_z_default {
 };
 
 inline constexpr AxisConfig axis_defaults[3] = { axis_x_default, axis_y_default, axis_z_default };
+
+/// Default for cascade second shaper: disabled (null type, zero frequency)
+inline constexpr AxisConfig cascade_disabled_default {
+    .type = Type::null,
+    .frequency = 0.,
+    .damping_ratio = 0.1f,
+    .vibration_reduction = 20.f,
+};
 
 inline constexpr bool weight_adjust_enabled_default = {
 // DO NOT CHANGE DEFAULTS WITHOUT CHANGING EEPROM CODE!
