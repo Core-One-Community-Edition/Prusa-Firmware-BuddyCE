@@ -27,6 +27,7 @@ struct ProbePoint {
 // The FSM lifecycle guarantees there is no concurrent access.
 struct ProbeData {
     Mode mode;
+    bool interactive = true; // false = auto mode, skip user-confirm screens.
     uint8_t cols; // Grid columns (0 in shims mode).
     uint8_t rows; // Grid rows (0 in shims mode).
     uint8_t count; // Number of active points in points[].
@@ -40,7 +41,11 @@ extern ProbeData probe_data;
 // reference. Returns NAN when nothing has been probed yet.
 float reference_z();
 
-void run(Mode mode);
+void run(Mode mode, bool interactive = true);
+
+// Print the probed data to the serial port in a G29-style human-readable
+// format.  Call after run() returns (so probe_data is populated).
+void report_serial();
 
 } // namespace bed_level_probe
 

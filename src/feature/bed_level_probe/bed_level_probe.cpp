@@ -12,6 +12,8 @@
 #include <buddy/unreachable.hpp>
 #include <cmath>
 #include <iterator>
+#include <core/serial.h>
+#include <core/utility.h>
 
 static_assert(HAS_BED_LEVEL_PROBE());
 
@@ -138,6 +140,10 @@ private:
     }
 
     void intro() {
+        if (!probe_data.interactive) {
+            start_probing();
+            return;
+        }
         switch (wait_for_response(curr_phase)) {
         case Response::Continue:
             start_probing();
@@ -210,6 +216,10 @@ private:
     }
 
     void results() {
+        if (!probe_data.interactive) {
+            fsm_change(PhaseBedLevelProbe::finish);
+            return;
+        }
         switch (wait_for_response(curr_phase)) {
         case Response::Done:
             fsm_change(PhaseBedLevelProbe::finish);
@@ -224,6 +234,10 @@ private:
     }
 
     void error() {
+        if (!probe_data.interactive) {
+            fsm_change(PhaseBedLevelProbe::finish);
+            return;
+        }
         switch (wait_for_response(curr_phase)) {
         case Response::Retry:
             start_probing();
@@ -243,9 +257,10 @@ private:
 
 } // namespace
 
-void run(Mode mode) {
+void run(Mode mode, bool interactive) {
     probe_data = {};
     probe_data.mode = mode;
+    probe_data.interactive = interactive;
     if (mode == Mode::grid) {
         setup_grid_points();
     } else {
@@ -254,6 +269,148 @@ void run(Mode mode) {
 
     BedLevelProbe probe;
     probe.run();
+}
+
+// ---------------------------------------------------------------------------
+// Serial reporting – mirrors the G29 "Bed Topography Report" format.
+// ---------------------------------------------------------------------------
+
+namespace {
+
+// Width per cell: space + sign + 3 integer digits + '.' + 3 fractional + space = 9
+// (matches the [-3.567] format used by UBL display_map).
+constexpr uint16_t eachsp = 1 + 6 + 1;
+
+void serial_echo_xy(uint16_t sp, int16_t x, int16_t y) {
+    SERIAL_ECHO_SP(sp);
+    SERIAL_CHAR('(');
+    if (x < 100) {
+        SERIAL_CHAR(' ');
+        if (x < 10)
+            SERIAL_CHAR(' ');
+    }
+    SERIAL_ECHO(x);
+    SERIAL_CHAR(',');
+    if (y < 100) {
+        SERIAL_CHAR(' ');
+        if (y < 10)
+            SERIAL_CHAR(' ');
+    }
+    SERIAL_ECHO(y);
+    SERIAL_CHAR(')');
+    serial_delay(5);
+}
+
+void serial_echo_column_labels(uint8_t sp) {
+    SERIAL_ECHO_SP(7);
+    for (uint8_t i = 0; i < probe_data.cols; i++) {
+        if (i < 10)
+            SERIAL_CHAR(' ');
+        SERIAL_ECHO(i);
+        SERIAL_ECHO_SP(sp);
+    }
+    serial_delay(10);
+}
+
+void report_grid() {
+    const uint16_t twixt = eachsp * probe_data.cols - 9 * 2;
+
+    SERIAL_ECHOLNPGM("\nBed Flatness Report:");
+    SERIAL_EOL();
+
+    // Top corner coordinates.
+    serial_echo_xy(4, static_cast<int16_t>(grid_min_x), static_cast<int16_t>(grid_max_y));
+    serial_echo_xy(twixt, static_cast<int16_t>(grid_max_x), static_cast<int16_t>(grid_max_y));
+    SERIAL_EOL();
+    serial_echo_column_labels(eachsp - 2);
+    SERIAL_EOL();
+
+    // Rows, top (max Y) to bottom (min Y).
+    for (int8_t row = static_cast<int8_t>(probe_data.rows) - 1; row >= 0; row--) {
+        // Row label.
+        if (row < 10)
+            SERIAL_CHAR(' ');
+        SERIAL_ECHO(row);
+        SERIAL_ECHOPGM(" |");
+
+        for (uint8_t col = 0; col < probe_data.cols; col++) {
+            SERIAL_CHAR(' ');
+
+            const float f = probe_data.points[row * probe_data.cols + col].z;
+            if (isnan(f))
+                SERIAL_ECHOPGM("  .   ");
+            else {
+                if (f >= 0.0f)
+                    SERIAL_CHAR(f > 0 ? '+' : ' ');
+                SERIAL_ECHO_F(f, 3);
+            }
+
+            SERIAL_CHAR(' ');
+            SERIAL_FLUSHTX();
+            idle(false);
+        }
+
+        SERIAL_EOL();
+        // Blank line between rows.
+        if (row > 0)
+            SERIAL_ECHOLNPGM("   |");
+    }
+
+    // Bottom corner coordinates.
+    serial_echo_column_labels(eachsp - 2);
+    SERIAL_EOL();
+    serial_echo_xy(4, static_cast<int16_t>(grid_min_x), static_cast<int16_t>(grid_min_y));
+    serial_echo_xy(twixt, static_cast<int16_t>(grid_max_x), static_cast<int16_t>(grid_min_y));
+    SERIAL_EOL();
+    SERIAL_EOL();
+}
+
+void report_shims() {
+    SERIAL_ECHOLNPGM("\nShim Calibration Report:");
+    SERIAL_EOL();
+
+    static constexpr const char *labels[] = { "Left front", "Right front", "Back center" };
+
+    const float ref = reference_z();
+    if (isnan(ref)) {
+        SERIAL_ECHOLNPGM("  No valid probe data.");
+        SERIAL_EOL();
+        return;
+    }
+
+    SERIAL_ECHOPGM("  Reference Z (closest to nozzle): ");
+    SERIAL_ECHO_F(ref, 3);
+    SERIAL_EOL();
+
+    for (uint8_t i = 0; i < probe_data.count; i++) {
+        const float z = probe_data.points[i].z;
+        SERIAL_ECHOPGM("  ");
+        SERIAL_ECHO(labels[i]);
+        SERIAL_ECHOPGM(": ");
+        if (isnan(z))
+            SERIAL_ECHOPGM("probe failed");
+        else {
+            SERIAL_ECHO_F(z, 3);
+            SERIAL_ECHOPGM(" mm  (offset: ");
+            const float offset = z - ref;
+            if (offset >= 0.0f)
+                SERIAL_CHAR('+');
+            SERIAL_ECHO_F(offset, 3);
+            SERIAL_ECHOPGM(" mm)");
+        }
+        SERIAL_EOL();
+        serial_delay(5);
+    }
+    SERIAL_EOL();
+}
+
+} // namespace
+
+void report_serial() {
+    if (probe_data.mode == Mode::grid)
+        report_grid();
+    else
+        report_shims();
 }
 
 } // namespace bed_level_probe
