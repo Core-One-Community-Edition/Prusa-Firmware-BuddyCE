@@ -1,5 +1,6 @@
 #include "client_response.hpp"
 #include <option/has_manual_belt_tuning.h>
+#include <option/has_bed_level_probe.h>
 #include <fsm/safety_timer_phases.hpp>
 
 #if HAS_MANUAL_BELT_TUNING()
@@ -51,6 +52,9 @@ constinit const EnumArray<ClientFSM, std::span<const PhaseResponses>, ClientFSM:
 #endif
 #if HAS_DOOR_SENSOR_CALIBRATION()
         { ClientFSM::DoorSensorCalibration, door_sensor_calibration_responses },
+#endif
+#if HAS_BED_LEVEL_PROBE()
+        { ClientFSM::BedLevelProbe, BedLevelProbeResponses },
 #endif
 #if HAS_LOADCELL()
         { ClientFSM::NozzleCleaningFailed, nozzle_cleaning_responses },

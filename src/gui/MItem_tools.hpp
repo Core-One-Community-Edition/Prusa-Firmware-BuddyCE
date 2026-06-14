@@ -19,6 +19,7 @@
 #include <option/has_side_leds.h>
 #include <option/buddy_enable_connect.h>
 #include <option/has_auto_retract.h>
+#include <option/has_bed_level_probe.h>
 #include <meta_utils.hpp>
 #include <gui/menu_item/menu_item_gcode_action.hpp>
 
@@ -94,6 +95,7 @@ public:
 protected:
     virtual void click(IWindowMenu &window_menu) override;
 };
+
 
 class MI_DISABLE_STEP : public IWindowMenuItem {
     static constexpr const char *const label = N_("Disable Motors");
@@ -607,6 +609,11 @@ protected:
 
 #if HAS_MANUAL_BELT_TUNING()
 using MI_MANUAL_BELT_TUNING = WithConstructorArgs<MenuItemGcodeAction, N_("Manual Belt Tuning"), "M961"_tstr>;
+#endif
+
+#if HAS_BED_LEVEL_PROBE()
+using MI_SHIM_CALIBRATION = WithConstructorArgs<MenuItemGcodeAction, N_("Bed Level Shims"), "M1962"_tstr>;
+using MI_BED_LEVEL_PROBE = WithConstructorArgs<MenuItemGcodeAction, N_("Bed Flatness Map"), "M1963"_tstr>;
 #endif
 
 #if HAS_ILI9488_DISPLAY()

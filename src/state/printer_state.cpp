@@ -19,6 +19,7 @@
 #include <option/has_remote_bed.h>
 #include <option/has_chamber_filtration_api.h>
 #include <option/has_door_sensor_calibration.h>
+#include <option/has_bed_level_probe.h>
 #include <option/xbuddy_extension_variant.h>
 #include <option/has_side_fsensor.h>
 #include <option/has_human_interactions.h>
@@ -268,6 +269,9 @@ DeviceState get_state(bool ready) {
 #if HAS_DOOR_SENSOR_CALIBRATION()
     case ClientFSM::DoorSensorCalibration:
 #endif
+#if HAS_BED_LEVEL_PROBE()
+    case ClientFSM::BedLevelProbe:
+#endif
     case ClientFSM::Serial_printing:
         // FIXME: BFW-3893 Sadly there is no way (without saving state in this function)
         //  to distinguish between preheat from main screen,
@@ -482,6 +486,9 @@ StateWithDialog get_state_with_dialog(bool ready) {
 #endif
 #if HAS_DOOR_SENSOR_CALIBRATION()
     case ClientFSM::DoorSensorCalibration:
+#endif
+#if HAS_BED_LEVEL_PROBE()
+    case ClientFSM::BedLevelProbe:
 #endif
     case ClientFSM::Preheat:
     case ClientFSM::SafetyTimer:

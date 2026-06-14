@@ -13,6 +13,7 @@
 #include <option/has_mmu2.h>
 #include <option/has_coldpull.h>
 #include <option/has_sheet_profiles.h>
+#include <option/has_bed_level_probe.h>
 #include <printers.h>
 #include "MItem_basic_selftest.hpp"
 #include "MItem_mmu.hpp"
@@ -69,6 +70,11 @@ using ScreenMenuControlSpec = ScreenMenu<EFooter::On, MI_RETURN
 #if HAS_SELFTEST()
     ,
     MI_SELFTEST_SNAKE
+#endif
+
+#if HAS_BED_LEVEL_PROBE()
+    ,
+    MI_ADVANCED_CALIBRATION
 #endif
     >;
 

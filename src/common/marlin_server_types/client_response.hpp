@@ -595,6 +595,19 @@ enum class PhaseDoorSensorCalibration : PhaseUnderlyingType {
 constexpr inline ClientFSM client_fsm_from_phase(PhaseDoorSensorCalibration) { return ClientFSM::DoorSensorCalibration; }
 #endif
 
+#if HAS_BED_LEVEL_PROBE()
+enum class PhaseBedLevelProbe : PhaseUnderlyingType {
+    intro,
+    homing,
+    probing,
+    results,
+    error,
+    finish,
+    _last = finish,
+};
+constexpr inline ClientFSM client_fsm_from_phase(PhaseBedLevelProbe) { return ClientFSM::BedLevelProbe; }
+#endif
+
 namespace ClientResponses {
 
 // declare 2d arrays of single buttons for radio buttons
@@ -1025,6 +1038,18 @@ inline constexpr EnumArray<PhaseDoorSensorCalibration, PhaseResponses, CountPhas
     { PhaseDoorSensorCalibration::done, { Response::Continue } },
     { PhaseDoorSensorCalibration::finish, {} },
 };
+#endif
+
+#if HAS_BED_LEVEL_PROBE()
+inline constexpr EnumArray<PhaseBedLevelProbe, PhaseResponses, CountPhases<PhaseBedLevelProbe>()> BedLevelProbeResponses {
+    { PhaseBedLevelProbe::intro, { Response::Continue, Response::Abort } },
+    { PhaseBedLevelProbe::homing, {} },
+    { PhaseBedLevelProbe::probing, {} },
+    { PhaseBedLevelProbe::results, { Response::Done, Response::Retry } },
+    { PhaseBedLevelProbe::error, { Response::Retry, Response::Abort } },
+    { PhaseBedLevelProbe::finish, {} },
+};
+static_assert(std::size(ClientResponses::BedLevelProbeResponses) == CountPhases<PhaseBedLevelProbe>());
 #endif
 
 extern constinit const EnumArray<ClientFSM, std::span<const PhaseResponses>, ClientFSM::_count> fsm_phase_responses;
