@@ -170,7 +170,14 @@ private:
     //
     // It is set only once at the start, when the thread is started.
     static std::atomic<NetworkState *> instance;
-    uint32_t active = NETDEV_NODEV_ID;
+    std::atomic<uint32_t> active = NETDEV_NODEV_ID;
+
+    // Lock-free snapshots of the active interface and per-interface status,
+    // refreshed by the network task each loop iteration. GUI/other threads read
+    // these instead of taking NetworkState::mutex, so they can never be blocked
+    // by a long mutex hold inside the network task (e.g. the ESP join or
+    // espif_reset() during reconfigure, both of which do blocking UART I/O).
+    std::array<std::atomic<netdev_status_t>, NETDEV_COUNT> status_cache;
 
     Mode iface_mode(const Iface &iface) {
         // Assumes already locked
@@ -420,6 +427,11 @@ private:
         while (true) {
             events |= ulTaskNotifyTake(pdTRUE, LOOP_EVT_TIMEOUT);
 
+            // Publish lock-free status snapshots for GUI/other readers. Done here
+            // (on every wake-up, including the timeout tick) so the data is at
+            // most LOOP_EVT_TIMEOUT stale - imperceptible for a status icon.
+            refresh_status_cache();
+
             // The original code polled the packet sources from time to time
             // even if there was no interrupt. Not sure if there's a specific
             // reason for that, but we are keeping the legacy functionality to
@@ -462,11 +474,24 @@ private:
                 // Delayed init, after the ESP told us it is ready and gave us a MAC address.
                 // If we are reconfiguring don't send old connection information, wait for next loop and new ap info.
                 if (iface_mode(ifaces[NETDEV_ESP_ID]) != Mode::Off && espif_need_ap() && !(events & Reconfigure)) {
+                    // Copy the credentials out under the lock, but do NOT hold
+                    // the lock across espif_join_ap(). The join performs a
+                    // synchronous UART transfer to the ESP that, during early
+                    // bring-up, can block for hundreds of ms up to ~1s waiting on
+                    // the (unbounded) TX-complete semaphore. The GUI thread polls
+                    // netdev status through the same NetworkState::mutex, so
+                    // holding it across the join freezes the UI for that long.
+                    // espif serializes its own UART access with uart_write_mutex,
+                    // so dropping our lock here is safe.
+                    ap_entry_t ap_copy;
                     {
                         unique_lock lock(mutex);
-                        const char *passwd = ap.pass[0] == '\0' ? NULL : ap.pass;
-                        espif_join_ap(ap.ssid, passwd);
+                        ap_copy = ap;
                     }
+
+                    const char *passwd = ap_copy.pass[0] == '\0' ? NULL : ap_copy.pass;
+                    espif_join_ap(ap_copy.ssid, passwd);
+
                     set_up(ifaces[NETDEV_ESP_ID].dev);
                 }
             }
@@ -592,10 +617,34 @@ private:
         return false;
     }
 
+    // Computes the current status of an interface. Called only from the network
+    // task (which fills status_cache); takes no lock, as the underlying netif
+    // fields are updated by the tcpip thread independently of NetworkState::mutex
+    // anyway. Mirrors the logic previously inlined in get_status().
+    netdev_status_t compute_status(uint32_t netdev_id) {
+        netif &iface = ifaces[netdev_id].dev;
+        if (!netif_is_link_up(&iface)) {
+            return NETDEV_NETIF_DOWN;
+        }
+        if (!netif_link(netdev_id)) {
+            return NETDEV_UNLINKED;
+        }
+        return netif_ip4_addr(&iface)->addr != 0 ? NETDEV_NETIF_UP : NETDEV_NETIF_NOADDR;
+    }
+
+    void refresh_status_cache() {
+        for (uint32_t netdev_id = 0; netdev_id < ifaces.size(); netdev_id++) {
+            status_cache[netdev_id].store(compute_status(netdev_id), std::memory_order_relaxed);
+        }
+    }
+
 public:
     NetworkState() {
         network_task = osThreadGetId();
         assert(instance == nullptr);
+        for (auto &status : status_cache) {
+            status.store(NETDEV_NETIF_DOWN, std::memory_order_relaxed);
+        }
         instance = this;
 #if HAS_ESP()
         last_esp_ok = sys_now();
@@ -659,24 +708,16 @@ public:
     }
 
     static netdev_status_t get_status(uint32_t netdev_id) {
-        netdev_status_t status = NETDEV_NETIF_DOWN;
-        with_iface(netdev_id, [&](netif &iface, NetworkState &instance) {
-            if (netif_is_link_up(&iface)) {
-                if (instance.netif_link(netdev_id)) {
-                    status = netif_ip4_addr(&iface)->addr != 0 ? NETDEV_NETIF_UP : NETDEV_NETIF_NOADDR;
-                } else {
-                    status = NETDEV_UNLINKED;
-                }
-            }
-        });
-        return status;
+        NetworkState *state = instance;
+        if (state != nullptr && netdev_id < state->status_cache.size()) {
+            return state->status_cache[netdev_id].load(std::memory_order_relaxed);
+        }
+        return NETDEV_NETIF_DOWN;
     }
     static uint32_t get_active() {
         NetworkState *state = instance;
         if (state != nullptr) {
-            unique_lock lock(state->mutex);
-            uint32_t active = state->active;
-            return active;
+            return state->active.load(std::memory_order_relaxed);
         } else {
             return NETDEV_NODEV_ID;
         }
