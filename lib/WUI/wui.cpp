@@ -462,11 +462,24 @@ private:
                 // Delayed init, after the ESP told us it is ready and gave us a MAC address.
                 // If we are reconfiguring don't send old connection information, wait for next loop and new ap info.
                 if (iface_mode(ifaces[NETDEV_ESP_ID]) != Mode::Off && espif_need_ap() && !(events & Reconfigure)) {
+                    // Copy the credentials out under the lock, but do NOT hold
+                    // the lock across espif_join_ap(). The join performs a
+                    // synchronous UART transfer to the ESP that, during early
+                    // bring-up, can block for hundreds of ms up to ~1s waiting on
+                    // the (unbounded) TX-complete semaphore. The GUI thread polls
+                    // netdev status through the same NetworkState::mutex, so
+                    // holding it across the join freezes the UI for that long.
+                    // espif serializes its own UART access with uart_write_mutex,
+                    // so dropping our lock here is safe.
+                    ap_entry_t ap_copy;
                     {
                         unique_lock lock(mutex);
-                        const char *passwd = ap.pass[0] == '\0' ? NULL : ap.pass;
-                        espif_join_ap(ap.ssid, passwd);
+                        ap_copy = ap;
                     }
+
+                    const char *passwd = ap_copy.pass[0] == '\0' ? NULL : ap_copy.pass;
+                    espif_join_ap(ap_copy.ssid, passwd);
+
                     set_up(ifaces[NETDEV_ESP_ID].dev);
                 }
             }
