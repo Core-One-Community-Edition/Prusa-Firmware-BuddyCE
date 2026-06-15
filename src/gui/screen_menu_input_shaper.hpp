@@ -19,8 +19,14 @@ using ScreenMenuInputShaper = ScreenMenu<
 #endif
     MI_IS_X_TYPE,
     MI_IS_X_FREQUENCY,
+    MI_IS_CASCADE_X_ENABLE,
+    MI_IS_X_CASCADE_TYPE,
+    MI_IS_X_CASCADE_FREQUENCY,
     MI_IS_Y_TYPE,
     MI_IS_Y_FREQUENCY,
+    MI_IS_CASCADE_Y_ENABLE,
+    MI_IS_Y_CASCADE_TYPE,
+    MI_IS_Y_CASCADE_FREQUENCY,
     MI_IS_RESTORE_DEFAULTS>;
 } // namespace detail
 

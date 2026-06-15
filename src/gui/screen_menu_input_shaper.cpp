@@ -22,17 +22,39 @@ void ScreenMenuInputShaper::update_gui() {
 
     const bool x_enabled = config_store().input_shaper_axis_x_enabled.get();
     const bool y_enabled = config_store().input_shaper_axis_y_enabled.get();
+    const bool cascade_x_enabled = config_store().input_shaper_axis_x_cascade_enabled.get();
+    const bool cascade_y_enabled = config_store().input_shaper_axis_y_cascade_enabled.get();
 
     Item<MI_IS_X_TYPE>().set_enabled(is_editing_enabled && x_enabled);
     Item<MI_IS_X_FREQUENCY>().set_enabled(is_editing_enabled && x_enabled);
+    Item<MI_IS_CASCADE_X_ENABLE>().set_enabled(is_editing_enabled);
+    Item<MI_IS_X_CASCADE_TYPE>().set_enabled(is_editing_enabled && cascade_x_enabled);
+    Item<MI_IS_X_CASCADE_FREQUENCY>().set_enabled(is_editing_enabled && cascade_x_enabled);
     Item<MI_IS_Y_TYPE>().set_enabled(is_editing_enabled && y_enabled);
     Item<MI_IS_Y_FREQUENCY>().set_enabled(is_editing_enabled && y_enabled);
+    Item<MI_IS_CASCADE_Y_ENABLE>().set_enabled(is_editing_enabled);
+    Item<MI_IS_Y_CASCADE_TYPE>().set_enabled(is_editing_enabled && cascade_y_enabled);
+    Item<MI_IS_Y_CASCADE_FREQUENCY>().set_enabled(is_editing_enabled && cascade_y_enabled);
     Item<MI_IS_RESTORE_DEFAULTS>().set_enabled(is_editing_enabled);
 
     Item<MI_IS_X_TYPE>().set_show_disabled_extension(x_enabled);
     Item<MI_IS_X_FREQUENCY>().set_show_disabled_extension(x_enabled);
+    if (!cascade_x_enabled) {
+        Item<MI_IS_X_CASCADE_TYPE>().hide();
+        Item<MI_IS_X_CASCADE_FREQUENCY>().hide();
+    } else {
+        Item<MI_IS_X_CASCADE_TYPE>().show();
+        Item<MI_IS_X_CASCADE_FREQUENCY>().show();
+    }
     Item<MI_IS_Y_TYPE>().set_show_disabled_extension(y_enabled);
     Item<MI_IS_Y_FREQUENCY>().set_show_disabled_extension(y_enabled);
+    if (!cascade_y_enabled) {
+        Item<MI_IS_Y_CASCADE_TYPE>().hide();
+        Item<MI_IS_Y_CASCADE_FREQUENCY>().hide();
+    } else {
+        Item<MI_IS_Y_CASCADE_TYPE>().show();
+        Item<MI_IS_Y_CASCADE_FREQUENCY>().show();
+    }
 
     if (x_enabled) {
         const auto axis_config = config_store().input_shaper_axis_x_config.get();
@@ -40,10 +62,26 @@ void ScreenMenuInputShaper::update_gui() {
         Item<MI_IS_X_FREQUENCY>().SetVal(static_cast<int>(axis_config.frequency));
     }
 
+    // Cascade X
+    Item<MI_IS_CASCADE_X_ENABLE>().update();
+    if (cascade_x_enabled) {
+        const auto cascade_config = config_store().input_shaper_axis_x_cascade_config.get();
+        Item<MI_IS_X_CASCADE_TYPE>().update();
+        Item<MI_IS_X_CASCADE_FREQUENCY>().SetVal(static_cast<int>(cascade_config.frequency));
+    }
+
     if (y_enabled) {
         const auto axis_config = config_store().input_shaper_axis_y_config.get();
         Item<MI_IS_Y_TYPE>().update();
         Item<MI_IS_Y_FREQUENCY>().SetVal(static_cast<int>(axis_config.frequency));
+    }
+
+    // Cascade Y
+    Item<MI_IS_CASCADE_Y_ENABLE>().update();
+    if (cascade_y_enabled) {
+        const auto cascade_config = config_store().input_shaper_axis_y_cascade_config.get();
+        Item<MI_IS_Y_CASCADE_TYPE>().update();
+        Item<MI_IS_Y_CASCADE_FREQUENCY>().SetVal(static_cast<int>(cascade_config.frequency));
     }
 }
 
