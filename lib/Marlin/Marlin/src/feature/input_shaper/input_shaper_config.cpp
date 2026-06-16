@@ -124,13 +124,21 @@ static void adjust_input_shaper_pulses_to_match_time_pulses(input_shaper_pulses_
     second_pulses = second_pulses_adjust;
 }
 
-void get_input_shaper(input_shaper_pulses_t &first_axis_pulses, const AxisConfig &first_axis_config, input_shaper_pulses_t &second_axis_pulses, const std::optional<AxisConfig> &second_axis_config) {
-    const auto &cfg = current_config();
-    get_input_shaper(first_axis_pulses, first_axis_config, cfg.cascade[X_AXIS]);
+void get_input_shaper(input_shaper_pulses_t &first_axis_pulses, const AxisConfig &first_axis_config, const std::optional<AxisConfig> &first_cascade, input_shaper_pulses_t &second_axis_pulses, const std::optional<AxisConfig> &second_axis_config, const std::optional<AxisConfig> &second_cascade) {
+    get_input_shaper(first_axis_pulses, first_axis_config, first_cascade);
     if (second_axis_config) {
         get_input_shaper(second_axis_pulses, *second_axis_config, second_cascade);
     } else {
         create_null_input_shaper_pulses(second_axis_pulses);
+    }
+    if (first_axis_pulses.num_pulses + second_axis_pulses.num_pulses > INPUT_SHAPER_MAX_PULSES) {
+        // Cascaded pulses exceed the CoreXY merge buffer; fall back to primary-only
+        get_input_shaper(first_axis_pulses, first_axis_config);
+        if (second_axis_config) {
+            get_input_shaper(second_axis_pulses, *second_axis_config);
+        } else {
+            create_null_input_shaper_pulses(second_axis_pulses);
+        }
     }
     adjust_input_shaper_pulses_to_match_time_pulses(first_axis_pulses, second_axis_pulses);
 }
@@ -145,7 +153,8 @@ static void set_logical_axis_config_internal(const AxisEnum axis, std::optional<
     if (axis_config) {
         if (axis == X_AXIS || axis == Y_AXIS) {
             std::optional<AxisConfig> second_axis_config = current_config().axis[second_axis];
-            get_input_shaper(InputShaper::logical_axis_pulses[axis], *axis_config, InputShaper::logical_axis_pulses[second_axis], second_axis_config);
+            const auto &cfg = current_config();
+            get_input_shaper(InputShaper::logical_axis_pulses[axis], *axis_config, cfg.cascade[axis], InputShaper::logical_axis_pulses[second_axis], second_axis_config, cfg.cascade[second_axis]);
             PreciseStepping::physical_axis_step_generator_types |= INPUT_SHAPER_STEP_GENERATOR_X;
             PreciseStepping::physical_axis_step_generator_types |= INPUT_SHAPER_STEP_GENERATOR_Y;
         } else {
@@ -156,7 +165,8 @@ static void set_logical_axis_config_internal(const AxisEnum axis, std::optional<
         if (axis == X_AXIS || axis == Y_AXIS) {
             if (std::optional<AxisConfig> second_axis_config = current_config().axis[second_axis]; second_axis_config) {
                 // The input shaper is also enabled on the second logical axis, so we disable it just on the first axis.
-                get_input_shaper(InputShaper::logical_axis_pulses[second_axis], *second_axis_config, InputShaper::logical_axis_pulses[axis], axis_config);
+                const auto &cfg = current_config();
+                get_input_shaper(InputShaper::logical_axis_pulses[second_axis], *second_axis_config, cfg.cascade[second_axis], InputShaper::logical_axis_pulses[axis], axis_config, cfg.cascade[axis]);
             } else {
                 PreciseStepping::physical_axis_step_generator_types &= ~(INPUT_SHAPER_STEP_GENERATOR_X);
                 PreciseStepping::physical_axis_step_generator_types &= ~(INPUT_SHAPER_STEP_GENERATOR_Y);
