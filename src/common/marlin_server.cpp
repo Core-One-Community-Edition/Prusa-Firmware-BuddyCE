@@ -2526,6 +2526,9 @@ static void _server_print_loop(void) {
             crash_s.reset();
 #endif // ENABLED(CRASH_RECOVERY)
 
+            // Start cooling the bed now so it cools in parallel with parking and the filament unload.
+            set_target_bed(0);
+
             // ! Must be before the park_head(), otherwise the head parking is still considered a print state
             server.print_state = State::Finishing_UnloadFilament;
 
