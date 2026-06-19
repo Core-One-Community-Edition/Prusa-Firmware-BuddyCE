@@ -95,11 +95,17 @@ void AutoRetract::maybe_retract_from_nozzle(const ProgressCallback &progress_cal
         thermalManager.setTargetHotend(original_temp, hotend);
     });
 
-    // heat up the nozzle (especially important for INDX where nozzle can cool down before autoretract is finished)
+    // Heat up the nozzle (especially important for INDX where nozzle can cool down before autoretract is finished).
+    // Use the temperature the print was running at (display_nozzle) instead of the firmware filament default, so we
+    // don't needlessly overheat the nozzle and wait for it. Fall back to the filament default only when the print
+    // temperature is unknown/too low to safely run the ramming sequence (e.g. the nozzle was already commanded off,
+    // as on abort).
+    const float print_temp = marlin_vars().hotend(hotend).display_nozzle;
     const auto filament_temp = config_store().get_filament_type(hotend).parameters().nozzle_temperature;
-    if (original_temp < filament_temp) {
+    const float ram_temp = (print_temp >= EXTRUDE_MINTEMP) ? print_temp : static_cast<float>(filament_temp);
+    if (original_temp < ram_temp) {
         const M109Flags flags = {
-            .target_temp = static_cast<float>(filament_temp),
+            .target_temp = ram_temp,
             .wait_heat = true,
             .wait_heat_or_cool = false,
         };
