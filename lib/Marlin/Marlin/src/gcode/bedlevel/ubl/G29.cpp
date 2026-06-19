@@ -44,9 +44,14 @@
     #include <mapi/motion.hpp>
 
 #include <option/has_nozzle_cleaner.h>
+#include <option/has_bed_wiper.h>
 
 #if HAS_NOZZLE_CLEANER()
     #include "../../../feature/nozzle_cleaner/include/nozzle_cleaner.hpp"
+#endif
+
+#if HAS_BED_WIPER()
+    #include <wiper_cleaner.hpp>
 #endif
 
 /** \addtogroup G-Codes
@@ -275,7 +280,35 @@ void GcodeSuite::G29() {
     uint8_t nozzle_cleaning_retries = 0;
 #endif
 
+#if HAS_BED_WIPER()
+    // Run the wiper for any `G29` without a `P` phase. The full leveling pass
+    // is a bare `G29`, while `G29 P9` (nozzle-clean-only), `G29 P1` (mesh
+    // generation) and the other phase sub-commands must not trigger it.
+    // Honors the hardware-menu enable toggle.
+    const bool run_bed_wiper = !parser.seen('P') && config_store().bed_wiper_enable.get();
+    bool bed_wiper_done = false;
+#endif
+
     while (true) {
+#if HAS_BED_WIPER()
+        // Clean the nozzle on the bed wiper once, right before the first
+        // probing pass. If the wiper g-code is absent from the USB drive,
+        // execute() returns false and we simply proceed to MBL as usual.
+        if (run_bed_wiper && !bed_wiper_done && !planner.draining()) {
+            bed_wiper_done = true;
+            if (wiper_cleaner::is_loader_idle()) {
+                wiper_cleaner::load_wipe_gcode();
+            }
+            while (wiper_cleaner::is_loader_buffering()) {
+                if (planner.draining()) {
+                    return;
+                }
+                idle(true); // Wait for the loader to finish buffering
+            }
+            wiper_cleaner::execute();
+        }
+#endif
+
         ubl.g29_min_max_measured_z = std::nullopt;
         ubl.g29_nozzle_cleaning_failed = false;
         ubl.g29_probing_failed = false;

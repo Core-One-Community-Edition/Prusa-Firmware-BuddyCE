@@ -18,6 +18,7 @@
 #include <option/has_modular_bed.h>
 #include <option/has_mmu2.h>
 #include <option/has_auto_retract.h>
+#include <option/has_bed_wiper.h>
 #include <option/has_chamber_vents.h>
 #include <common/extended_printer_type.hpp>
 #include "MItem_basic_selftest.hpp"
@@ -83,6 +84,9 @@ using ScreenMenuHardware__ = ScreenMenu<GuiDefaults::MenuFooter,
 #endif
 #if HAS_AUTO_RETRACT()
     MI_PRE_NOZZLE_CLEANING_RETRACT,
+#endif
+#if HAS_BED_WIPER()
+    MI_BED_WIPER_ENABLE,
 #endif
     MI_HARDWARE_G_CODE_CHECKS,
 #if HAS_PRECISE_HOMING_COREXY()

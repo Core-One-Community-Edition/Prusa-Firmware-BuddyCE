@@ -732,6 +732,23 @@ void MI_COLD_PULL::click([[maybe_unused]] IWindowMenu &window_menu) {
 }
 #endif
 
+#if HAS_BED_WIPER()
+MI_WIPE_NOZZLE::MI_WIPE_NOZZLE()
+    : IWindowMenuItem(_(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {
+}
+
+void MI_WIPE_NOZZLE::click([[maybe_unused]] IWindowMenu &window_menu) {
+    marlin_client::gcode("G13");
+}
+
+MI_BED_WIPER_ENABLE::MI_BED_WIPER_ENABLE()
+    : WI_ICON_SWITCH_OFF_ON_t(config_store().bed_wiper_enable.get(), _("Wipe Nozzle Before MBL")) {}
+
+void MI_BED_WIPER_ENABLE::OnChange(size_t) {
+    config_store().bed_wiper_enable.set(value());
+}
+#endif
+
 MI_GCODE_VERIFY::MI_GCODE_VERIFY()
     : WI_ICON_SWITCH_OFF_ON_t(config_store().verify_gcode.get(), _(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {}
 

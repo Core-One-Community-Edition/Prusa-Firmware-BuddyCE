@@ -43,6 +43,7 @@
 #include <option/has_chamber_filtration_api.h>
 #include <option/has_esp.h>
 #include <option/has_auto_retract.h>
+#include <option/has_bed_wiper.h>
 #include <option/has_door_sensor_calibration.h>
 #include <option/has_chamber_vents.h>
 #include <option/has_precise_homing_corexy.h>
@@ -754,6 +755,10 @@ struct CurrentStore
     std::optional<float> get_filament_retracted_distance(uint8_t tool_idx);
 
     static_assert(HOTENDS <= 8);
+#endif
+
+#if HAS_BED_WIPER()
+    StoreItem<bool, true, ItemFlag::features, journal::hash("Bed wiper enabled")> bed_wiper_enable;
 #endif
 
 #if HAS_CHAMBER_VENTS()

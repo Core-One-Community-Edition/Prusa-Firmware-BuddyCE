@@ -11,6 +11,7 @@
 #include <option/has_i2c_expander.h>
 #include <option/has_chamber_api.h>
 #include <option/has_nozzle_cleaner.h>
+#include <option/has_bed_wiper.h>
 #include <option/has_emergency_stop.h>
 #include <option/buddy_enable_connect.h>
 #include <option/has_door_sensor_calibration.h>
@@ -35,6 +36,9 @@ int8_t get_target_extruder_from_command_p(const GCodeParser2 &p);
 
 #if HAS_NOZZLE_CLEANER()
 void G12(); ///< Nozzle Cleaning
+#endif
+#if HAS_BED_WIPER()
+void G13(); ///< Wipe nozzle on bed wiper
 #endif
 void G26(); //< first layer calibration
 void G162(); //< calibrate Z

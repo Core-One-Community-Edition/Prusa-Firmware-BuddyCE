@@ -51,6 +51,10 @@ if(HAS_NOZZLE_CLEANER)
   target_sources(firmware PRIVATE G12.cpp)
 endif()
 
+if(HAS_BED_WIPER)
+  target_sources(firmware PRIVATE G13.cpp)
+endif()
+
 if(HAS_SELFTEST)
   target_sources(firmware PRIVATE G162.cpp G163.cpp M1978.cpp M1981.cpp)
 endif()

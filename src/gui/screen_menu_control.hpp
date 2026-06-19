@@ -12,6 +12,7 @@
 #include <option/has_selftest.h>
 #include <option/has_mmu2.h>
 #include <option/has_coldpull.h>
+#include <option/has_bed_wiper.h>
 #include <option/has_sheet_profiles.h>
 #include <option/has_bed_level_probe.h>
 #include <printers.h>
@@ -55,6 +56,11 @@ using ScreenMenuControlSpec = ScreenMenu<EFooter::On, MI_RETURN
 #if HAS_COLDPULL()
     ,
     MI_COLD_PULL
+#endif
+
+#if HAS_BED_WIPER()
+    ,
+    MI_WIPE_NOZZLE
 #endif
 
 #if HAS_MMU2()
