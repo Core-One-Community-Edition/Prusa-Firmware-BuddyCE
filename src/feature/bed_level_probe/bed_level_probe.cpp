@@ -180,23 +180,38 @@ private:
         fsm_change(PhaseBedLevelProbe::probing, data);
     }
 
+    // The user can cancel between points via the Abort button on the probing
+    // screen. A single probe move is blocking, so the click is picked up here
+    // once the point in progress finishes.
+    bool abort_requested() {
+        return marlin_server::get_response_from_phase(PhaseBedLevelProbe::probing) == Response::Abort;
+    }
+
     void probing() {
+        bool aborted = false;
         if (probe_data.mode == Mode::grid) {
             // Serpentine ordering minimises travel between rows while the points
             // stay stored row-major for the display.
-            for (uint8_t row = 0; row < probe_data.rows; ++row) {
-                for (uint8_t step = 0; step < probe_data.cols; ++step) {
+            for (uint8_t row = 0; row < probe_data.rows && !aborted; ++row) {
+                for (uint8_t step = 0; step < probe_data.cols && !aborted; ++step) {
                     const uint8_t col = (row % 2 == 0) ? step : (probe_data.cols - 1 - step);
                     probe_point(row * probe_data.cols + col);
+                    aborted = abort_requested();
                 }
             }
         } else {
-            for (uint8_t i = 0; i < probe_data.count; ++i) {
+            for (uint8_t i = 0; i < probe_data.count && !aborted; ++i) {
                 probe_point(i);
+                aborted = abort_requested();
             }
         }
 
         do_blocking_move_to_z(safe_z);
+
+        if (aborted) {
+            fsm_change(PhaseBedLevelProbe::finish);
+            return;
+        }
 
         bool any_failed = false;
         for (uint8_t i = 0; i < probe_data.count; ++i) {

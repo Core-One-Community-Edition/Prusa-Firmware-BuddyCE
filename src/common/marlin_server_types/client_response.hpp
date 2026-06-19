@@ -1044,7 +1044,7 @@ inline constexpr EnumArray<PhaseDoorSensorCalibration, PhaseResponses, CountPhas
 inline constexpr EnumArray<PhaseBedLevelProbe, PhaseResponses, CountPhases<PhaseBedLevelProbe>()> BedLevelProbeResponses {
     { PhaseBedLevelProbe::intro, { Response::Continue, Response::Abort } },
     { PhaseBedLevelProbe::homing, {} },
-    { PhaseBedLevelProbe::probing, {} },
+    { PhaseBedLevelProbe::probing, { Response::Abort } },
     { PhaseBedLevelProbe::results, { Response::Done, Response::Retry } },
     { PhaseBedLevelProbe::error, { Response::Retry, Response::Abort } },
     { PhaseBedLevelProbe::finish, {} },
