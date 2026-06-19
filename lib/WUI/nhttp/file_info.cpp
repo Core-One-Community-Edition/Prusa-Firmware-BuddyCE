@@ -103,15 +103,17 @@ JsonResult FileInfo::DirRenderer::renderStateV1(size_t resume_point, JsonOutput 
             }
 
             {
-                const bool filename_printable = filename_is_printable(state.ent->d_name);
-                if (state.ent->d_type != DT_DIR && !filename_printable) {
+                // Transferrable = printable gcode plus firmware (.bbf), so
+                // firmware files show up and can be managed (downloaded/deleted).
+                const bool filename_transferrable = filename_is_transferrable(state.ent->d_name);
+                if (state.ent->d_type != DT_DIR && !filename_transferrable) {
                     continue;
                 }
 
                 state.read_only = false;
                 state.partial = false;
 
-                if(state.ent->d_type == DT_DIR && filename_printable) {
+                if(state.ent->d_type == DT_DIR && filename_transferrable) {
                     MutablePath mp(state.filepath);
                     mp.push(state.ent->d_name);
                     if (transfers::is_valid_transfer(mp)) {
