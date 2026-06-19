@@ -14,6 +14,7 @@
 #include <option/has_emergency_stop.h>
 #include <option/buddy_enable_connect.h>
 #include <option/has_door_sensor_calibration.h>
+#include <option/has_bed_level_probe.h>
 #include <option/has_chamber_vents.h>
 
 #include <gcode/gcode_parser.hpp>
@@ -149,6 +150,10 @@ void M1703(); //< Wi-fi setup. Prusa platform specific
 void M1978(); //< Fan Selftest
 #if HAS_DOOR_SENSOR_CALIBRATION()
 void M1980(); //< Door sensor calibration
+#endif
+#if HAS_BED_LEVEL_PROBE()
+void M1962(); //< Shim Calibration (probe 3 Z-screw positions)
+void M1963(); //< Bed level probe (probe full bed grid)
 #endif
 #if HAS_SELFTEST()
 void M1981(); //< Filament sensors selftest

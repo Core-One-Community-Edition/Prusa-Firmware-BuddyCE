@@ -47,6 +47,10 @@
     #include <screen_menu_bed_level_correction.hpp>
 #endif
 
+#if HAS_BED_LEVEL_PROBE()
+    #include <screen_menu_advanced_calibration.hpp>
+#endif
+
 #if HAS_SELFTEST()
     #include "screen_menu_selftest_snake.hpp"
 #endif
@@ -155,6 +159,10 @@ template struct MI_SCREEN_CTOR<ScreenMenuSTSCalibrations>;
 
 #if PRINTER_IS_PRUSA_MK3_5() || PRINTER_IS_PRUSA_MINI()
 template struct MI_SCREEN_CTOR<ScreenMenuBedLevelCorrection>;
+#endif
+
+#if HAS_BED_LEVEL_PROBE()
+template struct MI_SCREEN_CTOR<ScreenMenuAdvancedCalibration>;
 #endif
 
 #if HAS_LEDS_MENU()

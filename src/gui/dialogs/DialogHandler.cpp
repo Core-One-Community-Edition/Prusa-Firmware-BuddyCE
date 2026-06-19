@@ -14,6 +14,7 @@
 #include <option/has_input_shaper_calibration.h>
 #include <option/has_coldpull.h>
 #include <option/has_door_sensor_calibration.h>
+#include <option/has_bed_level_probe.h>
 #include <option/has_manual_belt_tuning.h>
 #include <option/has_loadcell.h>
 #include <gui/screen/screen_preheat.hpp>
@@ -60,6 +61,10 @@
 
 #if HAS_DOOR_SENSOR_CALIBRATION()
     #include <feature/door_sensor_calibration/screen_door_sensor_calibration.hpp>
+#endif
+
+#if HAS_BED_LEVEL_PROBE()
+    #include <feature/bed_level_probe/screen_bed_level_probe.hpp>
 #endif
 
 #include <option/has_esp.h>
@@ -284,6 +289,9 @@ using FSMDisplayConfig = FSMDisplayConfigDef<
 #endif
 #if HAS_DOOR_SENSOR_CALIBRATION()
     FSMScreenDef<ClientFSM::DoorSensorCalibration, ScreenDoorSensorCalibration>,
+#endif
+#if HAS_BED_LEVEL_PROBE()
+    FSMScreenDef<ClientFSM::BedLevelProbe, ScreenBedLevelProbe>,
 #endif
 #if HAS_MANUAL_BELT_TUNING()
     FSMScreenDef<ClientFSM::ManualBeltTuning, ScreenManualBeltTuning>,

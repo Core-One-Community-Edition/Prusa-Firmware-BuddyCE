@@ -4,6 +4,7 @@
 #include <option/has_phase_stepping_calibration.h>
 #include <option/has_input_shaper_calibration.h>
 #include <option/has_door_sensor_calibration.h>
+#include <option/has_bed_level_probe.h>
 #include <option/has_manual_belt_tuning.h>
 #include <logging/log.hpp>
 
@@ -31,6 +32,9 @@ static constexpr uint32_t score(ClientFSM fsm_type) {
 #endif
 #if HAS_DOOR_SENSOR_CALIBRATION()
     case ClientFSM::DoorSensorCalibration:
+#endif
+#if HAS_BED_LEVEL_PROBE()
+    case ClientFSM::BedLevelProbe:
 #endif
         return 1;
 

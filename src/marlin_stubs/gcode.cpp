@@ -33,6 +33,7 @@
 #endif
 
 #include <option/has_input_shaper_calibration.h>
+#include <option/has_bed_level_probe.h>
 #if HAS_INPUT_SHAPER_CALIBRATION()
     #include "M1959.hpp"
 #endif
@@ -285,6 +286,14 @@ bool GcodeSuite::process_parsed_command_custom(bool no_ok) {
 #if HAS_INPUT_SHAPER_CALIBRATION()
         case 1959:
             PrusaGcodeSuite::M1959();
+            break;
+#endif
+#if HAS_BED_LEVEL_PROBE()
+        case 1962:
+            PrusaGcodeSuite::M1962();
+            break;
+        case 1963:
+            PrusaGcodeSuite::M1963();
             break;
 #endif
 #if HAS_PHASE_STEPPING_CALIBRATION()
