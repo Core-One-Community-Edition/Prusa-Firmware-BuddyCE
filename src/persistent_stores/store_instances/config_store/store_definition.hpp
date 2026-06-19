@@ -353,6 +353,9 @@ struct CurrentStore
     // Should we verify gcode (CRC & similar)?
     StoreItem<bool, true, ItemFlag::features, journal::hash("Verify Gcode")> verify_gcode;
 
+    // Should the heat absorption stage (G29 G) run? When disabled, the stage becomes a noop.
+    StoreItem<bool, true, ItemFlag::features, journal::hash("Heat Absorption Enabled")> heat_absorption_enabled;
+
     StoreItem<bool, true, ItemFlag::user_interface, journal::hash("Run LEDs")> run_leds;
     StoreItem<bool, defaults::heat_entire_bed, ItemFlag::features | ItemFlag::common_misconfigurations, journal::hash("Heat Entire Bed")> heat_entire_bed;
     StoreItem<bool, true, ItemFlag::user_interface, journal::hash("Touch Enabled")> touch_enabled;

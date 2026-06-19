@@ -3300,9 +3300,14 @@ void Temperature::isr() {
     }
 
     void Temperature::wait_for_frame_heatup() {
+        if (!config_store().heat_absorption_enabled.get()) {
+            log_info(MarlinServer, "Absorbing heat: disabled in settings, continuing");
+            return;
+        }
+
         // Keep everything heated up when absorbing heat
         buddy::SafetyTimerBlocker safety_timer_blocker;
-      
+
         if (fabs(temp_bed.target - bed_frame_est_celsius) < 0.5f) {
             log_info(MarlinServer, "Absorbing heat: already stable, continuing");
             return;
