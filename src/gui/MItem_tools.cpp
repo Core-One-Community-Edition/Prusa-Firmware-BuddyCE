@@ -311,6 +311,15 @@ void MI_DRYRUN::OnChange(size_t) {
 }
 
 /*****************************************************************************/
+// MI_HEAT_ABSORPTION
+MI_HEAT_ABSORPTION::MI_HEAT_ABSORPTION()
+    : WI_ICON_SWITCH_OFF_ON_t(config_store().heat_absorption_enabled.get(), _(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {}
+
+void MI_HEAT_ABSORPTION::OnChange(size_t) {
+    config_store().heat_absorption_enabled.set(value());
+}
+
+/*****************************************************************************/
 // MI_TIMEOUT
 MI_TIMEOUT::MI_TIMEOUT()
     : WI_ICON_SWITCH_OFF_ON_t(Screens::Access()->GetMenuTimeout() ? 1 : 0, _(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {}

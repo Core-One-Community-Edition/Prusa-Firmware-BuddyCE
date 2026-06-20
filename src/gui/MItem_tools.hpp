@@ -137,6 +137,16 @@ protected:
     virtual void OnChange(size_t old_index) override;
 };
 
+class MI_HEAT_ABSORPTION : public WI_ICON_SWITCH_OFF_ON_t {
+    constexpr static const char *const label = N_("Heat Absorption");
+
+public:
+    MI_HEAT_ABSORPTION();
+
+protected:
+    virtual void OnChange(size_t old_index) override;
+};
+
 class MI_TIMEOUT : public WI_ICON_SWITCH_OFF_ON_t {
     constexpr static const char *const label = N_("Menu Timeout");
 
