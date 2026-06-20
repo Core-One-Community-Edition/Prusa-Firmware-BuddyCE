@@ -2,6 +2,7 @@
 #include "basic_gets.h"
 #include "../nhttp/file_info.h"
 #include "../nhttp/file_command.h"
+#include "../nhttp/gcode_command.h"
 #include "../nhttp/headers.h"
 #include "../nhttp/gcode_upload.h"
 #include "../nhttp/job_command.h"
@@ -32,6 +33,7 @@ using namespace handler;
 using namespace transfers;
 using nhttp::printer::FileCommand;
 using nhttp::printer::FileInfo;
+using nhttp::printer::GcodeCommand;
 using nhttp::printer::GcodeUpload;
 using nhttp::printer::JobCommand;
 using printer_state::DeviceState;
@@ -171,6 +173,19 @@ Selector::Accepted PrusaLinkApiV1::accept(const RequestParser &parser, handler::
             return Accepted::Accepted;
         } else {
             out.next = StatusPage(Status::NoContent, parser);
+            return Accepted::Accepted;
+        }
+    } else if (suffix == "gcode") {
+        switch (parser.method) {
+        case Method::Post:
+            if (!parser.content_length.has_value()) {
+                out.next = StatusPage(Status::LengthRequired, parser);
+            } else {
+                out.next = GcodeCommand(*parser.content_length, parser.can_keep_alive(), parser.accepts_json);
+            }
+            return Accepted::Accepted;
+        default:
+            out.next = StatusPage(Status::MethodNotAllowed, parser);
             return Accepted::Accepted;
         }
     } else if (remove_prefix(suffix, "files").has_value()) {
