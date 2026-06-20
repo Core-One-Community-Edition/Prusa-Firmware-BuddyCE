@@ -274,6 +274,7 @@ JsonResult get_info(size_t resume_point, JsonOutput &output) {
 #endif
     serial_nr_t serial {};
     otp_get_serial_nr(serial);
+    const auto &printer_model_info = PrinterModelInfo::current();
 
     // Keep the indentation of the JSON in here!
     // clang-format off
@@ -283,6 +284,8 @@ JsonResult get_info(size_t resume_point, JsonOutput &output) {
         JSON_FIELD_BOOL("mmu", mmu2_enabled) JSON_COMMA;
         JSON_FIELD_STR("serial", serial.begin()) JSON_COMMA;
         JSON_FIELD_STR("hostname", hostname) JSON_COMMA;
+        JSON_FIELD_STR("firmware", version::project_version_full) JSON_COMMA;
+        JSON_FIELD_STR_FORMAT("printer", "%i.%i.%i", printer_model_info.version.type, printer_model_info.version.version, printer_model_info.version.subversion) JSON_COMMA;
         JSON_FIELD_INT("min_extrusion_temp", EXTRUDE_MINTEMP);
     JSON_OBJ_END;
     JSON_END;
