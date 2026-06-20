@@ -25,6 +25,8 @@ public:
         return value_;
     }
 
+    MenuItemType menu_item_type() const override { return MenuItemType::toggle; }
+
 protected:
     virtual invalidate_t change(int dif) override;
     virtual void OnChange([[maybe_unused]] size_t old_index) {} // TODO: Remove this ugly legacy parameter

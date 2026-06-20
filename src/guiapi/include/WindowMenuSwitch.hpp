@@ -27,9 +27,14 @@ public:
 
     string_view_utf8 current_item_text() const;
 
+    /// Translated text of the option at \p index (used by the remote menu API).
+    string_view_utf8 item_text(size_t index) const;
+
     inline size_t get_index() const {
         return index_;
     }
+
+    MenuItemType menu_item_type() const override { return MenuItemType::options; }
 
 protected:
     Rect16 getSwitchRect(Rect16 extension_rect) const;

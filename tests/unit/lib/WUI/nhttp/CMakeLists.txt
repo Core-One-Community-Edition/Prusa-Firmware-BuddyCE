@@ -7,6 +7,7 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/status_renderer_mock.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/partial_file_mock.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/transfer_mock.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/menu_bridge_mock.cpp
   # Some handlers are stubbed out.
   ${CMAKE_CURRENT_SOURCE_DIR}/server_tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/req_parser_tests.cpp
@@ -23,6 +24,7 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/server.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/job_command.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/gcode_command.cpp
+  ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/menu_command.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/static_mem.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/splice.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/send_file.cpp

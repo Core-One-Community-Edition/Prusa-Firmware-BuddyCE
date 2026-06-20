@@ -6,6 +6,7 @@
 #include "knob_event.hpp"
 #include "language_eeprom.hpp"
 #include "marlin_client.hpp"
+#include <menu_bridge.hpp>
 #include <screen_error.hpp>
 #include "screen_home.hpp"
 #include "screen_move_z.hpp"
@@ -118,6 +119,7 @@ void gui_run(void) {
         gui::StartLoop();
 
         Screens::Access()->Loop();
+        menu_bridge::process();
         DialogHandler::Access().Loop();
 
         gui_loop();

@@ -10,6 +10,9 @@
 #include "window_frame.hpp"
 #include "screen_init_variant.hpp"
 #include "compact_pointer.hpp"
+#include <string_view_utf8.hpp>
+
+class IWindowMenu;
 
 // DO NOT SET has_relative_subwins flag !!!
 // screen must have rect == GuiDefaults::RectScreen
@@ -20,6 +23,13 @@ class screen_t : public window_frame_t {
 public:
     screen_t(window_t *parent = nullptr, win_type_t type = win_type_t::normal, is_closed_on_timeout_t timeout = is_closed_on_timeout_t::yes, is_closed_on_printing_t close_on_print = is_closed_on_printing_t::yes);
     ~screen_t();
+
+    /// If this screen is a menu screen, returns its menu (for the remote menu
+    /// API), otherwise nullptr. Overridden by ScreenMenuBase_.
+    virtual IWindowMenu *get_menu() { return nullptr; }
+
+    /// Title of this screen's menu, or empty if not a menu screen.
+    virtual string_view_utf8 get_menu_title() const { return {}; }
 
     virtual window_t *GetCapturedWindow() override;
     virtual void ChildVisibilityChanged(window_t &child) override;

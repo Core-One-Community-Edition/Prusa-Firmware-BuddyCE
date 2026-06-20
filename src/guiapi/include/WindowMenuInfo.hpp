@@ -29,6 +29,8 @@ public:
         return value_;
     }
 
+    MenuItemType menu_item_type() const override { return MenuItemType::info; }
+
     /// Updates extension width to match the info value
     void update_extension_width();
 

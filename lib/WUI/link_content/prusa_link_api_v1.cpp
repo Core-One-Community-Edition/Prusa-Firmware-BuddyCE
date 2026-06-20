@@ -6,6 +6,8 @@
 #include "../nhttp/headers.h"
 #include "../nhttp/gcode_upload.h"
 #include "../nhttp/job_command.h"
+#include "../nhttp/menu_command.hpp"
+#include "../nhttp/menu_renderer.hpp"
 #include "../nhttp/send_json.h"
 #include "../nhttp/status_renderer.h"
 #include "../wui_api.h"
@@ -36,6 +38,7 @@ using nhttp::printer::FileInfo;
 using nhttp::printer::GcodeCommand;
 using nhttp::printer::GcodeUpload;
 using nhttp::printer::JobCommand;
+using nhttp::printer::MenuCommand;
 using printer_state::DeviceState;
 using transfers::ChangedPath;
 
@@ -182,6 +185,22 @@ Selector::Accepted PrusaLinkApiV1::accept(const RequestParser &parser, handler::
                 out.next = StatusPage(Status::LengthRequired, parser);
             } else {
                 out.next = GcodeCommand(*parser.content_length, parser.can_keep_alive(), parser.accepts_json);
+            }
+            return Accepted::Accepted;
+        default:
+            out.next = StatusPage(Status::MethodNotAllowed, parser);
+            return Accepted::Accepted;
+        }
+    } else if (suffix == "menu") {
+        switch (parser.method) {
+        case Method::Get:
+            out.next = SendJson(MenuJsonRenderer {}, parser.can_keep_alive());
+            return Accepted::Accepted;
+        case Method::Post:
+            if (!parser.content_length.has_value()) {
+                out.next = StatusPage(Status::LengthRequired, parser);
+            } else {
+                out.next = MenuCommand(*parser.content_length, parser.can_keep_alive(), parser.accepts_json);
             }
             return Accepted::Accepted;
         default:

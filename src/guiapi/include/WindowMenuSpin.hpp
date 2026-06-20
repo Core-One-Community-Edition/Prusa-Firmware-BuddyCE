@@ -54,6 +54,8 @@ public:
         return config_;
     }
 
+    MenuItemType menu_item_type() const override { return MenuItemType::number; }
+
 protected:
     virtual void OnClick() {}
 
