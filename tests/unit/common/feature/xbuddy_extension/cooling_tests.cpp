@@ -12,8 +12,8 @@ TEST_CASE("Cooling PWM") {
     buddy::FanCooling cooling;
     static constexpr buddy::FanCooling::FanPWM max_auto_pwm { 100 };
 
-    const auto step = [&](bool already_spinning, Temperature current_temperature, std::optional<Temperature> target_temperature, PWM255OrAuto target_pwm) {
-        auto result = cooling.compute_pwm_step(current_temperature, target_temperature, target_pwm, max_auto_pwm);
+    const auto step = [&](bool already_spinning, Temperature current_temperature, std::optional<Temperature> target_temperature, PWM255OrAuto target_pwm, std::optional<Temperature> heatbreak_temperature = std::nullopt) {
+        auto result = cooling.compute_pwm_step(current_temperature, target_temperature, target_pwm, max_auto_pwm, heatbreak_temperature);
         result = cooling.apply_pwm_overrides(already_spinning, result);
         return result;
     };
@@ -85,6 +85,72 @@ TEST_CASE("Cooling PWM") {
         REQUIRE(step(false, 4.0 + target_temperature, target_temperature, pwm_auto) == cooling.spin_up_pwm);
 
         REQUIRE(step(true, 4.0 + target_temperature, target_temperature, pwm_auto) == cooling.min_pwm);
+    }
+
+    SECTION("Heatbreak limiter") {
+        const Temperature heatbreak_limit = 45;
+        const std::optional<Temperature> target_temperature = 20;
+        const Temperature current_temperature = 35;
+
+        cooling.heatbreak_max_temp = heatbreak_limit;
+
+        SECTION("Heatbreak below limit, no boost") {
+            // Saturate the chamber regulation at max_auto_pwm first
+            for (uint32_t i = 0; i < 20; i++) {
+                step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit - 5);
+            }
+
+            REQUIRE(step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit - 5) == max_auto_pwm);
+            REQUIRE(cooling.get_heatbreak_pwm_boost() == PWM255 { 0 });
+        }
+
+        SECTION("Heatbreak over limit, boost exceeds max_auto_pwm") {
+            // Boost integrates by 2.5 PWM per step at 5°C error -> enough steps to pass max_auto_pwm
+            for (uint32_t i = 0; i < 50; i++) {
+                step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit + 5);
+            }
+
+            const auto boosted = step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit + 5);
+            REQUIRE(boosted > max_auto_pwm);
+
+            // The boost is clamped at max_pwm
+            for (uint32_t i = 0; i < 200; i++) {
+                step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit + 5);
+            }
+
+            REQUIRE(step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit + 5) == cooling.max_pwm);
+
+            SECTION("Heatbreak recovers, boost decays back") {
+                for (uint32_t i = 0; i < 500; i++) {
+                    step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit - 5);
+                }
+
+                REQUIRE(step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit - 5) == max_auto_pwm);
+                REQUIRE(cooling.get_heatbreak_pwm_boost() == PWM255 { 0 });
+            }
+
+            SECTION("Manual fan PWM resets the boost") {
+                step(true, current_temperature, target_temperature, PWM255 { 50 }, heatbreak_limit + 5);
+
+                REQUIRE(cooling.get_heatbreak_pwm_boost() == PWM255 { 0 });
+            }
+
+            SECTION("Disabling the limiter resets the boost") {
+                cooling.heatbreak_max_temp = std::nullopt;
+
+                step(true, current_temperature, target_temperature, pwm_auto, heatbreak_limit + 5);
+
+                REQUIRE(cooling.get_heatbreak_pwm_boost() == PWM255 { 0 });
+            }
+        }
+
+        SECTION("Boost works without a chamber target temperature") {
+            for (uint32_t i = 0; i < 20; i++) {
+                step(true, current_temperature, std::nullopt, pwm_auto, heatbreak_limit + 5);
+            }
+
+            REQUIRE(step(true, current_temperature, std::nullopt, pwm_auto, heatbreak_limit + 5) > PWM255 { 0 });
+        }
     }
 
     SECTION("Overheating cooling") {

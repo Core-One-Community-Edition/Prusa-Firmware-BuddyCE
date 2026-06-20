@@ -99,6 +99,10 @@ if(HAS_PRECISE_HOMING_COREXY)
   target_sources(firmware PRIVATE M9202.cpp)
 endif()
 
+if(XBUDDY_EXTENSION_VARIANT_IS_STANDARD)
+  target_sources(firmware PRIVATE M9160.cpp)
+endif()
+
 if(HAS_ESP)
   target_sources(firmware PRIVATE M1703.cpp)
 endif()

@@ -84,6 +84,24 @@ FanCooling::FanPWM FanCooling::compute_auto_regulation_step_legacy(Temperature c
     return FanPWM { desired };
 }
 
+FanCooling::FanPWM FanCooling::compute_heatbreak_boost_step(std::optional<Temperature> heatbreak_temperature) {
+    /**
+     * Heatbreak limiter (M9160): when the heatbreak temperature exceeds the configured limit,
+     * gradually ramp up the chamber cooling to bring it back down. The boost acts as a floor
+     * on top of the chamber regulation output and is allowed to exceed the user max fan limit
+     * (max_auto_pwm), up to max_pwm. A negative error decays the boost at the same rate.
+     */
+    if (!heatbreak_max_temp.has_value() || !heatbreak_temperature.has_value()) {
+        heatbreak_pwm_boost = 0.0f;
+        return FanPWM { 0 };
+    }
+
+    const float error = *heatbreak_temperature - *heatbreak_max_temp;
+    heatbreak_pwm_boost = std::clamp(heatbreak_pwm_boost + heatbreak_boost_integration_constant * error, 0.0f, static_cast<float>(max_pwm.value));
+
+    return get_heatbreak_pwm_boost();
+}
+
 FanCooling::FanPWM FanCooling::apply_pwm_overrides(bool already_spinning, FanPWM pwm) const {
     if (overheating_temp_flag || critical_temp_flag) {
         // Max cooling after temperature overshoot
@@ -108,22 +126,30 @@ FanCooling::FanPWM FanCooling::apply_pwm_overrides(bool already_spinning, FanPWM
     return std::max(pwm, min_pwm);
 }
 
-FanCooling::FanPWM FanCooling::compute_pwm_step(Temperature current_temperature, std::optional<Temperature> target_temperature, FanPWMOrAuto target_pwm, FanPWM max_auto_pwm) {
+FanCooling::FanPWM FanCooling::compute_pwm_step(Temperature current_temperature, std::optional<Temperature> target_temperature, FanPWMOrAuto target_pwm, FanPWM max_auto_pwm, std::optional<Temperature> heatbreak_temperature) {
     // Prevent cropping off 1 during the restaling
     FanPWM result = target_pwm.value_or(FanPWM { 0 });
 
     // Make sure the target_pwm contains the value we would _like_ to
     // run at.
-    if (target_pwm == pwm_auto && target_temperature.has_value()) {
-        if (regulator_legacy) { // We need to keep legacy regulator for old gcode compatibility
+    if (target_pwm == pwm_auto) {
+        if (!target_temperature.has_value()) {
+            // No target temperature -> no chamber regulation
+            last_regulation_output = 0.0f;
+            result = FanPWM { 0 };
+        } else if (regulator_legacy) { // We need to keep legacy regulator for old gcode compatibility
             result = compute_auto_regulation_step_legacy(current_temperature, *target_temperature, max_auto_pwm);
         } else {
             result = compute_auto_regulation_step(current_temperature, *target_temperature, max_auto_pwm);
         }
 
+        // The heatbreak limiter only applies in auto mode and may exceed max_auto_pwm
+        result = std::max(result, compute_heatbreak_boost_step(heatbreak_temperature));
+
     } else {
-        // Reset regulator if we lose the control
+        // Reset regulators if we lose the control
         last_regulation_output = 0.0f;
+        heatbreak_pwm_boost = 0.0f;
     }
 
     if (current_temperature >= critical_temp) {

@@ -47,6 +47,7 @@ void XBuddyExtension::step() {
     const auto filtration_backend = chamber_filtration().backend();
     const auto filtration_pwm = chamber_filtration().output_pwm();
     const auto temp = chamber().current_temperature();
+    const std::optional<Temperature> heatbreak_temp = thermalManager.temp_heatbreak[0].celsius;
 
     std::lock_guard _lg(mutex_);
 
@@ -91,19 +92,19 @@ void XBuddyExtension::step() {
         case ChamberFiltrationBackend::xbe_official_filter:
             // The filtration fan does both filtration and cooling
             cooling_fans_actual_pwm_ = cooling_fans_target_pwm_.value_or(FanPWM { 0 });
-            filtration_fan_actual_pwm_ = std::max(chamber_cooling.compute_pwm_step(*temp, target_temp, filtration_fan_target_pwm_, max_auto_pwm), filtration_pwm);
+            filtration_fan_actual_pwm_ = std::max(chamber_cooling.compute_pwm_step(*temp, target_temp, filtration_fan_target_pwm_, max_auto_pwm, heatbreak_temp), filtration_pwm);
             can_auto_cool_ = (filtration_fan_target_pwm_ == pwm_auto);
             break;
 
         case ChamberFiltrationBackend::xbe_filter_on_cooling_fans:
             // The cooling fans do both filtration and cooling
-            cooling_fans_actual_pwm_ = std::max(chamber_cooling.compute_pwm_step(*temp, target_temp, cooling_fans_target_pwm_, max_auto_pwm), filtration_pwm);
+            cooling_fans_actual_pwm_ = std::max(chamber_cooling.compute_pwm_step(*temp, target_temp, cooling_fans_target_pwm_, max_auto_pwm, heatbreak_temp), filtration_pwm);
             filtration_fan_actual_pwm_ = filtration_fan_target_pwm_.value_or(FanPWM { 0 });
             can_auto_cool_ = (cooling_fans_target_pwm_ == pwm_auto);
             break;
 
         default:
-            cooling_fans_actual_pwm_ = chamber_cooling.compute_pwm_step(*temp, target_temp, cooling_fans_target_pwm_, max_auto_pwm);
+            cooling_fans_actual_pwm_ = chamber_cooling.compute_pwm_step(*temp, target_temp, cooling_fans_target_pwm_, max_auto_pwm, heatbreak_temp);
             filtration_fan_actual_pwm_ = filtration_fan_target_pwm_.value_or(FanPWM { 0 });
             can_auto_cool_ = (cooling_fans_target_pwm_ == pwm_auto);
             break;
@@ -267,6 +268,21 @@ void XBuddyExtension::set_max_cooling_pwm(PWM255 set) {
     } else {
         config_store().xbe_cooling_fan_max_auto_pwm.set(set.value);
     }
+}
+
+void XBuddyExtension::set_heatbreak_max_temp(std::optional<Temperature> temp) {
+    std::lock_guard _lg(mutex_);
+    chamber_cooling.heatbreak_max_temp = temp;
+}
+
+std::optional<Temperature> XBuddyExtension::heatbreak_max_temp() const {
+    std::lock_guard _lg(mutex_);
+    return chamber_cooling.heatbreak_max_temp;
+}
+
+XBuddyExtension::FanPWM XBuddyExtension::heatbreak_pwm_boost() const {
+    std::lock_guard _lg(mutex_);
+    return chamber_cooling.get_heatbreak_pwm_boost();
 }
 
 bool XBuddyExtension::can_auto_cool() const {

@@ -1013,6 +1013,7 @@ void static finalize_print(bool finished) {
 
 #if XBUDDY_EXTENSION_VARIANT_IS_STANDARD()
     buddy::xbuddy_extension().set_chamber_regulator_legacy(true); // For compatibility with old gcodes on coreone
+    buddy::xbuddy_extension().set_heatbreak_max_temp(std::nullopt); // The heatbreak limit (M9160) is per-print
 #endif
 
     if (config_store().show_fsensors_disabled_warning_after_print.get()) {
@@ -2237,6 +2238,7 @@ static void _server_print_loop(void) {
 #endif
 #if XBUDDY_EXTENSION_VARIANT_IS_STANDARD()
         buddy::xbuddy_extension().set_chamber_regulator_legacy(true); // For compatibility with old gcodes on coreone
+        buddy::xbuddy_extension().set_heatbreak_max_temp(std::nullopt); // The heatbreak limit (M9160) is per-print
 #endif
         break;
 
