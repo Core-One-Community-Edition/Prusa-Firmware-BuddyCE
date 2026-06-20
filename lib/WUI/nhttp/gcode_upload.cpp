@@ -5,6 +5,8 @@
 #include "../wui_api.h"
 
 #include <common/stat_retry.hpp>
+#include <common/directory.hpp>
+#include <common/filepath_operation.h>
 #include <path_utils.h>
 #include <transfers/files.hpp>
 #include <transfers/changed_path.hpp>
@@ -12,6 +14,7 @@
 #include <sys/stat.h>
 #include <cassert>
 #include <cstring>
+#include <strings.h>
 #include <unistd.h>
 
 extern "C" {
@@ -251,6 +254,66 @@ namespace {
         }
     }
 
+    // After a firmware (.bbf) file has been uploaded, any other firmware files
+    // already present in the same directory would still be offered to the
+    // bootloader on the next boot, forcing the user to delete the stale one by
+    // hand. Rename those superseded firmware files so their extension is no
+    // longer recognized as firmware; they stay on the drive as a ".old" backup
+    // and can be removed later.
+    void supersede_old_firmware(const char *new_firmware_path) {
+        if (!filename_is_firmware(new_firmware_path)) {
+            return;
+        }
+
+        const char *new_filename = basename_b(new_firmware_path);
+
+        char dir_path[FILE_PATH_BUFFER_LEN];
+        strlcpy(dir_path, new_firmware_path, sizeof(dir_path));
+        dirname(dir_path);
+
+        // Rename one stale firmware per directory scan: renaming an entry while
+        // iterating could invalidate the read cursor. Renamed files lose the
+        // firmware extension, so re-scanning eventually finds none; the counter
+        // is just a backstop in case a rename keeps failing.
+        for (size_t guard = 0; guard < 16; guard++) {
+            char old_name[FILE_NAME_BUFFER_LEN];
+            old_name[0] = '\0';
+
+            Directory dir(dir_path);
+            if (!dir) {
+                return;
+            }
+            while (dirent *ent = dir.read()) {
+                if (ent->d_type == DT_DIR) {
+                    continue;
+                }
+                const char *name = dirent_lfn(ent);
+                if (filename_is_firmware(name) && strcasecmp(name, new_filename) != 0) {
+                    strlcpy(old_name, name, sizeof(old_name));
+                    break;
+                }
+            }
+            dir.close();
+
+            if (old_name[0] == '\0') {
+                // No more stale firmware to rename.
+                return;
+            }
+
+            char old_path[FILE_PATH_BUFFER_LEN + FILE_NAME_BUFFER_LEN];
+            char backup_path[sizeof(old_path) + sizeof(".old")];
+            snprintf(old_path, sizeof(old_path), "%s/%s", dir_path, old_name);
+            snprintf(backup_path, sizeof(backup_path), "%s.old", old_path);
+
+            // f_rename refuses to overwrite, so drop any previous backup first.
+            remove(backup_path);
+            if (rename(old_path, backup_path) != 0) {
+                // Give up rather than rescan the same file forever.
+                return;
+            }
+        }
+    }
+
     class PutTransfer final : public splice::Transfer {
     public:
         GcodeUpload::UploadedNotify *uploaded_notify = nullptr;
@@ -290,6 +353,7 @@ namespace {
                 error = try_rename(fname.begin(), final_filename, overwrite, [&](char *filename) -> UploadHooks::Result {
                     monitor_slot->done(Monitor::Outcome::Finished);
                     ChangedPath::instance.changed_path(filename, Type::File, Incident::Created);
+                    supersede_old_firmware(filename);
                     cleanup_temp_file = false;
                     if (uploaded_notify != nullptr) {
                         if (uploaded_notify(filename, print_after_upload)) {
@@ -342,8 +406,8 @@ namespace {
 } // namespace
 
 UploadHooks::Result GcodeUpload::check_filename(const char *filename) const {
-    if (!filename_is_printable(filename)) {
-        return make_tuple(Status::UnsupportedMediaType, "Not a GCODE");
+    if (!filename_is_transferrable(filename)) {
+        return make_tuple(Status::UnsupportedMediaType, "Not a GCODE or firmware");
     }
 
     // Note: If the directory we want to upload to doesn't exist,
@@ -418,6 +482,7 @@ UploadHooks::Result GcodeUpload::finish(const char *final_filename, bool start_p
     return try_rename(fname.begin(), final_filename, upload.overwrite, [&](char *filename) -> UploadHooks::Result {
         monitor_slot.done(Monitor::Outcome::Finished);
         ChangedPath::instance.changed_path(filename, Type::File, Incident::Created);
+        supersede_old_firmware(filename);
         if (uploaded_notify != nullptr) {
             if (uploaded_notify(filename, start_print)) {
                 return make_tuple(Status::Ok, nullptr);

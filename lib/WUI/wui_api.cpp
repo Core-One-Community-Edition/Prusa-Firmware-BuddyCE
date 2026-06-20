@@ -17,6 +17,7 @@
 #include "marlin_client.hpp"
 
 #include <lfn.h>
+#include <common/filename_type.hpp>
 #include <state/printer_state.hpp>
 
 #include <cassert>
@@ -327,6 +328,12 @@ StartPrintResult wui_start_print(char *filename, bool autostart_if_able) {
 }
 
 bool wui_uploaded_gcode(char *filename, bool start_print) {
+    // Firmware (.bbf) and other non-printable uploads have nothing to print or
+    // preview ‒ the upload itself is the whole job, so report success.
+    if (!filename_is_printable(filename)) {
+        return true;
+    }
+
     StartPrintResult res = wui_start_print(filename, start_print);
 
     return (res != StartPrintResult::Failed);
