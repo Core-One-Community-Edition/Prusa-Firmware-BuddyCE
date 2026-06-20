@@ -184,7 +184,12 @@ int FooterItemNozzle::static_readValue() {
 #endif
 
     HeatState state = getState(current, target, display, cold);
-    StateAndTemps temps(state, current, display, no_tool);
+    // Show the real target the printer is actually regulating to (target_nozzle), not display_nozzle.
+    // display_nozzle can show the full filament temperature (e.g. 215) while the printer is only
+    // preheating to a lower standby temperature (e.g. 170 for MBL), which is misleading.
+    // getState still receives display so the green "preheat" blink remains as a hint that the
+    // temperature will rise further later.
+    StateAndTemps temps(state, current, target, no_tool);
     return temps.ToInt();
 }
 
