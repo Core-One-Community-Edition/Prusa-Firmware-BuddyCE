@@ -6,6 +6,13 @@
 #include <transfers/monitor.hpp>
 #include <segmented_json_macros.h>
 
+#include "filament.hpp"
+#include <config_store/store_instance.hpp>
+#include <config_features.h>
+#include <common/adc.hpp>
+#include "printers.h"
+#include <module/temperature.h>
+
 #include <option/buddy_enable_connect.h>
 #if BUDDY_ENABLE_CONNECT()
     #include <connect/connect.hpp>
@@ -20,6 +27,13 @@
     #include <feature/chamber/chamber.hpp>
     #include <xl_enclosure.hpp>
     #include <fanctl.hpp>
+#endif
+
+#if BOARD_IS_XLBUDDY()
+    #include <module/prusa/toolchanger.h>
+#endif
+#if XL_ENCLOSURE_SUPPORT()
+    #include <puppies/modular_bed.hpp>
 #endif
 
 using namespace marlin_server;
@@ -46,6 +60,13 @@ json::JsonResult StatusRenderer::renderState(size_t resume_point, json::JsonOutp
 #elif XL_ENCLOSURE_SUPPORT()
     const auto chamber_caps = buddy::chamber().capabilities();
 #endif
+
+#if BOARD_IS_XLBUDDY()
+    buddy::puppies::Dwarf &dwarf = prusa_toolchanger.getActiveToolOrFirst();
+#endif
+
+    const FilamentType filament = config_store().get_filament_type(marlin_vars().active_extruder);
+    const FilamentTypeParameters filament_material = filament.parameters();
 
     // Keep the indentation of the JSON in here!
     // clang-format off
@@ -83,6 +104,27 @@ json::JsonResult StatusRenderer::renderState(size_t resume_point, json::JsonOutp
             JSON_FIELD_FFIXED("target_bed", marlin_vars().target_bed, 1) JSON_COMMA;
             JSON_FIELD_FFIXED("temp_nozzle", marlin_vars().active_hotend().temp_nozzle, 1) JSON_COMMA;
             JSON_FIELD_FFIXED("target_nozzle", marlin_vars().active_hotend().target_nozzle, 1) JSON_COMMA;
+            // Note: our own extension, because our printers sometimes display
+            // different "target" temperature than what they heat towards.
+            JSON_FIELD_FFIXED("display_nozzle", marlin_vars().active_hotend().display_nozzle, 1) JSON_COMMA;
+            JSON_FIELD_FFIXED("temp_heatbreak", marlin_vars().active_hotend().temp_heatbreak, 1) JSON_COMMA;
+            #if HAS_TEMP_BOARD
+            JSON_FIELD_FFIXED("temp_board", static_cast<double>(thermalManager.degBoard()), 1) JSON_COMMA;
+            #endif
+            #if BOARD_IS_XLBUDDY()
+            JSON_FIELD_INT("temp_sandwich", AdcGet::sandwichTemp()) JSON_COMMA;
+            JSON_FIELD_INT("temp_splitter", AdcGet::splitterTemp()) JSON_COMMA;
+            JSON_FIELD_FFIXED("temp_dwarf_mcu", dwarf.get_mcu_temperature(), 1) JSON_COMMA;
+            JSON_FIELD_FFIXED("temp_dwarf_board", dwarf.get_board_temperature(), 1) JSON_COMMA;
+            #endif
+            #if XL_ENCLOSURE_SUPPORT()
+            JSON_FIELD_INT("temp_mcu_modular_bed", buddy::puppies::modular_bed.get_mcu_temperature()) JSON_COMMA;
+            #endif
+            #if PRINTER_IS_PRUSA_iX()
+            JSON_FIELD_FFIXED("temp_psu", static_cast<double>(thermalManager.deg_psu()), 1) JSON_COMMA;
+            JSON_FIELD_FFIXED("temp_ambient", static_cast<double>(thermalManager.deg_ambient()), 1) JSON_COMMA;
+            #endif
+            JSON_FIELD_STR("material", filament_material.name.data()) JSON_COMMA;
             // XYZE, mm
             JSON_FIELD_FFIXED("axis_z", marlin_vars().logical_curr_pos[2], 1) JSON_COMMA;
             if (!marlin_client::is_printing()) {
