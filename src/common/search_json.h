@@ -82,8 +82,7 @@ namespace impl {
             for (int i = 0; pos && (i < token->size); i++) {
                 std::optional<std::string_view> key_tmp = std::nullopt;
                 if (is_object) {
-                    assert(pos->size == 1);
-                    if (pos->type != JSMN_STRING) {
+                    if (pos->type != JSMN_STRING || pos->size != 1) {
                         return nullptr;
                     }
                     key_tmp = std::string_view(input + pos->start, pos->end - pos->start);

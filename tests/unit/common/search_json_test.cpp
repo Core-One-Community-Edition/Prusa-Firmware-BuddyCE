@@ -59,3 +59,27 @@ TEST_CASE("Json structural traversal") {
     REQUIRE(success);
     REQUIRE(pos == event_cnt);
 }
+
+TEST_CASE("Malformed object member without value is refused") {
+    // Non-strict jsmn accepts {"key"} (a key with no value) as a "successful"
+    // parse, but it is structurally broken: the key token has size 0 and no
+    // value token follows it. search() must refuse it gracefully rather than
+    // advancing past the parsed tokens into uninitialized memory.
+    char json[] = "{\"gcode\"}";
+
+    jsmn_parser parser;
+    jsmntok_t tokens[MAX_TOKENS];
+    jsmn_init(&parser);
+
+    const auto parse_result = jsmn_parse(&parser, json, strlen(json), tokens, sizeof tokens / sizeof *tokens);
+
+    REQUIRE(parse_result > 0);
+
+    bool callback_called = false;
+    const bool success = json::search(json, tokens, parse_result, [&](const Event &) {
+        callback_called = true;
+    });
+
+    REQUIRE_FALSE(success);
+    REQUIRE_FALSE(callback_called);
+}
