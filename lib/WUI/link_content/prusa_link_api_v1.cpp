@@ -203,7 +203,14 @@ Selector::Accepted PrusaLinkApiV1::accept(const RequestParser &parser, handler::
         }
         switch (parser.method) {
         case Method::Put: {
-            if (parser.create_folder) {
+            if (parser.rename_requested()) {
+                char dest[FILE_PATH_BUFFER_LEN + FILE_NAME_BUFFER_LEN];
+                if (!parse_rename_dest(parser, dest, sizeof(dest), out)) {
+                    return Accepted::Accepted;
+                }
+                out.next = rename_file(filename, dest, parser);
+                return Accepted::Accepted;
+            } else if (parser.create_folder) {
                 out.next = create_folder(filename, parser);
                 return Accepted::Accepted;
             } else {

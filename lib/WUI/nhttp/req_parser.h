@@ -122,6 +122,11 @@ protected:
     http::Url url = {};
     uint8_t url_size = 0;
 
+    // Destination path for a rename/move (the Rename-To header). Stored raw
+    // (still percent-encoded); decode + validate via rename_to_filename().
+    http::Url rename_to = {};
+    uint8_t rename_to_size = 0;
+
 public:
     /*************   This part makes it a valid Handler and is used by the Server ***********/
     virtual automata::ExecutionControl event(automata::Event event) override;
@@ -153,6 +158,11 @@ public:
 
     bool uri_filename(char *buffer, size_t buffer_len) const;
     std::string_view uri() const { return std::string_view(url.begin(), url_size); }
+
+    /// Was a Rename-To header present (i.e. is this PUT a rename/move)?
+    bool rename_requested() const { return rename_to_size > 0; }
+    /// Decodes + validates the Rename-To destination into buffer (like uri_filename).
+    bool rename_to_filename(char *buffer, size_t buffer_len) const;
 
     /// Multipart boundary (or empty string if not present)
     std::string_view boundary() const { return std::string_view(url.begin() + url_size, boundary_size); }

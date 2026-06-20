@@ -25,6 +25,12 @@ handler::StatusPage delete_file(const char *filename, const handler::RequestPars
 
 handler::StatusPage create_folder(const char *filename, const handler::RequestParser &parser);
 
+// Decodes + validates the rename destination (the Rename-To header) into dest,
+// enforcing it stays on /usb/. On failure (false) the http response is set in out.
+bool parse_rename_dest(const handler::RequestParser &parser, char *dest, const size_t dest_len, handler::Step &out);
+
+handler::StatusPage rename_file(const char *source, const char *dest, const handler::RequestParser &parser);
+
 handler::StatusPage print_file(char *filename, const handler::RequestParser &parser);
 
 void get_only(handler::ConnectionState state, const handler::RequestParser &parser, handler::Step &out);
