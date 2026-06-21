@@ -20,6 +20,7 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/file_command.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/gcode_upload.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/gcode_preview.cpp
+  ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/dir_thumbnails.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/server.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/job_command.cpp
   ${CMAKE_SOURCE_DIR}/lib/WUI/nhttp/gcode_command.cpp
@@ -63,6 +64,7 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/transfers/transfer_recovery.cpp
   ${CMAKE_SOURCE_DIR}/lib/Middlewares/Third_Party/mbedtls/library/sha256.c
   ${CMAKE_SOURCE_DIR}/lib/Middlewares/Third_Party/mbedtls/library/md5.c
+  ${CMAKE_SOURCE_DIR}/lib/Middlewares/Third_Party/mbedtls/library/base64.c
   ${CMAKE_SOURCE_DIR}/lib/heatshrink/heatshrink_decoder.c
   # Dependencies.
   # It seems it's not possible to just link the damn LwIP library:

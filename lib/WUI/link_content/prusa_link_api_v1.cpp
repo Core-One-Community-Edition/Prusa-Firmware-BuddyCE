@@ -1,5 +1,6 @@
 #include "prusa_link_api_v1.h"
 #include "basic_gets.h"
+#include "../nhttp/dir_thumbnails.h"
 #include "../nhttp/file_info.h"
 #include "../nhttp/file_command.h"
 #include "../nhttp/gcode_command.h"
@@ -31,6 +32,7 @@ using std::optional;
 using std::string_view;
 using namespace handler;
 using namespace transfers;
+using nhttp::printer::DirThumbnails;
 using nhttp::printer::FileCommand;
 using nhttp::printer::FileInfo;
 using nhttp::printer::GcodeCommand;
@@ -188,6 +190,18 @@ Selector::Accepted PrusaLinkApiV1::accept(const RequestParser &parser, handler::
             out.next = StatusPage(Status::MethodNotAllowed, parser);
             return Accepted::Accepted;
         }
+    } else if (remove_prefix(suffix, "thumbnails").has_value()) {
+        // A whole directory's small thumbnails as one JSON object
+        // { "<name>": "<base64 png>", ... }, so the client doesn't fetch them
+        // one file at a time.
+        static const auto thumbs_prefix = "/api/v1/thumbnails";
+        static const size_t thumbs_prefix_len = strlen(thumbs_prefix);
+        char dirpath[FILE_PATH_BUFFER_LEN + FILE_NAME_BUFFER_LEN + thumbs_prefix_len];
+        if (!parse_file_url(parser, thumbs_prefix_len, dirpath, sizeof(dirpath), RemapPolicy::NoRemap, out)) {
+            return Accepted::Accepted;
+        }
+        get_only(SendJson(DirThumbnails(dirpath), parser.can_keep_alive()), parser, out);
+        return Accepted::Accepted;
     } else if (remove_prefix(suffix, "files").has_value()) {
         static const auto prefix = "/api/v1/files";
         static const size_t prefix_len = strlen(prefix);

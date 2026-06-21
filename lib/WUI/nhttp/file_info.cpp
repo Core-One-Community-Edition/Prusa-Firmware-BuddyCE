@@ -14,6 +14,7 @@
 #include <transfers/transfer.hpp>
 
 #include <cmsis_os.h>
+#include <cstdio>
 #include <cstring>
 #include <sys/stat.h>
 
@@ -127,6 +128,19 @@ JsonResult FileInfo::DirRenderer::renderStateV1(size_t resume_point, JsonOutput 
                 }
             }
 
+            // The dirent carries no size, so stat the entry to include it in the
+            // listing (saves the client a per-file request). Stored in state so
+            // it survives a render resume mid-entry.
+            state.entry_size = 0;
+            if (state.ent->d_type != DT_DIR) {
+                char entry_path[FILE_PATH_BUFFER_LEN + FILE_NAME_BUFFER_LEN];
+                snprintf(entry_path, sizeof(entry_path), "%s/%s", state.filepath, state.ent->d_name);
+                struct stat entry_st {};
+                if (stat_retry(entry_path, &entry_st) == 0) {
+                    state.entry_size = entry_st.st_size;
+                }
+            }
+
             if (!state.first) {
                 JSON_COMMA;
             } else {
@@ -142,6 +156,7 @@ JsonResult FileInfo::DirRenderer::renderStateV1(size_t resume_point, JsonOutput 
                 JSON_FIELD_INT("m_timestamp", state.ent->time) JSON_COMMA;
 #endif
                 if (state.ent->d_type != DT_DIR) {
+                    JSON_FIELD_INT("size", state.entry_size) JSON_COMMA;
                     JSON_FIELD_OBJ("refs");
                         if (filename_is_printable(state.ent->d_name)) {
                             JSON_FIELD_STR_FORMAT("icon", "/thumb/s%s/%s", state.filepath, state.ent->d_name) JSON_COMMA;
