@@ -47,6 +47,10 @@ public:
 
     static constexpr float integration_constant = 1.5f * dt_s; // used for legacy regulator only
 
+    // Default ramp regulator tuning, can be overridden per print via M106 P3/P4 N/G
+    static constexpr uint8_t default_ramp_breakpoint_pwm = 0;
+    static constexpr float default_ramp_slope = 10.0f;
+
     /// Applies spinup and emergency fan overrides
     [[nodiscard]] FanPWM apply_pwm_overrides(bool already_spinning, FanPWM pwm) const;
 
@@ -57,9 +61,14 @@ public:
     constexpr bool get_overheating_temp_flag() { return overheating_temp_flag; };
     constexpr bool get_critical_temp_flag() { return critical_temp_flag; };
 
-    uint8_t ramp_breakpoint_pwm = 0;
-    float ramp_slope = 10.0f;
-    bool regulator_legacy = true; // Legacy regulator for old gcode compatibility
+    uint8_t ramp_breakpoint_pwm = default_ramp_breakpoint_pwm;
+    float ramp_slope = default_ramp_slope;
+
+    /// Fork note: upstream defaults to the legacy regulator (and switches back to it on print
+    /// start/end), which behaves like a bang-bang 0% <-> max% control. We default to the graduated
+    /// ramp regulator instead and nothing enables the legacy one anymore. The legacy code path is
+    /// kept dormant only to minimize divergence from upstream - candidate for future cleanup.
+    bool regulator_legacy = false;
 
 private:
     /// Computes a PWM ramping function

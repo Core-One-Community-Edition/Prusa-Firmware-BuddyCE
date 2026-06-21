@@ -1012,7 +1012,7 @@ void static finalize_print(bool finished) {
 #endif
 
 #if XBUDDY_EXTENSION_VARIANT_IS_STANDARD()
-    buddy::xbuddy_extension().set_chamber_regulator_legacy(true); // For compatibility with old gcodes on coreone
+    buddy::xbuddy_extension().reset_chamber_regulator(); // So that per-print M106 N/G tuning does not leak into the next print or idle cooling
 #endif
 
     if (config_store().show_fsensors_disabled_warning_after_print.get()) {
@@ -2236,7 +2236,7 @@ static void _server_print_loop(void) {
         buddy::chamber_filtration().check_filter_expiration();
 #endif
 #if XBUDDY_EXTENSION_VARIANT_IS_STANDARD()
-        buddy::xbuddy_extension().set_chamber_regulator_legacy(true); // For compatibility with old gcodes on coreone
+        buddy::xbuddy_extension().reset_chamber_regulator(); // So that per-print M106 N/G tuning does not leak into the next print or idle cooling
 #endif
         break;
 

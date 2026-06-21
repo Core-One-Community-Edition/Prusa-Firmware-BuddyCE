@@ -57,15 +57,41 @@ TEST_CASE("Cooling PWM") {
     }
 
     SECTION("Auto cooling, really hot") {
-        const std::optional<Temperature> target_temperature = 20;
-        const Temperature current_temperature = 55;
+        // Far above target - the ramp regulator saturates at the max allowed PWM right away
+        REQUIRE(step(true, 55, 20, pwm_auto) == max_auto_pwm);
+    }
 
-        const auto result = step(true, current_temperature, target_temperature, pwm_auto);
-        REQUIRE(result > PWM255 { 0 });
+    SECTION("Auto cooling, graduated curve") {
+        const std::optional<Temperature> target_temperature = 40;
+
+        // Slightly above target - below the hysteresis turn-on threshold, fans stay off
+        REQUIRE(step(true, 42, target_temperature, pwm_auto) == PWM255 { 0 });
+        REQUIRE(step(true, 43, target_temperature, pwm_auto) == PWM255 { 0 });
+
+        // Error of 4°C * default_ramp_slope(10) = 40 PWM, above the turn-on threshold
+        REQUIRE(step(true, 44, target_temperature, pwm_auto) == PWM255 { 40 });
+
+        // Hysteresis dead-band - once running, a drop below the turn-on threshold keeps the fans on
+        REQUIRE(step(true, 43, target_temperature, pwm_auto) == cooling.min_pwm);
+
+        // Below the turn-off threshold, fans turn off
+        REQUIRE(step(true, 42, target_temperature, pwm_auto) == PWM255 { 0 });
+
+        // Proportional region - 10 PWM per °C above target
+        REQUIRE(step(true, 47, target_temperature, pwm_auto) == PWM255 { 70 });
+
+        // Far above target - clamped to the max allowed PWM
+        REQUIRE(step(true, 55, target_temperature, pwm_auto) == max_auto_pwm);
+    }
+
+    SECTION("Auto cooling, dormant legacy regulator") {
+        cooling.regulator_legacy = true;
+
+        // The legacy I-only regulator winds up to the max allowed PWM on sustained overtemperature
         for (uint32_t i = 0; i < 10; i++) {
-            step(true, current_temperature, target_temperature, pwm_auto);
+            step(true, 50, 40, pwm_auto);
         }
-        REQUIRE(step(true, current_temperature, target_temperature, pwm_auto) == max_auto_pwm);
+        REQUIRE(step(true, 50, 40, pwm_auto) == max_auto_pwm);
     }
 
     SECTION("Nonsense range test") {
@@ -73,7 +99,7 @@ TEST_CASE("Cooling PWM") {
 
         REQUIRE(step(true, current_temperature, -100, pwm_auto) == max_auto_pwm);
 
-        // due to previous regulation cycle, the target value must be multiplied
+        // Target far above the current temperature - no cooling needed
         REQUIRE(step(true, current_temperature, 300, pwm_auto) == PWM255 { 0 });
     }
 
