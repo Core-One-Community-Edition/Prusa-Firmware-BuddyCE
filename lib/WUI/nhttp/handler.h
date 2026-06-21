@@ -28,6 +28,7 @@
  */
 #pragma once
 
+#include "dir_thumbnails.h"
 #include "file_info.h"
 #include "file_command.h"
 #include "gcode_command.h"
@@ -151,6 +152,7 @@ namespace handler {
         SendJson<StatusRenderer>,
         printer::GcodeUpload,
         printer::GCodePreview,
+        SendJson<printer::DirThumbnails>,
         printer::JobCommand,
         printer::GcodeCommand,
         printer::FileInfo,
