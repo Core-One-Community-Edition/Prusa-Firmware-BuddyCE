@@ -22,12 +22,16 @@ public:
         return ret;
     }
 
+    IWindowMenu *get_menu() override { return i_menu; }
+    string_view_utf8 get_menu_title() const override { return menu_title_; }
+
 protected:
     ScreenMenuBase_(window_t *parent, const string_view_utf8 &label, EFooter show_footer, IWindowMenu *menu)
         : screen_t(parent, parent != nullptr ? win_type_t::dialog : win_type_t::normal)
         , header(this)
         , footer(this)
-        , i_menu(menu) //
+        , i_menu(menu)
+        , menu_title_(label) //
     {
         // Do NOT work with i_menu here, it is not yet constructed!
         header.SetText(label);
@@ -40,6 +44,7 @@ protected:
 
 private:
     IWindowMenu *i_menu = nullptr;
+    string_view_utf8 menu_title_;
 };
 
 template <typename Menu>

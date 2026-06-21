@@ -21,6 +21,9 @@
 #include <option/has_esp.h>
 
 class MI_SCREEN_BASE : public IWindowMenuItem {
+public:
+    MenuItemType menu_item_type() const override { return MenuItemType::submenu; }
+
 protected:
     // Two constructors for flash saving (so that we don't need to pass that many parameters)
     MI_SCREEN_BASE(ScreenFactory::Creator::Func screen_ctor, const char *label);

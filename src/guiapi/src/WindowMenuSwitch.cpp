@@ -87,6 +87,10 @@ void MenuItemSwitch::changeExtentionWidth() {
 }
 
 string_view_utf8 MenuItemSwitch::current_item_text() const {
-    const char *str = items_[index_];
+    return item_text(index_);
+}
+
+string_view_utf8 MenuItemSwitch::item_text(size_t index) const {
+    const char *str = items_[index];
     return translate_items_ ? _(str) : string_view_utf8::MakeRAM(str);
 }

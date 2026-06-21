@@ -34,6 +34,8 @@
 #include "gcode_upload.h"
 #include "gcode_preview.h"
 #include "job_command.h"
+#include "menu_command.hpp"
+#include "menu_renderer.hpp"
 #include "req_parser.h"
 #include "send_file.h"
 #include "send_json.h"
@@ -149,10 +151,12 @@ namespace handler {
         SendJson<EmptyRenderer>,
         SendJson<TransferRenderer>,
         SendJson<StatusRenderer>,
+        SendJson<MenuJsonRenderer>,
         printer::GcodeUpload,
         printer::GCodePreview,
         printer::JobCommand,
         printer::GcodeCommand,
+        printer::MenuCommand,
         printer::FileInfo,
         printer::FileCommand,
 #if NETWORKING_BENCHMARK_ENABLED

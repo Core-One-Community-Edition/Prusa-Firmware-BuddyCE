@@ -80,6 +80,18 @@ public:
         replaces_extends,
     };
 
+    /// Coarse classification used by the remote menu API to serialize/drive
+    /// items generically. RTTI is disabled in firmware, so this virtual tag
+    /// replaces dynamic_cast for telling item kinds apart.
+    enum class MenuItemType : uint8_t {
+        generic,
+        info,
+        toggle,
+        options,
+        number,
+        submenu,
+    };
+
     /// Minimum width of the item extension touch rect
     static constexpr int minimum_touch_extension_area_width = 96;
 
@@ -266,6 +278,9 @@ public:
     IconPosition get_icon_position() const;
 
     virtual void Loop() {}; // automatically called by menu
+
+    /// Coarse item kind for the remote menu API. Overridden by the widget bases.
+    virtual MenuItemType menu_item_type() const { return MenuItemType::generic; }
 
     // some friend classes to be able to access / private hide/show methods
     // those methods must not be public, because their usage will break menu!!!
