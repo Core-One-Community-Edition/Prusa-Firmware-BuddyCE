@@ -1517,7 +1517,8 @@ void Temperature::manage_heater() {
       #endif
 
       #if HAS_THERMALLY_PROTECTED_BED
-        thermal_runaway_protection(tr_state_machine_bed, temp_bed.celsius, temp_bed.target, H_BED, THERMAL_PROTECTION_BED_PERIOD, THERMAL_PROTECTION_BED_HYSTERESIS);
+        const uint16_t bed_hysteresis = _MAX(THERMAL_PROTECTION_BED_HYSTERESIS, temp_bed.target * THERMAL_PROTECTION_BED_HYSTERESIS_PERCENT / 100);
+        thermal_runaway_protection(tr_state_machine_bed, temp_bed.celsius, temp_bed.target, H_BED, THERMAL_PROTECTION_BED_PERIOD, bed_hysteresis);
       #endif
 
       #if HEATER_IDLE_HANDLER
