@@ -92,7 +92,8 @@
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
     #define THERMAL_PROTECTION_BED_PERIOD 20 // Seconds
-    #define THERMAL_PROTECTION_BED_HYSTERESIS 10 // Degrees Celsius
+    #define THERMAL_PROTECTION_BED_HYSTERESIS 10 // Degrees Celsius (minimum recovery band)
+    #define THERMAL_PROTECTION_BED_HYSTERESIS_PERCENT 20 // Percent of target temperature; the band is the larger of this and the minimum above
 
     /**
    * As described above, except for the bed (M140/M190/M303).
