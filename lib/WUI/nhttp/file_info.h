@@ -47,6 +47,7 @@ private:
         Directory dir;
         dirent *ent = nullptr;
         time_t base_folder_timestamp {};
+        int64_t entry_size = 0;
         bool first = true;
         bool read_only = false;
         bool partial = false;
