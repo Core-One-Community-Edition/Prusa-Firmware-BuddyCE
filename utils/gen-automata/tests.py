@@ -41,6 +41,7 @@ want_headers = {
     'Content-Length': read_header_value('ContentLength'),
     'Content-Type': read_boundary(),
     'Print-After-Upload': print_after_upload_header(),
+    'Rename-To': read_header_value('RenameTo'),
     'Connection': connection_header(),
     'Accept': accept_header(),
     'Content-Encryption-Mode': content_encryption_mode_header(),

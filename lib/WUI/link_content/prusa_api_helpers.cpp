@@ -6,6 +6,7 @@
 #include <print_utils.hpp>
 
 #include <unistd.h>
+#include <cstdio>
 
 namespace nhttp::link_content {
 
@@ -122,6 +123,49 @@ StatusPage create_folder(const char *filename, const RequestParser &parser) {
     }
 
     ChangedPath::instance.changed_path(filename, Type::Folder, Incident::Created);
+    return StatusPage(Status::Created, parser);
+}
+
+bool parse_rename_dest(const RequestParser &parser, char *dest, const size_t dest_len, handler::Step &out) {
+    if (!parser.rename_to_filename(dest, dest_len)) {
+        out.next = StatusPage(Status::BadRequest, parser, "Invalid rename destination");
+        return false;
+    }
+
+    // Same safety guard as parse_file_url: the destination must stay on the USB.
+    if (strncmp(dest, "/usb/", 5) != 0) {
+        out.next = StatusPage(Status::Forbidden, parser);
+        return false;
+    }
+
+    dedup_slashes(dest);
+
+    return true;
+}
+
+StatusPage rename_file(const char *source, const char *dest, const RequestParser &parser) {
+    if (access(source, F_OK) != 0) {
+        return StatusPage(Status::NotFound, parser);
+    }
+
+    if (access(dest, F_OK) == 0) {
+        if (!parser.overwrite_file) {
+            return StatusPage(Status::Conflict, parser, "Destination already exists");
+        }
+        if (remove(dest) != 0) {
+            return StatusPage(Status::Conflict, parser, "Destination is busy");
+        }
+    }
+
+    // Filesystem-level rename on the USB FatFS — instant, copies no data, and
+    // works for any file type (gcode, .bbf, .bbf.old, …).
+    if (rename(source, dest) != 0) {
+        return StatusPage(Status::Conflict, parser, "Could not rename (file busy?)");
+    }
+
+    ChangedPath::instance.changed_path(source, Type::File, Incident::Deleted);
+    ChangedPath::instance.changed_path(dest, Type::File, Incident::Created);
+
     return StatusPage(Status::Created, parser);
 }
 

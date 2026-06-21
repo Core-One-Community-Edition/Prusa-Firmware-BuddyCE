@@ -112,6 +112,14 @@ ExecutionControl RequestParser::event(Event event) {
             error_code = Status::RequestHeaderFieldsTooLarge;
             return ExecutionControl::Continue;
         }
+    case Names::RenameTo:
+        if (rename_to_size < rename_to.size()) {
+            rename_to[rename_to_size++] = event.payload;
+            return ExecutionControl::Continue;
+        } else {
+            error_code = Status::RequestHeaderFieldsTooLarge;
+            return ExecutionControl::Continue;
+        }
     case Names::Nonce:
     case Names::NonceUnquoted: {
         if (!holds_alternative<DigestAuthParams>(auth_status)) {
@@ -270,11 +278,15 @@ StatusPage::CloseHandling RequestParser::status_page_handling() const {
     return can_keep_alive() ? StatusPage::CloseHandling::KeepAlive : StatusPage::CloseHandling::Close;
 }
 
-bool RequestParser::uri_filename(char *buffer, size_t buffer_size) const {
+namespace {
+
+// Safely turns a (possibly percent-encoded) request path into a file name:
+// strips query params, url-decodes, and forbids directory traversal ("..").
+bool decode_path(string_view raw, char *buffer, size_t buffer_size) {
     // Only up to ?, which are query params
-    size_t len = url_size;
-    if (const char *amp = static_cast<const char *>(memchr(url.begin(), '?', url_size)); amp) {
-        len = amp - url.begin();
+    size_t len = raw.size();
+    if (const char *amp = static_cast<const char *>(memchr(raw.data(), '?', raw.size())); amp) {
+        len = amp - raw.data();
     }
 
     // FIXME: this is a bit stricter than necessary, if we have
@@ -283,27 +295,37 @@ bool RequestParser::uri_filename(char *buffer, size_t buffer_size) const {
         return false;
     }
 
-    string_view fname(url.begin(), len);
+    string_view fname(raw.data(), len);
     if (!url_decode(fname, buffer, buffer_size)) {
         return false;
     }
 
-    size_t url_len = strlen(buffer);
-    string_view fname_decoded(buffer, url_len);
+    size_t decoded_len = strlen(buffer);
+    string_view fname_decoded(buffer, decoded_len);
     // Make sure the user is not able to "escape" from directory.
-    if (url_len >= 3 && (fname_decoded.substr(0, 3) == "../" || fname_decoded.substr(url_len - 3) == "/..")) {
+    if (decoded_len >= 3 && (fname_decoded.substr(0, 3) == "../" || fname_decoded.substr(decoded_len - 3) == "/..")) {
         return false;
     }
 
     // It seems looking for a substring in a non-null-terminated string in C++
     // is kind of painful.
-    for (size_t i = 0; i + 4 < url_len; i++) {
+    for (size_t i = 0; i + 4 < decoded_len; i++) {
         if (fname_decoded.substr(i, 4) == "/../") {
             return false;
         }
     }
 
     return true;
+}
+
+} // namespace
+
+bool RequestParser::uri_filename(char *buffer, size_t buffer_size) const {
+    return decode_path(uri(), buffer, buffer_size);
+}
+
+bool RequestParser::rename_to_filename(char *buffer, size_t buffer_size) const {
+    return decode_path(string_view(rename_to.begin(), rename_to_size), buffer, buffer_size);
 }
 
 bool RequestParser::nonce_valid(uint64_t nonce_to_check) const {

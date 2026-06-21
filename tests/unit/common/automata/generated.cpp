@@ -164,6 +164,19 @@ TEST_CASE("X-Api-Key first") {
     REQUIRE(ex.events.back().entering_state == Names::Body);
 }
 
+TEST_CASE("Rename-To header") {
+    using test::http::Names;
+    TestExecution ex(http_request);
+    const string_view request = string_view("PUT /api/v1/files/usb/old.gcode HTTP/1.1\r\nX-Api-Key: 12345678\r\nRename-To: /usb/new.gcode\r\nContent-Length: 0\r\n\r\n");
+    const auto [result, consumed] = ex.consume(request);
+
+    REQUIRE(result == ExecutionControl::Continue);
+    REQUIRE(ex.events[0].leaving_state == Names::MethodPut);
+    REQUIRE(ex.collect_entered(Names::Url) == "/api/v1/files/usb/old.gcode");
+    REQUIRE(ex.collect_entered(Names::RenameTo) == "/usb/new.gcode");
+    REQUIRE(ex.events.back().entering_state == Names::Body);
+}
+
 TEST_CASE("Extract boundary") {
     using test::http::Names;
     const char *boundary = nullptr;

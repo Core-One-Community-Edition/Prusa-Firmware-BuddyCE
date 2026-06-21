@@ -9,6 +9,7 @@ if __name__ == "__main__":
         'Print-After-Upload': print_after_upload_header(),
         'Overwrite': overwrite_file_header(),
         'Create-Folder': create_folder_header(),
+        'Rename-To': read_header_value('RenameTo'),
         'Content-Type': read_boundary(),
         'Connection': connection_header(),
         'Accept': accept_header(),
