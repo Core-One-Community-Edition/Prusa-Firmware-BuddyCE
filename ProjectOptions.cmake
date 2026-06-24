@@ -546,6 +546,10 @@ set_feature_for_printers(HAS_SHEET_SUPPORT "MINI" "MK3.5")
 set_feature_for_printers(HAS_NFC "MK3.5" "MK4" "COREONE" "COREONEL")
 
 set_feature_for_printers(HAS_NOZZLE_CLEANER "iX")
+# Bed wiper (silicone pad mounted on the front of the heatbed). Cleans the
+# nozzle before bed mesh leveling by injecting a user-supplied g-code file
+# from the USB drive, mirroring the iX nozzle_cleaner mechanism.
+set_feature_for_printers(HAS_BED_WIPER "COREONE")
 set_feature_for_printers(HAS_MANUAL_BELT_TUNING "COREONE" "COREONEL" "iX")
 set_feature_for_printers_master_board(HAS_I2C_EXPANDER "MK3.5" "MK4" "COREONE" "COREONEL")
 set_feature_for_printers(HAS_WASTEBIN "iX")

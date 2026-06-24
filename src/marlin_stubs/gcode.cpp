@@ -361,6 +361,11 @@ bool GcodeSuite::process_parsed_command_custom(bool no_ok) {
             PrusaGcodeSuite::G12();
             break;
 #endif
+#if HAS_BED_WIPER()
+        case 13:
+            PrusaGcodeSuite::G13();
+            break;
+#endif
         case 26:
             PrusaGcodeSuite::G26();
             break;

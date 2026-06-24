@@ -15,6 +15,7 @@
 #include <option/has_dwarf.h>
 #include <option/has_filament_sensors_menu.h>
 #include <option/has_coldpull.h>
+#include <option/has_bed_wiper.h>
 #include <option/has_leds.h>
 #include <option/has_side_leds.h>
 #include <option/buddy_enable_connect.h>
@@ -483,7 +484,25 @@ public:
 protected:
     virtual void click(IWindowMenu &window_menu) override;
 };
+#endif
 
+#if HAS_BED_WIPER()
+
+class MI_WIPE_NOZZLE : public IWindowMenuItem {
+    static constexpr const char *const label = N_("Wipe Nozzle");
+
+public:
+    MI_WIPE_NOZZLE();
+
+protected:
+    virtual void click(IWindowMenu &window_menu) override;
+};
+
+class MI_BED_WIPER_ENABLE : public WI_ICON_SWITCH_OFF_ON_t {
+public:
+    MI_BED_WIPER_ENABLE();
+    void OnChange(size_t) final;
+};
 #endif
 
 class MI_GCODE_VERIFY : public WI_ICON_SWITCH_OFF_ON_t {
