@@ -111,21 +111,24 @@ inline double vibration_reduction_factor(
     // inv_D = 1 / sum(shaper pulse amplitudes)
     double d = 0.;
     for (int i = 0; i < shaper.num_pulses; ++i) {
-        d += shaper.a[i];
+        d += static_cast<double>(shaper.a[i]);
     }
     const double inv_D = 1. / d;
 
-    const double omega = 2. * std::numbers::pi_v<double> * frequency;
-    const double damping = system_damping_ratio * omega;
+    const double omega = 2. * std::numbers::pi_v<double> * static_cast<double>(frequency);
+    const double damping = static_cast<double>(system_damping_ratio) * omega;
     const double omega_d = omega * std::sqrt(1. - static_cast<double>(sq(system_damping_ratio)));
 
     double s = 0.;
     double c = 0.;
 
     for (int i = 0; i < shaper.num_pulses; ++i) {
-        const double w = shaper.a[i] * std::exp(-damping * (shaper.t[shaper.num_pulses - 1] - shaper.t[i]));
-        s += w * std::sin(omega_d * shaper.t[i]);
-        c += w * std::cos(omega_d * shaper.t[i]);
+        const double a = static_cast<double>(shaper.a[i]);
+        const double t = static_cast<double>(shaper.t[i]);
+        const double t_last = static_cast<double>(shaper.t[shaper.num_pulses - 1]);
+        const double w = a * std::exp(-damping * (t_last - t));
+        s += w * std::sin(omega_d * t);
+        c += w * std::cos(omega_d * t);
     }
     return std::sqrt(sq(s) + sq(c)) * inv_D;
 }

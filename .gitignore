@@ -23,3 +23,8 @@ __pycache__
 *.egg
 /heap_instrumentation.txt
 /src/**/*.mo
+
+# Agent/session scratch
+/.pi-subagents/
+/progress.md
+/plan.md

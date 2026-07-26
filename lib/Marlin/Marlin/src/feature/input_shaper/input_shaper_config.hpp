@@ -203,7 +203,15 @@ constexpr float frequency_safe_min = 10.0;
 #if PRINTER_IS_PRUSA_MINI()
 constexpr float frequency_safe_max = 150.0;
 #else
-constexpr float frequency_safe_max = 100.0;
+// Sized to cover the full motor-vibration sweep range (20-200 Hz, see
+// motor_vibration_config.hpp). Capping at 100 Hz would leave high-frequency
+// structural resonances (e.g. the ~183 Hz mode observed on CoreOne) un-notchable
+// even though the user can measure them with M963. A ZV notch at 200 Hz adds
+// only ~2.5 ms of smoothing, so there is no physics reason to clamp lower.
+// M1959 auto-calibration still only *recommends* within its own accept band
+// (low_freq_limit_hz..high_freq_limit_hz); this cap only governs what a user
+// may manually configure via the menu or M593.
+constexpr float frequency_safe_max = 200.0;
 #endif
 
 float clamp_frequency_to_safe_values(float frequency);

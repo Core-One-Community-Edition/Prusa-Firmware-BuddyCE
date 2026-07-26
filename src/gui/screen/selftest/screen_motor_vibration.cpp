@@ -333,6 +333,10 @@ public:
             snprintf(buffer_.data(), buffer_.size(),
                 "No USB stick found.\nInsert USB and retry.\n\nPeak: Motor A %d Hz, Motor B %d Hz",
                 results.peak_freq_a, results.peak_freq_b);
+        } else if (results.usb_status == 3) {
+            snprintf(buffer_.data(), buffer_.size(),
+                "Sweep aborted.\nPartial spectra (if any) saved to USB.\n\nPeak: Motor A %d Hz, Motor B %d Hz",
+                results.peak_freq_a, results.peak_freq_b);
         } else {
             snprintf(buffer_.data(), buffer_.size(),
                 "Measurement data invalid.\nCheck accelerometer.\n\nPress Continue to finish.");

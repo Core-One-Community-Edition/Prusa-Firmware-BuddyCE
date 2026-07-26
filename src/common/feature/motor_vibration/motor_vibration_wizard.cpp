@@ -85,7 +85,13 @@ void write_spectrum_row(FILE *f, float frequency, float gain_x, float gain_y, fl
         static_cast<double>(gain_y),
         static_cast<double>(gain_z),
         static_cast<double>(psd));
-    fwrite(buffer.data(), n, 1, f);
+    // snprintf returns the would-have-been length on truncation (>= size) or a
+    // negative value on an encoding error. Guard both before fwrite, otherwise
+    // a negative n widens to a huge size_t (buffer over-read) and truncation
+    // reads past the 80-byte buffer.
+    if (n > 0 && n < static_cast<int>(buffer.size())) {
+        fwrite(buffer.data(), static_cast<size_t>(n), 1, f);
+    }
 }
 
 /// Close and flush the spectrum file.
@@ -249,9 +255,18 @@ private:
             }
         }
 
-        // Determine USB status
+        // Determine USB status. Distinguish a user abort (USB present, but
+        // the sweep did not complete) from a genuinely missing USB stick — the
+        // old code conflated them under usb_status==2 and told the user to
+        // "insert USB" even though USB was fine.
         if (usb_status == 0 && file_a) {
-            usb_status = (motor_a_ok && motor_b_ok) ? 1 : 2;
+            if (motor_a_ok && motor_b_ok) {
+                usb_status = 1; // written
+            } else if (motor_a_ok || motor_b_ok) {
+                usb_status = 3; // aborted, partial data written
+            } else {
+                usb_status = 3; // aborted before/at motor A, no data
+            }
         }
 
         // Show results

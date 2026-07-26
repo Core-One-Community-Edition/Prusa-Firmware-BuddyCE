@@ -133,12 +133,24 @@ static void dump_current_config() {
 }
 
 static M593Params clamp_frequency(M593Params params) {
-    if (params.axis.frequency != 0.) {
+    // Guard the optional dereference: a disengaged optional is never equal to
+    // any value, so `opt != 0.` is true when unset and must not be dereferenced.
+    if (params.axis.frequency && *params.axis.frequency != 0.f) {
         const float original_frequency = *params.axis.frequency;
         const float clamped_frequency = clamp_frequency_to_safe_values(original_frequency);
         if (clamped_frequency != original_frequency) {
             SERIAL_ECHO_MSG("Frequency clamped to safe values");
             params.axis.frequency = clamped_frequency;
+        }
+    }
+    // Clamp the cascade frequency to the same safe range as the primary.
+    // (A frequency of 0 means "disable cascade" and must be preserved.)
+    if (params.cascade.frequency && *params.cascade.frequency != 0.f) {
+        const float original_frequency = *params.cascade.frequency;
+        const float clamped_frequency = clamp_frequency_to_safe_values(original_frequency);
+        if (clamped_frequency != original_frequency) {
+            SERIAL_ECHO_MSG("Cascade frequency clamped to safe values");
+            params.cascade.frequency = clamped_frequency;
         }
     }
     return params;
@@ -154,6 +166,26 @@ static void M593_set_axis_config(const AxisEnum axis, const M593Params &params) 
     if (params.cascade.type || params.cascade.frequency || params.cascade.damping_ratio || params.cascade.vibration_reduction) {
         const std::optional<AxisConfig> prev_cascade = current_config().cascade[axis];
         const std::optional<AxisConfig> next_cascade = get_cascade_config(prev_cascade, params);
+
+        // Validate that the primary+cascade convolution fits the pulse buffer.
+        // If it doesn't, the firmware will silently fall back to primary-only at
+        // apply time, so warn here (where the user can act) rather than leaving
+        // the configured-but-ignored situation undiagnosed.
+        if (next_config && next_cascade && next_cascade->type != input_shaper::Type::null && next_cascade->frequency > 0.f) {
+            const int primary_pulses = input_shaper::num_pulses_for_type(next_config->type);
+            const int cascade_pulses = input_shaper::num_pulses_for_type(next_cascade->type);
+            // On CoreXY two axes share the merge buffer, so the bound is the
+            // per-axis slot count (INPUT_SHAPER_MAX_LENGTH); on non-CoreXY the
+            // bound is the total (INPUT_SHAPER_MAX_PULSES == MAX_LENGTH here).
+            const int max_pulses = INPUT_SHAPER_MAX_LENGTH;
+            if (primary_pulses * cascade_pulses > max_pulses) {
+                SERIAL_ECHO_MSG("?Cascade too large for buffer, falling back to primary-only");
+                current_config().cascade[axis].reset();
+                set_axis_config(axis, next_config);
+                return;
+            }
+        }
+
         current_config().cascade[axis] = next_cascade;
         // Re-apply the axis config to update pulses (cascade changes the effective pulse train)
         set_axis_config(axis, next_config);

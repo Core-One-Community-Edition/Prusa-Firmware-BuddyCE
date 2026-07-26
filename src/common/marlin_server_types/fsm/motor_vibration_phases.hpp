@@ -41,7 +41,7 @@ struct sweep_measuring_data {
 struct sweep_results_data {
     uint8_t peak_freq_a; ///< Peak frequency for motor A (Hz), 0 if not measured
     uint8_t peak_freq_b; ///< Peak frequency for motor B (Hz), 0 if not measured
-    uint8_t usb_status;  ///< 0=not attempted, 1=written, 2=no USB stick
+    uint8_t usb_status;  ///< 0=not attempted, 1=written, 2=no USB stick, 3=aborted (partial/no data)
     uint8_t shaped;     ///< 0=raw only, 1=raw+shaped files written
 
     sweep_results_data() = default;

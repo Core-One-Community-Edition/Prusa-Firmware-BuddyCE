@@ -249,6 +249,26 @@ void create_null_input_shaper_pulses(input_shaper_pulses_t &is_pulses) {
     init_input_shaper_pulses(shaper.a, shaper.t, shaper.num_pulses, &is_pulses);
 }
 
+int input_shaper::num_pulses_for_type(const input_shaper::Type type) {
+    switch (type) {
+    case input_shaper::Type::null:
+        return 0;
+    case input_shaper::Type::zv:
+        return 2;
+    case input_shaper::Type::zvd:
+    case input_shaper::Type::mzv:
+    case input_shaper::Type::ei:
+        return 3;
+    case input_shaper::Type::ei_2hump:
+        return 4;
+    case input_shaper::Type::ei_3hump:
+        return 5;
+    case input_shaper::Type::cnt:
+        return 0;
+    }
+    return 0;
+}
+
 void create_cascaded_input_shaper_pulses(input_shaper_pulses_t &is_pulses, const input_shaper::AxisConfig &primary_config, const std::optional<input_shaper::AxisConfig> &cascade_config) {
     // Create the primary shaper
     input_shaper::Shaper shaper1 = input_shaper::get(
@@ -271,9 +291,13 @@ void create_cascaded_input_shaper_pulses(input_shaper_pulses_t &is_pulses, const
     const int n_combined = n1 * n2;
 
     if (n_combined > INPUT_SHAPER_MAX_PULSES) {
-        // This should not happen if cascade configurations are validated,
-        // but protect against buffer overflow
-        bsod("Cascaded shaper pulse count exceeds buffer");
+        // The cascade would produce more pulses than the buffer can hold (e.g. a
+        // 2HUMP/3HUMP-heavy combo set via M593). Fall back to the primary shaper
+        // alone rather than crashing — the printer stays usable, just without
+        // the second notch. M593 / the UI are expected to reject such configs
+        // upstream with a diagnostic message; this is the last-resort safety net.
+        init_input_shaper_pulses(shaper1.a, shaper1.t, shaper1.num_pulses, &is_pulses);
+        return;
     }
 
     // Build combined pulse arrays
