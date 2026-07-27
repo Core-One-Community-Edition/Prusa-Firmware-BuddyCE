@@ -16,6 +16,7 @@
 #include <option/has_door_sensor_calibration.h>
 #include <option/has_bed_level_probe.h>
 #include <option/has_manual_belt_tuning.h>
+#include <option/has_motor_vibration.h>
 #include <option/has_loadcell.h>
 #include <gui/screen/screen_preheat.hpp>
 #include <gui/screen/dialog_safety_timer.hpp>
@@ -26,6 +27,10 @@
 
 #if HAS_MANUAL_BELT_TUNING()
     #include <screen/selftest/screen_manual_belt_tuning.hpp>
+#endif
+
+#if HAS_MOTOR_VIBRATION()
+    #include <screen/selftest/screen_motor_vibration.hpp>
 #endif
 
 #if HAS_COLDPULL()
@@ -295,6 +300,9 @@ using FSMDisplayConfig = FSMDisplayConfigDef<
 #endif
 #if HAS_MANUAL_BELT_TUNING()
     FSMScreenDef<ClientFSM::ManualBeltTuning, ScreenManualBeltTuning>,
+#endif
+#if HAS_MOTOR_VIBRATION()
+    FSMScreenDef<ClientFSM::MotorVibration, ScreenMotorVibration>,
 #endif
 #if HAS_LOADCELL()
     FSMScreenDef<ClientFSM::NozzleCleaningFailed, ScreenNozzleCleaningFailed>,

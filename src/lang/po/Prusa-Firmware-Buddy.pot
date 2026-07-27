@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Prusa-Firmware-Buddy 4.1\n"
 "Report-Msgid-Bugs-To: info@prusa3d.com\n"
-"POT-Creation-Date: 2026-01-30 11:47+0000\n"
+"POT-Creation-Date: 2026-07-27 18:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:777
+#: src/gui/MItem_tools.cpp:786
 msgid ""
 "\n"
 "Loading settings finished.\n"
@@ -64,7 +64,7 @@ msgid "  Tool 5"
 msgstr ""
 
 #. not calibrated would be too long
-#: src/gui/MItem_tools.cpp:532
+#: src/gui/MItem_tools.cpp:541
 #, c-format
 msgid " INS / %7ld"
 msgstr ""
@@ -89,30 +89,30 @@ msgstr ""
 msgid "%d Dock Position Calibration"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:86
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:87
+#: src/gui/include_COREONE/selftest_snake_config.hpp:86
 #, c-format
 msgid "%d Door Sensor"
 msgstr ""
 
-#: src/gui/include_MINI/selftest_snake_config.hpp:77
-#: src/gui/include_COREONE/selftest_snake_config.hpp:85
-#: src/gui/include_MK3.5/selftest_snake_config.hpp:78
-#: src/gui/include_XL/selftest_snake_config.hpp:129
 #: src/gui/include_MK4/selftest_snake_config.hpp:79
+#: src/gui/include_MINI/selftest_snake_config.hpp:77
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:86
+#: src/gui/include_MK3.5/selftest_snake_config.hpp:78
 #: src/gui/include_iX/selftest_snake_config.hpp:84
+#: src/gui/include_XL/selftest_snake_config.hpp:129
+#: src/gui/include_COREONE/selftest_snake_config.hpp:85
 #, c-format
 msgid "%d Fan Test"
 msgstr ""
 
-#: src/gui/include_MINI/selftest_snake_config.hpp:81
-#: src/gui/include_COREONE/selftest_snake_config.hpp:97
-#: src/gui/include_MK3.5/selftest_snake_config.hpp:84
-#: src/gui/include_XL/selftest_snake_config.hpp:141
 #: src/gui/include_MK4/selftest_snake_config.hpp:86
+#: src/gui/include_MINI/selftest_snake_config.hpp:81
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:98
+#: src/gui/include_MK3.5/selftest_snake_config.hpp:84
 #: src/gui/include_iX/selftest_snake_config.hpp:94
+#: src/gui/include_XL/selftest_snake_config.hpp:141
+#: src/gui/include_COREONE/selftest_snake_config.hpp:97
 #, c-format
 msgid "%d Filament Sensor Calibration"
 msgstr ""
@@ -123,38 +123,38 @@ msgstr ""
 msgid "%d First Layer Calibration"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:96
-#: src/gui/include_XL/selftest_snake_config.hpp:145
 #: src/gui/include_MK4/selftest_snake_config.hpp:85
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:97
+#: src/gui/include_XL/selftest_snake_config.hpp:145
+#: src/gui/include_COREONE/selftest_snake_config.hpp:96
 #, c-format
 msgid "%d Gearbox Alignment"
 msgstr ""
 
-#: src/gui/include_MINI/selftest_snake_config.hpp:80
-#: src/gui/include_COREONE/selftest_snake_config.hpp:95
-#: src/gui/include_MK3.5/selftest_snake_config.hpp:82
-#: src/gui/include_XL/selftest_snake_config.hpp:140
 #: src/gui/include_MK4/selftest_snake_config.hpp:84
+#: src/gui/include_MINI/selftest_snake_config.hpp:80
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:96
+#: src/gui/include_MK3.5/selftest_snake_config.hpp:82
 #: src/gui/include_iX/selftest_snake_config.hpp:93
+#: src/gui/include_XL/selftest_snake_config.hpp:140
+#: src/gui/include_COREONE/selftest_snake_config.hpp:95
 #, c-format
 msgid "%d Heater Test"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:91
-#: src/gui/include_XL/selftest_snake_config.hpp:134
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:92
 #: src/gui/include_iX/selftest_snake_config.hpp:89
+#: src/gui/include_XL/selftest_snake_config.hpp:134
+#: src/gui/include_COREONE/selftest_snake_config.hpp:91
 #, c-format
 msgid "%d Homing Calibration"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:93
-#: src/gui/include_XL/selftest_snake_config.hpp:137
 #: src/gui/include_MK4/selftest_snake_config.hpp:82
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:94
 #: src/gui/include_iX/selftest_snake_config.hpp:91
+#: src/gui/include_XL/selftest_snake_config.hpp:137
+#: src/gui/include_COREONE/selftest_snake_config.hpp:93
 #, c-format
 msgid "%d Loadcell Test"
 msgstr ""
@@ -164,9 +164,9 @@ msgstr ""
 msgid "%d Nozzle Heaters Test"
 msgstr ""
 
-#: src/gui/include_XL/selftest_snake_config.hpp:144
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:99
 #: src/gui/include_iX/selftest_snake_config.hpp:95
+#: src/gui/include_XL/selftest_snake_config.hpp:144
 #, c-format
 msgid "%d Phase Stepping Calibration"
 msgstr ""
@@ -176,46 +176,46 @@ msgstr ""
 msgid "%d Tool Offset Calibration"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:89
-#: src/gui/include_XL/selftest_snake_config.hpp:132
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:90
 #: src/gui/include_iX/selftest_snake_config.hpp:87
+#: src/gui/include_XL/selftest_snake_config.hpp:132
+#: src/gui/include_COREONE/selftest_snake_config.hpp:89
 #, c-format
 msgid "%d X Axis Test"
 msgstr ""
 
+#: src/gui/include_MK4/selftest_snake_config.hpp:81
 #: src/gui/include_MINI/selftest_snake_config.hpp:78
 #: src/gui/include_MK3.5/selftest_snake_config.hpp:80
-#: src/gui/include_MK4/selftest_snake_config.hpp:81
 #, c-format
 msgid "%d XY Axis Test"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:88
-#: src/gui/include_XL/selftest_snake_config.hpp:131
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:89
 #: src/gui/include_iX/selftest_snake_config.hpp:86
+#: src/gui/include_XL/selftest_snake_config.hpp:131
+#: src/gui/include_COREONE/selftest_snake_config.hpp:88
 #, c-format
 msgid "%d Y Axis Test"
 msgstr ""
 
-#: src/gui/include_COREONE/selftest_snake_config.hpp:87
-#: src/gui/include_MK3.5/selftest_snake_config.hpp:79
-#: src/gui/include_XL/selftest_snake_config.hpp:130
 #: src/gui/include_MK4/selftest_snake_config.hpp:80
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:88
+#: src/gui/include_MK3.5/selftest_snake_config.hpp:79
 #: src/gui/include_iX/selftest_snake_config.hpp:85
+#: src/gui/include_XL/selftest_snake_config.hpp:130
+#: src/gui/include_COREONE/selftest_snake_config.hpp:87
 #, c-format
 msgid "%d Z Alignment Calibration"
 msgstr ""
 
-#: src/gui/include_MINI/selftest_snake_config.hpp:79
-#: src/gui/include_COREONE/selftest_snake_config.hpp:94
-#: src/gui/include_MK3.5/selftest_snake_config.hpp:81
-#: src/gui/include_XL/selftest_snake_config.hpp:139
 #: src/gui/include_MK4/selftest_snake_config.hpp:83
+#: src/gui/include_MINI/selftest_snake_config.hpp:79
 #: src/gui/include_COREONEL/selftest_snake_config.hpp:95
+#: src/gui/include_MK3.5/selftest_snake_config.hpp:81
 #: src/gui/include_iX/selftest_snake_config.hpp:92
+#: src/gui/include_XL/selftest_snake_config.hpp:139
+#: src/gui/include_COREONE/selftest_snake_config.hpp:94
 #, c-format
 msgid "%d Z Axis Test"
 msgstr ""
@@ -256,8 +256,8 @@ msgstr ""
 msgid "%u %% / unknown"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings_fs.cpp:11
 #: src/gui/screen/toolhead/screen_toolhead_settings.cpp:20
+#: src/gui/screen/toolhead/screen_toolhead_settings_fs.cpp:11
 msgid "-"
 msgstr ""
 
@@ -285,7 +285,7 @@ msgid ""
 "- Install calibration pin."
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:193 src/gui/screen_menu_connect.cpp:67
+#: src/gui/screen/screen_preheat.cpp:233 src/gui/screen_menu_connect.cpp:67
 msgid "---"
 msgstr ""
 
@@ -323,7 +323,7 @@ msgid ""
 "Move it a little bit to the front."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:635
+#: src/gui/MItem_tools.cpp:644
 msgid "5V Voltage"
 msgstr ""
 
@@ -371,11 +371,15 @@ msgstr ""
 msgid "ACCELEROMETER COMMUNICATION FAILED"
 msgstr ""
 
+#: src/gui/screen_menu_advanced_calibration.hpp:23
+msgid "ADVANCED CALIBRATION"
+msgstr ""
+
 #: src/common/client_response_texts.hpp:18
 msgid "ALL"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:295
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:291
 msgid "ALL TOOLS"
 msgstr ""
 
@@ -387,12 +391,17 @@ msgstr ""
 msgid "Abort print?"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1860
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1934
 msgid "Aborted."
 msgstr ""
 
 #: src/common/feature/print_status_message/print_status_message_formatter_buddy.cpp:21
 msgid "Absorbing heat"
+msgstr ""
+
+#. Confirm accelerometer PHASE: confirm_accelerometer
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:72
+msgid "Accelerometer"
 msgstr ""
 
 #: src/gui/frame_calibration_common.cpp:16
@@ -455,8 +464,12 @@ msgstr ""
 msgid "Adv. filtration"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:107
+#: src/gui/MItem_menus.hpp:109
 msgid "Advanced"
+msgstr ""
+
+#: src/gui/MItem_menus.hpp:197
+msgid "Advanced Calibration"
 msgstr ""
 
 #: src/gui/wizard/selftest_frame_dock.cpp:76
@@ -474,11 +487,11 @@ msgstr ""
 msgid "Alignment issue detected"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:705
+#: src/gui/MItem_tools.cpp:714
 msgid "All"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:350
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:346
 msgid "All Tools"
 msgstr ""
 
@@ -490,7 +503,7 @@ msgstr ""
 msgid "All nozzles"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:86
+#: src/gui/wizard/screen_fan_selftest.cpp:81
 msgid "All tests passed successfully."
 msgstr ""
 
@@ -498,7 +511,7 @@ msgstr ""
 msgid "Alt fan correction"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:847
+#: src/gui/MItem_tools.cpp:856
 msgid "Always"
 msgstr ""
 
@@ -507,7 +520,7 @@ msgstr ""
 msgid "Approx. %d min"
 msgstr ""
 
-#: src/gui/screen_printing_serial.cpp:80 src/gui/screen_printing.cpp:122
+#: src/gui/screen_printing.cpp:122 src/gui/screen_printing_serial.cpp:80
 msgid "Are you sure to stop this printing?"
 msgstr ""
 
@@ -528,7 +541,7 @@ msgstr ""
 msgid "Are you sure you want to skip the door sensor calibration for now?"
 msgstr ""
 
-#: src/gui/screen_menu_e2ee.hpp:53 src/gui/MItem_hardware.cpp:166
+#: src/gui/MItem_hardware.cpp:166 src/gui/screen_menu_e2ee.hpp:53
 msgid "Ask"
 msgstr ""
 
@@ -536,7 +549,7 @@ msgstr ""
 msgid "Assigned tool(s) without filament"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:332
+#: src/gui/MItem_tools.cpp:341
 msgid "Assist"
 msgstr ""
 
@@ -568,8 +581,8 @@ msgstr ""
 msgid "Auto Home"
 msgstr ""
 
-#: src/gui/screen/filament/screen_filament_detail.cpp:134
 #: src/gui/menu_item/specific/menu_items_auto_retract.cpp:7
+#: src/gui/screen/filament/screen_filament_detail.cpp:134
 msgid "Auto Retract"
 msgstr ""
 
@@ -622,11 +635,20 @@ msgstr ""
 msgid "BBF initialization failed, repeat the action or try another USB drive."
 msgstr ""
 
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:256
+msgid "BED FLATNESS MAP"
+msgstr ""
+
 #: src/gui/screen_menu_bed_level_correction.hpp:102
 msgid "BED LEVEL CORRECTION"
 msgstr ""
 
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:256
+msgid "BED LEVEL SHIMS"
+msgstr ""
+
 #: src/gui/dialogs/resolution_480x320/radio_button_preview.cpp:15
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:162
 msgid "Back"
 msgstr ""
 
@@ -634,7 +656,7 @@ msgstr ""
 msgid "Backup Calibration to USB"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:64
+#: src/gui/wizard/screen_fan_selftest.cpp:59
 msgid ""
 "Based on the test it looks like the fans connectors are switched. Double "
 "check your wiring and repeat the test."
@@ -653,8 +675,16 @@ msgstr ""
 msgid "Bed Fan 2"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:190
+#: src/gui/MItem_tools.hpp:627
+msgid "Bed Flatness Map"
+msgstr ""
+
+#: src/gui/MItem_menus.hpp:192
 msgid "Bed Level Correction"
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:626
+msgid "Bed Level Shims"
 msgstr ""
 
 #: src/gui/screen_menu_remote_bed.cpp:8
@@ -666,15 +696,15 @@ msgid "Bed Temp"
 msgstr ""
 
 #: src/gui/screen/filament/screen_filament_detail.cpp:87
-#: src/gui/MItem_tools.cpp:518
+#: src/gui/MItem_tools.cpp:527
 msgid "Bed Temperature"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:608
+#: src/gui/MItem_tools.cpp:617
 msgid "Bed Voltage"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:74
+#: src/gui/wizard/screen_fan_selftest.cpp:69
 msgid "Bed fans"
 msgstr ""
 
@@ -744,15 +774,15 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:651
+#: src/gui/MItem_tools.cpp:660
 msgid "Board Temperature"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:233
+#: src/gui/MItem_tools.hpp:246
 msgid "Bootloader Version"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:247
+#: src/gui/MItem_tools.hpp:260
 msgid "Buddy Board"
 msgstr ""
 
@@ -828,7 +858,7 @@ msgstr ""
 msgid "CONTINUE"
 msgstr ""
 
-#: src/gui/screen_menu_control.hpp:77
+#: src/gui/screen_menu_control.hpp:84
 msgid "CONTROL"
 msgstr ""
 
@@ -867,16 +897,16 @@ msgstr ""
 msgid "Calibrate Dock 5"
 msgstr ""
 
+#: src/gui/MItem_tools.hpp:611
 #: src/gui/screen/toolhead/screen_toolhead_settings_dock.cpp:51
-#: src/gui/MItem_tools.hpp:598
 msgid "Calibrate Dock Position"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:263
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:259
 msgid "Calibrate Filament Sensor"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:263
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:259
 msgid "Calibrate Filament Sensors"
 msgstr ""
 
@@ -888,6 +918,7 @@ msgstr ""
 msgid "Calibrating Y motor"
 msgstr ""
 
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:44
 #: src/gui/screen_input_shaper_calibration.cpp:30
 msgid "Calibrating accelerometer..."
 msgstr ""
@@ -904,7 +935,7 @@ msgstr ""
 msgid "Calibrating tool offsets."
 msgstr ""
 
-#: src/gui/screen_menu_phase_stepping.hpp:12 src/gui/MItem_input_shaper.hpp:64
+#: src/gui/screen_menu_phase_stepping.hpp:12 src/gui/MItem_input_shaper.hpp:122
 msgid "Calibration"
 msgstr ""
 
@@ -944,7 +975,7 @@ msgstr ""
 msgid "Calibrations"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:184
+#: src/gui/MItem_menus.hpp:186
 msgid "Calibrations & Tests"
 msgstr ""
 
@@ -965,7 +996,7 @@ msgstr ""
 msgid "Canceled"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1868
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1942
 msgid "Cannot find peaks in phase sweep."
 msgstr ""
 
@@ -992,8 +1023,8 @@ msgstr ""
 msgid "Center N and Fewer Items"
 msgstr ""
 
-#: src/common/selftest/selftest_fans.hpp:46
 #: src/gui/screen_menu_temperature.hpp:26
+#: src/common/selftest/selftest_fans.hpp:46
 msgid "Chamber"
 msgstr ""
 
@@ -1001,7 +1032,7 @@ msgstr ""
 msgid "Chamber Cooling Fan Error"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:553
+#: src/gui/MItem_tools.hpp:566
 msgid "Chamber Dimming"
 msgstr ""
 
@@ -1021,8 +1052,8 @@ msgstr ""
 msgid "Chamber Fans Limit"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:214
 #: src/gui/menu_item/specific/menu_items_chamber_filtration.cpp:17
+#: src/gui/MItem_menus.hpp:221
 msgid "Chamber Filtration"
 msgstr ""
 
@@ -1030,11 +1061,11 @@ msgstr ""
 msgid "Chamber Filtration Fan Error"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:525
+#: src/gui/MItem_tools.hpp:538
 msgid "Chamber Lights"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:539
+#: src/gui/MItem_tools.hpp:552
 msgid "Chamber Lights Dimmed"
 msgstr ""
 
@@ -1093,7 +1124,7 @@ msgstr ""
 msgid "Change Filter"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:494
+#: src/gui/MItem_tools.hpp:507
 msgid "Change Wave Table XYZ"
 msgstr ""
 
@@ -1176,13 +1207,29 @@ msgid ""
 "potential damage."
 msgstr ""
 
-#: src/gui/wizard/selftest_frame_axis.cpp:28
 #: src/gui/screen_crash_recovery.cpp:92
+#: src/gui/wizard/selftest_frame_axis.cpp:28
 msgid "Checking axes"
 msgstr ""
 
 #: src/gui/wizard/selftest_result_fans.cpp:17
 msgid "Checking for switched fans"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:27
+msgid ""
+"Choose how to measure and save spectra.\n"
+"\n"
+"Raw: spectrum only.\n"
+"Shaped: also apply current input shaper to show residual vibrations."
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:31
+msgid ""
+"Choose which motor to vibrate.\n"
+"\n"
+"Motor A drives the X-axis.\n"
+"Motor B drives the Y-axis."
 msgstr ""
 
 #: src/gui/wizard/selftest_frame_firstlayer_questions.cpp:68
@@ -1226,7 +1273,7 @@ msgstr ""
 msgid "Code: %s"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:466 tmp_error_headers/error_list.hpp:1037
+#: src/gui/MItem_tools.hpp:479 tmp_error_headers/error_list.hpp:1037
 msgid "Cold Pull"
 msgstr ""
 
@@ -1266,7 +1313,7 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: src/gui/screen_menu_network_status.hpp:41 src/gui/MItem_tools.cpp:786
+#: src/gui/MItem_tools.cpp:795 src/gui/screen_menu_network_status.hpp:41
 msgid "Connect"
 msgstr ""
 
@@ -1278,8 +1325,8 @@ msgstr ""
 msgid "Connect IP"
 msgstr ""
 
-#: src/gui/MItem_network.cpp:50 src/gui/MItem_network.cpp:91
-#: src/gui/wizard/selftest_result_eth.cpp:17
+#: src/gui/wizard/selftest_result_eth.cpp:17 src/gui/MItem_network.cpp:50
+#: src/gui/MItem_network.cpp:91
 msgid "Connected"
 msgstr ""
 
@@ -1303,7 +1350,7 @@ msgstr ""
 msgid "Continue running Calibrations & Tests?"
 msgstr ""
 
-#: src/gui/screen_home.cpp:137
+#: src/gui/screen_home.cpp:138
 msgid "Control"
 msgstr ""
 
@@ -1320,7 +1367,7 @@ msgid ""
 "Cooling fan of the power supply unit is operating outside of specification."
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:68
+#: src/gui/wizard/screen_fan_selftest.cpp:63
 msgid "Cooling fans"
 msgstr ""
 
@@ -1340,7 +1387,7 @@ msgstr ""
 msgid "Crash Sensitivity XY"
 msgstr ""
 
-#: src/gui/screen_home.cpp:322
+#: src/gui/screen_home.cpp:329
 msgid ""
 "Crash detected. Save it to USB?\n"
 "\n"
@@ -1373,7 +1420,7 @@ msgid "Current tool"
 msgstr ""
 
 #. Used in filament type context (user-defined ad-hoc), for example: "XX (User)". Please try to fit the text in 6 characters.
-#: src/common/filament.cpp:285 src/gui/screen/screen_preheat.cpp:133
+#: src/gui/screen/screen_preheat.cpp:173 src/common/filament.cpp:285
 msgid "Custom"
 msgstr ""
 
@@ -1417,7 +1464,7 @@ msgstr ""
 msgid "DIY"
 msgstr ""
 
-#: src/gui/screen_menu_network_status.hpp:33 src/gui/MItem_network.hpp:163
+#: src/gui/MItem_network.hpp:183 src/gui/screen_menu_network_status.hpp:33
 msgid "DNS"
 msgstr ""
 
@@ -1425,7 +1472,7 @@ msgstr ""
 msgid "DNS FAIL"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:163
+#: src/gui/MItem_network.hpp:183
 msgid "DNS Server"
 msgstr ""
 
@@ -1465,7 +1512,7 @@ msgstr ""
 msgid "DWARF ERROR"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:334
+#: src/gui/MItem_tools.cpp:343
 msgid "Debug"
 msgstr ""
 
@@ -1497,11 +1544,11 @@ msgstr ""
 msgid "Detecting steel sheet"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:486
+#: src/gui/MItem_tools.hpp:499
 msgid "Device Hash in QR"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:99
+#: src/gui/MItem_tools.hpp:102
 msgid "Disable Motors"
 msgstr ""
 
@@ -1527,7 +1574,7 @@ msgstr ""
 msgid "Disengaging idler"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:912
+#: src/gui/MItem_tools.cpp:921
 msgid "Display Refresh Speed"
 msgstr ""
 
@@ -1535,6 +1582,14 @@ msgstr ""
 msgid ""
 "Display issues detected. Reducing the refresh rate will possibly solve the "
 "problem. Proceed?"
+msgstr ""
+
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:65
+msgid "Distance to nozzle [mm], 0 = closest"
+msgstr ""
+
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:64
+msgid "Distance to nozzle [um], 0 = closest"
 msgstr ""
 
 #: src/gui/screen_menu_error_test.cpp:58
@@ -1570,7 +1625,7 @@ msgstr ""
 msgid "Do you really want to restore default filament ordering?"
 msgstr ""
 
-#: src/gui/MItem_input_shaper.cpp:91
+#: src/gui/MItem_input_shaper.cpp:235
 msgid "Do you really want to restore default input shaper configuration?"
 msgstr ""
 
@@ -1653,7 +1708,7 @@ msgstr ""
 msgid "Dock Calibration"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:215
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:211
 msgid "Dock Position"
 msgstr ""
 
@@ -1681,7 +1736,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: src/gui/MItem_hardware.hpp:68 src/gui/MItem_tools.cpp:659
+#: src/gui/MItem_hardware.hpp:68 src/gui/MItem_tools.cpp:668
 msgid "Door Sensor"
 msgstr ""
 
@@ -1700,7 +1755,7 @@ msgstr ""
 msgid "Downloading..."
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:129
+#: src/gui/MItem_tools.hpp:132
 msgid "Dry run (no extrusion)"
 msgstr ""
 
@@ -1788,7 +1843,7 @@ msgstr ""
 msgid "ESP error"
 msgstr ""
 
-#: src/gui/screen_menu_network_settings.hpp:24
+#: src/gui/screen_menu_network_settings.hpp:26
 msgid "ETHERNET SETTINGS"
 msgstr ""
 
@@ -1820,7 +1875,7 @@ msgstr ""
 msgid "EXTRUDER THERMAL RUNAWAY"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:54
+#: src/gui/MItem_menus.hpp:56
 msgid "Edit Filaments"
 msgstr ""
 
@@ -1847,7 +1902,7 @@ msgstr ""
 msgid "Emulate Watchdog"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:60
+#: src/gui/MItem_menus.hpp:62
 msgid "Enable Filaments"
 msgstr ""
 
@@ -1855,12 +1910,12 @@ msgstr ""
 msgid "Enable Metrics"
 msgstr ""
 
-#: src/gui/screen_prusa_link.hpp:29 src/gui/screen_menu_connect.hpp:12
+#: src/gui/screen_menu_connect.hpp:12 src/gui/screen_prusa_link.hpp:29
 msgid "Enabled"
 msgstr ""
 
-#: src/common/feature/chamber_filtration/chamber_filtration.cpp:46
 #: src/gui/MItem_enclosure.hpp:16
+#: src/common/feature/chamber_filtration/chamber_filtration.cpp:46
 msgid "Enclosure"
 msgstr ""
 
@@ -1868,7 +1923,7 @@ msgstr ""
 msgid "Enclosure Settings"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:67
+#: src/gui/wizard/screen_fan_selftest.cpp:62
 msgid "Enclosure fan"
 msgstr ""
 
@@ -1882,7 +1937,7 @@ msgstr ""
 msgid "Enclosure temperature"
 msgstr ""
 
-#: src/gui/screen_menu_e2ee.hpp:69 src/gui/MItem_menus.hpp:228
+#: src/gui/screen_menu_e2ee.hpp:69 src/gui/MItem_menus.hpp:235
 msgid "Encryption"
 msgstr ""
 
@@ -1895,6 +1950,12 @@ msgstr ""
 #: src/gui/dialogs/DialogLoadUnload.cpp:47
 #: src/mmu2/mmu2_progress_converter.cpp:8
 msgid "Engaging idler"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:73
+msgid ""
+"Ensure the accelerometer is attached to the toolhead and connected. Press "
+"Continue to start the sweep."
 msgstr ""
 
 #: tmp_error_headers/error_list.hpp:1353
@@ -1910,8 +1971,8 @@ msgstr ""
 msgid "Enter credentials manually"
 msgstr ""
 
-#: src/gui/screen_menu_connect.cpp:50 src/gui/screen_network_setup.cpp:339
-#: src/gui/screen_menu_connect.hpp:33 src/guiapi/src/window_msgbox.cpp:325
+#: src/guiapi/src/window_msgbox.cpp:325 src/gui/screen_network_setup.cpp:339
+#: src/gui/screen_menu_connect.cpp:50 src/gui/screen_menu_connect.hpp:33
 msgid "Error"
 msgstr ""
 
@@ -1933,7 +1994,7 @@ msgid ""
 "drive and try again."
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:87 src/gui/screen_network_setup.cpp:349
+#: src/gui/screen_network_setup.cpp:349 src/gui/MItem_menus.hpp:89
 msgid "Ethernet"
 msgstr ""
 
@@ -1953,7 +2014,7 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:110
+#: src/gui/MItem_menus.hpp:112
 msgid "Experimental Settings"
 msgstr ""
 
@@ -2004,7 +2065,7 @@ msgstr ""
 msgid "FIL. ALREADY LOADED"
 msgstr ""
 
-#: src/common/client_response_texts.hpp:40 src/gui/screen_menu_filament.hpp:24
+#: src/gui/screen_menu_filament.hpp:24 src/common/client_response_texts.hpp:40
 msgid "FILAMENT"
 msgstr ""
 
@@ -2024,8 +2085,8 @@ msgstr ""
 msgid "FILAMENT LOADING WARNING"
 msgstr ""
 
-#: src/gui/screen/filament/screen_filament_management_list.cpp:70
 #: src/gui/screen/filament/screen_filament_management.cpp:4
+#: src/gui/screen/filament/screen_filament_management_list.cpp:70
 msgid "FILAMENT MANAGEMENT"
 msgstr ""
 
@@ -2178,15 +2239,15 @@ msgstr ""
 msgid "FW updated"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:139
+#: src/gui/MItem_menus.hpp:141
 msgid "Factory Reset"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:75
+#: src/gui/MItem_menus.hpp:77
 msgid "Fail Stats"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:772
+#: src/gui/MItem_tools.cpp:781
 msgid "Failed"
 msgstr ""
 
@@ -2264,7 +2325,7 @@ msgstr ""
 msgid "Failed to open file"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:941
+#: src/gui/MItem_tools.cpp:950
 #, c-format
 msgid "Failed to open file '%s' for writing."
 msgstr ""
@@ -2285,11 +2346,11 @@ msgstr ""
 msgid "Fan 1 of the heated bed is operating outside of specification."
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:216
+#: src/gui/MItem_tools.hpp:229
 msgid "Fan Check"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:63
+#: src/gui/MItem_menus.hpp:65
 msgid "Fan Info"
 msgstr ""
 
@@ -2344,9 +2405,9 @@ msgstr ""
 msgid "Fil. Sensor Troubleshooting"
 msgstr ""
 
-#: src/common/footer_def.cpp:12
+#: src/gui/screen_home.cpp:137 src/gui/MItem_tools.hpp:350
 #: src/gui/screen/filament/screen_filaments_loaded.cpp:30
-#: src/gui/screen_home.cpp:136 src/gui/MItem_tools.hpp:337
+#: src/common/footer_def.cpp:12
 msgid "Filament"
 msgstr ""
 
@@ -2355,14 +2416,14 @@ msgstr ""
 msgid "Filament %u"
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:73
+#: src/gui/screen/screen_preheat.cpp:76
 #, c-format
 msgid ""
 "Filament '%s' is abrasive, but you don't have a hardened nozzle installed. "
 "Do you really want to continue?"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:261
+#: src/gui/MItem_tools.hpp:274
 msgid "Filament Autoloading"
 msgstr ""
 
@@ -2371,11 +2432,11 @@ msgid "Filament Change"
 msgstr ""
 
 #. If the printer has filament sensors menu, this item is inside it and is supposed to be called differently (BFW-4973)
-#: src/gui/MItem_tools.hpp:36
+#: src/gui/MItem_tools.hpp:38
 msgid "Filament Sensing"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:559 src/gui/MItem_tools.hpp:36
+#: src/gui/MItem_tools.hpp:38 src/gui/MItem_tools.cpp:568
 msgid "Filament Sensor"
 msgstr ""
 
@@ -2383,7 +2444,7 @@ msgstr ""
 msgid "Filament Sensors Disabled"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:249
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:245
 msgid "Filament Sensors Tuning"
 msgstr ""
 
@@ -2466,7 +2527,7 @@ msgid ""
 "isn't anything stuck in PTFE tube. Check that sensor reads properly."
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:178
+#: src/gui/MItem_menus.hpp:180
 msgid "Filament sensors"
 msgstr ""
 
@@ -2541,8 +2602,15 @@ msgstr ""
 msgid "Filtration Fan"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:69
+#: src/gui/wizard/screen_fan_selftest.cpp:64
 msgid "Filtration fan"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:23
+msgid ""
+"Find resonant frequencies in the printer's mechanical assembly.\n"
+"\n"
+"Press Continue to start."
 msgstr ""
 
 #: src/common/footer_def.cpp:33
@@ -2577,7 +2645,7 @@ msgstr ""
 msgid "Firmware Update Required"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:226 include/common/hw_check.hpp:33
+#: src/gui/MItem_tools.hpp:239 include/common/hw_check.hpp:33
 msgid "Firmware Version"
 msgstr ""
 
@@ -2704,11 +2772,11 @@ msgstr ""
 msgid "Following features are required:"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:104
+#: src/gui/MItem_menus.hpp:106
 msgid "Footer"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:709
+#: src/gui/MItem_tools.cpp:718
 msgid "For Filament Change, Preheat"
 msgstr ""
 
@@ -2796,7 +2864,7 @@ msgstr ""
 msgid "GEARBOX ALIGNMENT"
 msgstr ""
 
-#: src/gui/screen_menu_network_status.hpp:26 src/gui/MItem_network.hpp:154
+#: src/gui/MItem_network.hpp:174 src/gui/screen_menu_network_status.hpp:26
 msgid "Gateway"
 msgstr ""
 
@@ -2885,7 +2953,7 @@ msgstr ""
 msgid "HARD RESET"
 msgstr ""
 
-#: src/gui/screen_menu_hardware.hpp:113
+#: src/gui/screen_menu_hardware.hpp:114
 #: src/gui/screen_menu_hardware_tune.hpp:24
 msgid "HARDWARE"
 msgstr ""
@@ -2988,8 +3056,12 @@ msgstr ""
 msgid "Hard Reset (USB with FW needed)"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:124 src/gui/MItem_menus.hpp:127
+#: src/gui/MItem_menus.hpp:126 src/gui/MItem_menus.hpp:129
 msgid "Hardware"
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:142
+msgid "Heat Absorption"
 msgstr ""
 
 #: src/gui/screen_menu_modular_bed.cpp:9
@@ -3069,7 +3141,7 @@ msgstr ""
 msgid "Heatbreak"
 msgstr ""
 
-#: src/common/footer_def.cpp:21 src/gui/screen_menu_fan_info.cpp:13
+#: src/gui/screen_menu_fan_info.cpp:13 src/common/footer_def.cpp:21
 msgid "Heatbreak Fan"
 msgstr ""
 
@@ -3094,11 +3166,11 @@ msgstr ""
 msgid "Heated bed is operating outside of specification."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:618
+#: src/gui/MItem_tools.cpp:627
 msgid "Heater Current"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:613
+#: src/gui/MItem_tools.cpp:622
 msgid "Heater Voltage"
 msgstr ""
 
@@ -3191,7 +3263,7 @@ msgid ""
 "through the setup process."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:908
+#: src/gui/MItem_tools.cpp:917
 msgid "High"
 msgstr ""
 
@@ -3200,10 +3272,10 @@ msgid "Home"
 msgstr ""
 
 #. //MSG_PROGRESS_RETRACT_FINDA c=20
-#: src/common/feature/print_status_message/print_status_message_formatter_buddy.cpp:13
-#: src/gui/dialogs/DialogLoadUnload.cpp:69
+#: src/gui/dialogs/DialogLoadUnload.cpp:69 src/gui/screen_crash_recovery.cpp:93
 #: src/gui/screen_phase_stepping_calibration.cpp:41
-#: src/gui/screen_crash_recovery.cpp:93 src/mmu2/mmu2_progress_converter.cpp:31
+#: src/mmu2/mmu2_progress_converter.cpp:31
+#: src/common/feature/print_status_message/print_status_message_formatter_buddy.cpp:13
 msgid "Homing"
 msgstr ""
 
@@ -3215,13 +3287,17 @@ msgstr ""
 msgid "Homing calibration is needed to ensure repeatable homing."
 msgstr ""
 
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:26
+msgid "Homing..."
+msgstr ""
+
 #: src/gui/screen_menu_metrics.cpp:18
 msgid "Host"
 msgstr ""
 
 #. Printer's name within network
-#: src/gui/MItem_network.cpp:166 src/gui/MItem_network.hpp:83
-#: src/gui/screen_menu_connect.hpp:42
+#: src/gui/MItem_network.hpp:83 src/gui/screen_menu_connect.hpp:42
+#: src/gui/MItem_network.cpp:166
 msgid "Hostname"
 msgstr ""
 
@@ -3233,7 +3309,7 @@ msgid ""
 "- Not starting with '-'"
 msgstr ""
 
-#: src/common/footer_def.cpp:21 src/gui/screen_menu_fan_info.cpp:13
+#: src/gui/screen_menu_fan_info.cpp:13 src/common/footer_def.cpp:21
 msgid "Hotend Fan"
 msgstr ""
 
@@ -3241,14 +3317,9 @@ msgstr ""
 msgid "Hotend Type"
 msgstr ""
 
+#: src/gui/wizard/screen_fan_selftest.cpp:55
 #: src/gui/wizard/selftest_result_fans.cpp:14
-#: src/gui/wizard/screen_fan_selftest.cpp:59
 msgid "Hotend fan"
-msgstr ""
-
-#. for iX with turbine, heatbreak fan eval always succeeds
-#: src/gui/wizard/screen_fan_selftest.cpp:57
-msgid "Hotend fan (test disabled)"
 msgstr ""
 
 #: tmp_error_headers/error_list.hpp:1269
@@ -3317,7 +3388,7 @@ msgstr ""
 msgid "INPUT PORT OVERCURRENT"
 msgstr ""
 
-#: src/gui/screen_menu_input_shaper.hpp:30
+#: src/gui/screen_menu_input_shaper.hpp:36
 msgid "INPUT SHAPER"
 msgstr ""
 
@@ -3341,20 +3412,24 @@ msgstr ""
 msgid "INVALID TOOL"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:136
+#: src/gui/MItem_network.hpp:156
 msgid "IP"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:136
+#: src/gui/MItem_network.hpp:156
 msgid "IPv4 Address"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:154
+#: src/gui/MItem_network.hpp:174
 msgid "IPv4 Gateway"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:145
+#: src/gui/MItem_network.hpp:165
 msgid "IPv4 Netmask"
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:632
+msgid "IS Measure and Export"
 msgstr ""
 
 #: src/gui/screen_menu_e2ee.hpp:50
@@ -3391,11 +3466,11 @@ msgstr ""
 msgid "Increasing distance to bed"
 msgstr ""
 
-#: src/gui/screen_home.cpp:139 src/gui/MItem_menus.hpp:136
+#: src/gui/screen_home.cpp:140 src/gui/MItem_menus.hpp:138
 msgid "Info"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:87 src/guiapi/src/window_msgbox.cpp:349
+#: src/guiapi/src/window_msgbox.cpp:349 src/gui/MItem_tools.cpp:87
 msgid "Information"
 msgstr ""
 
@@ -3405,11 +3480,11 @@ msgstr ""
 msgid "Initialized"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:623
+#: src/gui/MItem_tools.cpp:632
 msgid "Input Current"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:142 include/common/hw_check.hpp:38
+#: src/gui/MItem_menus.hpp:144 include/common/hw_check.hpp:38
 msgid "Input Shaper"
 msgstr ""
 
@@ -3484,7 +3559,7 @@ msgstr ""
 msgid "Is Abrasive"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:81
+#: src/gui/wizard/screen_fan_selftest.cpp:76
 msgid "Is Hotend fan (left) spinning?"
 msgstr ""
 
@@ -3520,8 +3595,8 @@ msgstr ""
 msgid "Joining spool"
 msgstr ""
 
-#: src/common/feature/factory_reset/factory_reset.cpp:107
 #: src/gui/screen/screen_factory_reset.cpp:60
+#: src/common/feature/factory_reset/factory_reset.cpp:107
 msgid "Keep"
 msgstr ""
 
@@ -3590,11 +3665,11 @@ msgstr ""
 msgid "LOADING OBSTRUCTION"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:159
+#: src/gui/MItem_menus.hpp:161
 msgid "Language"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:115
+#: src/gui/MItem_menus.hpp:117
 msgid "Language & Time"
 msgstr ""
 
@@ -3619,6 +3694,10 @@ msgstr ""
 msgid "Left Side [um]"
 msgstr ""
 
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:163
+msgid "Left front"
+msgstr ""
+
 #: tmp_error_headers/error_list.hpp:1122
 msgid ""
 "Length of an axis is too long.\n"
@@ -3637,7 +3716,7 @@ msgstr ""
 msgid "Let's calibrate your belt tension"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:195
+#: src/gui/MItem_menus.hpp:202
 msgid "Lights Settings"
 msgstr ""
 
@@ -3650,7 +3729,7 @@ msgid ""
 "Link is valid only if you are connected to the same network as the printer."
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:71
+#: src/gui/MItem_tools.hpp:73
 msgid "Live Adjust Z"
 msgstr ""
 
@@ -3674,7 +3753,7 @@ msgstr ""
 msgid "Load Settings"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:502
+#: src/gui/MItem_tools.hpp:515
 msgid "Load Settings from File"
 msgstr ""
 
@@ -3686,7 +3765,7 @@ msgstr ""
 msgid "Load filament"
 msgstr ""
 
-#: src/gui/MItem_mmu.hpp:32 src/gui/screen_menu_mmu_load_to_nozzle.hpp:21
+#: src/gui/screen_menu_mmu_load_to_nozzle.hpp:21 src/gui/MItem_mmu.hpp:32
 msgid "Load to Nozzle"
 msgstr ""
 
@@ -3781,7 +3860,7 @@ msgstr ""
 msgid "Lock the tool"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:927
+#: src/gui/MItem_tools.cpp:936
 msgid "Logging has been turned off. You can now safely remove the USB drive."
 msgstr ""
 
@@ -3799,7 +3878,7 @@ msgid ""
 "orange) using the uni-wrench."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:330
+#: src/gui/MItem_tools.cpp:339
 msgid "Loud"
 msgstr ""
 
@@ -3807,7 +3886,7 @@ msgstr ""
 msgid "Love Board"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:908
+#: src/gui/MItem_tools.cpp:917
 msgid "Low"
 msgstr ""
 
@@ -3824,11 +3903,11 @@ msgstr ""
 msgid "M.I.N.D.A."
 msgstr ""
 
-#: src/gui/MItem_network.hpp:172
+#: src/gui/MItem_network.hpp:192
 msgid "MAC"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:172
+#: src/gui/MItem_network.hpp:192
 msgid "MAC Address"
 msgstr ""
 
@@ -3856,7 +3935,7 @@ msgstr ""
 msgid "MCU OVERHEAT"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:679
+#: src/gui/MItem_tools.cpp:688
 msgid "MCU Temperature"
 msgstr ""
 
@@ -3900,8 +3979,8 @@ msgstr ""
 msgid "MINTEMP ERROR"
 msgstr ""
 
-#: src/gui/screen/screen_hw_mmu.cpp:4 src/gui/MItem_menus.cpp:205
-#: src/gui/MItem_mmu.cpp:261
+#: src/gui/screen/screen_hw_mmu.cpp:4 src/gui/MItem_mmu.cpp:261
+#: src/gui/MItem_menus.cpp:213
 msgid "MMU"
 msgstr ""
 
@@ -3909,7 +3988,7 @@ msgstr ""
 msgid "MMU BL Status"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:628
+#: src/gui/MItem_tools.cpp:637
 msgid "MMU Current"
 msgstr ""
 
@@ -3957,7 +4036,7 @@ msgstr ""
 msgid "MMU Unit"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:240
+#: src/gui/MItem_tools.hpp:253
 msgid "MMU Version"
 msgstr ""
 
@@ -3971,7 +4050,7 @@ msgstr ""
 msgid "MMU filament"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:355
+#: src/gui/MItem_tools.hpp:368
 msgid "MMU filament loads"
 msgstr ""
 
@@ -4027,7 +4106,7 @@ msgstr ""
 msgid "MULTITOOL FILAMENT CHANGE"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1870
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1944
 msgid "Magnitude out of bounds."
 msgstr ""
 
@@ -4048,7 +4127,7 @@ msgstr ""
 msgid "Make sure the filament is inserted through the sensor."
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:51
+#: src/gui/MItem_menus.hpp:53
 msgid "Manage Filaments"
 msgstr ""
 
@@ -4056,8 +4135,12 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:609
+#: src/gui/MItem_tools.hpp:622
 msgid "Manual Belt Tuning"
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:631
+msgid "Manual Resonance Finder"
 msgstr ""
 
 #: tmp_error_headers/error_list.hpp:849
@@ -4066,7 +4149,7 @@ msgid ""
 "reached."
 msgstr ""
 
-#: src/gui/MItem_network.hpp:145
+#: src/gui/MItem_network.hpp:165
 msgid "Mask"
 msgstr ""
 
@@ -4095,6 +4178,14 @@ msgstr ""
 msgid "Measurement failed."
 msgstr ""
 
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:42
+msgid "Measuring Motor A resonance..."
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:43
+msgid "Measuring Motor B resonance..."
+msgstr ""
+
 #: src/gui/screen_input_shaper_calibration.cpp:112
 msgid "Measuring X resonance..."
 msgstr ""
@@ -4112,19 +4203,19 @@ msgstr ""
 msgid "Memory allocation failed for scheduled LED animation"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:139
+#: src/gui/MItem_tools.hpp:152
 msgid "Menu Timeout"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:89
+#: src/gui/MItem_tools.hpp:91
 msgid "Mesh Bed Leveling"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:95
+#: src/gui/MItem_menus.hpp:97
 msgid "Message History"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:84
+#: src/gui/MItem_menus.hpp:86
 msgid "Metrics & Log"
 msgstr ""
 
@@ -4167,8 +4258,8 @@ msgid "More detail at"
 msgstr ""
 
 #: src/gui/screen/selftest/screen_manual_belt_tuning.cpp:169
-#: src/gui/screen_error.cpp:37 src/gui/wizard/selftest_frame_loadcell.cpp:57
-#: src/gui/standard_frame/frame_qr_prompt.cpp:13
+#: src/gui/wizard/selftest_frame_loadcell.cpp:57
+#: src/gui/standard_frame/frame_qr_prompt.cpp:13 src/gui/screen_error.cpp:37
 msgid "More details at"
 msgstr ""
 
@@ -4177,7 +4268,38 @@ msgstr ""
 msgid "Motor %c vibration reduced by %2d%%"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:81
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:147
+msgid "Motor A"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:147
+msgid "Motor B"
+msgstr ""
+
+#. Sweep measuring PHASE: sweep_measuring
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:41
+msgid "Motor Sweep"
+msgstr ""
+
+#. -----------------------------------------------------------------------
+#. Text constants
+#. -----------------------------------------------------------------------
+#. Introduction PHASE: intro
+#. Vibration PHASE: vibrate
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:22
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:34
+msgid "Motor Vibration"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:51
+msgid ""
+"Motor vibration has finished.\n"
+"You're all set.\n"
+"\n"
+"Press Finish to exit."
+msgstr ""
+
+#: src/gui/MItem_menus.hpp:83
 msgid "Move Axis"
 msgstr ""
 
@@ -4249,7 +4371,7 @@ msgstr ""
 msgid "NINIT "
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:533
+#: src/gui/MItem_tools.cpp:542
 #, c-format
 msgid "NINS / %7ld"
 msgstr ""
@@ -4282,8 +4404,22 @@ msgstr ""
 msgid "NOZZLE_OFFSET"
 msgstr ""
 
+#: src/gui/MItem_network.cpp:207
+msgid "NTP"
+msgstr ""
+
+#: src/gui/MItem_network.hpp:103
+msgid "NTP Server"
+msgstr ""
+
+#: src/gui/MItem_network.cpp:246
+msgid ""
+"NTP server is not valid. It must be a hostname or an IP address containing "
+"only characters 'a-z A-Z 0-9 - .'"
+msgstr ""
+
 #: src/gui/screen/filament/screen_filament_detail.cpp:43
-#: src/gui/MItem_tools.cpp:369
+#: src/gui/MItem_tools.cpp:378
 msgid "Name"
 msgstr ""
 
@@ -4303,7 +4439,7 @@ msgstr ""
 msgid "Net fail"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:783 src/gui/MItem_menus.hpp:118
+#: src/gui/MItem_tools.cpp:792 src/gui/MItem_menus.hpp:120
 msgid "Network"
 msgstr ""
 
@@ -4311,11 +4447,11 @@ msgstr ""
 msgid "Network Settings"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:121
+#: src/gui/MItem_menus.hpp:123
 msgid "Network Status"
 msgstr ""
 
-#: src/gui/MItem_hardware.cpp:164 src/gui/MItem_tools.cpp:846
+#: src/gui/MItem_hardware.cpp:164 src/gui/MItem_tools.cpp:855
 msgid "Never"
 msgstr ""
 
@@ -4361,7 +4497,7 @@ msgstr ""
 msgid "No Config"
 msgstr ""
 
-#: src/gui/screen_home.cpp:140
+#: src/gui/screen_home.cpp:141
 msgid "No USB"
 msgstr ""
 
@@ -4389,7 +4525,7 @@ msgstr ""
 msgid "No network interface"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1866
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1940
 msgid "No peaks found."
 msgstr ""
 
@@ -4397,9 +4533,9 @@ msgstr ""
 msgid "Nominal Chamber Temperature"
 msgstr ""
 
+#: src/gui/MItem_hardware.cpp:22 src/gui/numeric_input_config_common.cpp:71
 #: src/common/footer_def.cpp:9
 #: src/common/feature/chamber_filtration/chamber_filtration.cpp:42
-#: src/gui/MItem_hardware.cpp:22 src/gui/numeric_input_config_common.cpp:71
 msgid "None"
 msgstr ""
 
@@ -4439,9 +4575,9 @@ msgid ""
 "print sheet."
 msgstr ""
 
-#: src/common/footer_def.cpp:10 src/gui/MItem_print.hpp:14
+#: src/gui/MItem_tools.cpp:713 src/gui/MItem_print.hpp:14
 #: src/gui/MItem_print.hpp:49 src/gui/wizard/selftest_result_heaters.cpp:13
-#: src/gui/MItem_tools.cpp:704 include/common/hw_check.hpp:31
+#: src/common/footer_def.cpp:10 include/common/hw_check.hpp:31
 msgid "Nozzle"
 msgstr ""
 
@@ -4465,7 +4601,7 @@ msgstr ""
 msgid "Nozzle 5 Temperature"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:955
+#: src/gui/MItem_tools.cpp:964
 msgid "Nozzle Cleaning Retraction"
 msgstr ""
 
@@ -4477,11 +4613,11 @@ msgstr ""
 msgid "Nozzle Hardened"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:197
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:195
 msgid "Nozzle High-flow"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:281
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:277
 msgid "Nozzle Offset"
 msgstr ""
 
@@ -4564,8 +4700,8 @@ msgstr ""
 
 #. clang-format off
 #. 01234567890123456789
-#: src/common/client_response_texts.hpp:64
 #: src/mmu2/mmu2_progress_converter.cpp:7
+#: src/common/client_response_texts.hpp:64
 msgid "OK"
 msgstr ""
 
@@ -4582,8 +4718,9 @@ msgid "Object"
 msgstr ""
 
 #. / Display string of the nullopt value
-#: src/gui/MItem_hardware.cpp:147 src/gui/screen_menu_connect.cpp:46
 #: src/guiapi/include/numeric_input_config.hpp:31
+#: src/gui/MItem_hardware.cpp:147 src/gui/screen_menu_connect.cpp:46
+#: src/gui/MItem_input_shaper.hpp:37
 msgid "Off"
 msgstr ""
 
@@ -4596,15 +4733,19 @@ msgstr ""
 msgid "Offset %c"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:772
+#: src/gui/MItem_tools.cpp:781
 msgid "Ok"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:848
+#: src/gui/MItem_input_shaper.hpp:37
+msgid "On"
+msgstr ""
+
+#: src/gui/MItem_tools.cpp:857
 msgid "On Idle"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:329
+#: src/gui/MItem_tools.cpp:338
 msgid "Once"
 msgstr ""
 
@@ -4725,9 +4866,9 @@ msgstr ""
 msgid "PRELOAD ALL"
 msgstr ""
 
-#: src/common/client_response_texts.hpp:108
-#: src/gui/screen_print_preview.cpp:151
 #: src/gui/resolution_480x320/screen_print_preview_base.cpp:24
+#: src/gui/screen_print_preview.cpp:151
+#: src/common/client_response_texts.hpp:108
 msgid "PRINT"
 msgstr ""
 
@@ -4739,7 +4880,7 @@ msgstr ""
 msgid "PRINTER SETUP"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:302
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:298
 msgid "PRINTHEAD"
 msgstr ""
 
@@ -4769,7 +4910,7 @@ msgstr ""
 msgid "PSU Fan"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:77
+#: src/gui/wizard/screen_fan_selftest.cpp:72
 msgid "PSU fan"
 msgstr ""
 
@@ -4790,7 +4931,7 @@ msgstr ""
 msgid "PURGE MORE"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1864
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1938
 msgid "Param sweep movement failed."
 msgstr ""
 
@@ -4799,11 +4940,15 @@ msgid "Park Current Tool"
 msgstr ""
 
 #. Do not show "Pick Tool" at all for all_toolheads, only "Park Tool" that gets disabled when no tool is selected
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:232
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:228
 msgid "Park Tool"
 msgstr ""
 
+#. Parking PHASE: parking
+#. Parking text
 #: src/gui/dialogs/DialogLoadUnload.cpp:23
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:38
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:76
 #: src/gui/screen_input_shaper_calibration.cpp:104
 msgid "Parking"
 msgstr ""
@@ -4829,8 +4974,8 @@ msgstr ""
 msgid "Parking tool"
 msgstr ""
 
-#: src/gui/screen_prusa_link.cpp:55 src/gui/screen_network_setup.cpp:31
-#: src/gui/screen_prusa_link.hpp:39
+#: src/gui/screen_network_setup.cpp:31 src/gui/screen_prusa_link.hpp:39
+#: src/gui/screen_prusa_link.cpp:55
 msgid "Password"
 msgstr ""
 
@@ -4842,7 +4987,7 @@ msgstr ""
 msgid "Pausing..."
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:267
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:263
 msgid ""
 "Perform filament sensors calibration? This discards previous filament "
 "sensors calibration."
@@ -4860,7 +5005,7 @@ msgid ""
 "Do not turn off the printer."
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:165
+#: src/gui/MItem_menus.hpp:167
 msgid "Phase Stepping"
 msgstr ""
 
@@ -4872,7 +5017,7 @@ msgstr ""
 msgid "Phase stepping defaults have been successfully restored."
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:232
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:228
 msgid "Pick Tool"
 msgstr ""
 
@@ -4921,7 +5066,7 @@ msgstr ""
 msgid "Pick Tool 5 (Current)"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:588
+#: src/gui/MItem_tools.hpp:601
 msgid "Pick/Park Tool"
 msgstr ""
 
@@ -4975,7 +5120,7 @@ msgstr ""
 msgid "Please select a filament."
 msgstr ""
 
-#: src/gui/standard_frame/frame_wait.cpp:13 src/gui/screen_cold_pull.cpp:184
+#: src/gui/screen_cold_pull.cpp:184 src/gui/standard_frame/frame_wait.cpp:13
 msgid "Please wait"
 msgstr ""
 
@@ -5023,7 +5168,7 @@ msgstr ""
 msgid "Power supply unit is operating outside of specification."
 msgstr ""
 
-#: src/gui/screen_home.cpp:135
+#: src/gui/screen_home.cpp:136
 msgid "Preheat"
 msgstr ""
 
@@ -5035,21 +5180,21 @@ msgstr ""
 msgid "Preheat Temp"
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:178
+#: src/gui/screen/screen_preheat.cpp:218
 msgid "Preheating"
 msgstr ""
 
 #. use load caption, not a bug
-#: src/gui/screen/screen_preheat.cpp:183
+#: src/gui/screen/screen_preheat.cpp:223
 msgid "Preheating for load"
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:190
+#: src/gui/screen/screen_preheat.cpp:230
 msgid "Preheating for purge"
 msgstr ""
 
 #. use unload caption, not a bug
-#: src/gui/screen/screen_preheat.cpp:187
+#: src/gui/screen/screen_preheat.cpp:227
 msgid "Preheating for unload"
 msgstr ""
 
@@ -5105,8 +5250,8 @@ msgstr ""
 msgid "Prime tower %dg"
 msgstr ""
 
-#: src/common/selftest/selftest_fans.hpp:40 src/gui/screen_home.cpp:134
 #: src/gui/dialogs/resolution_480x320/radio_button_preview.cpp:14
+#: src/gui/screen_home.cpp:135 src/common/selftest/selftest_fans.hpp:40
 msgid "Print"
 msgstr ""
 
@@ -5126,7 +5271,7 @@ msgstr ""
 msgid "Print Filtration"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:295
+#: src/gui/MItem_tools.hpp:308
 msgid "Print Progress Screen"
 msgstr ""
 
@@ -5134,12 +5279,12 @@ msgstr ""
 msgid "Print Speed"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:133
+#: src/gui/MItem_menus.hpp:135
 msgid "Print Statistics"
 msgstr ""
 
 #. First line - Print Time
-#: src/gui/gcode_description.cpp:144 src/gui/MItem_tools.hpp:362
+#: src/gui/gcode_description.cpp:144 src/gui/MItem_tools.hpp:375
 msgid "Print Time"
 msgstr ""
 
@@ -5147,8 +5292,8 @@ msgstr ""
 msgid "Print ended"
 msgstr ""
 
-#: src/common/footer_def.cpp:20 src/gui/wizard/selftest_result_fans.cpp:15
-#: src/gui/wizard/screen_fan_selftest.cpp:61
+#: src/gui/wizard/screen_fan_selftest.cpp:56
+#: src/gui/wizard/selftest_result_fans.cpp:15 src/common/footer_def.cpp:20
 msgid "Print fan"
 msgstr ""
 
@@ -5187,7 +5332,7 @@ msgstr ""
 msgid "Printer Model"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:148
+#: src/gui/MItem_menus.hpp:150
 msgid "Printer Setup"
 msgstr ""
 
@@ -5244,7 +5389,7 @@ msgid ""
 "Some configuration (network, filament profiles, ...) will be preserved."
 msgstr ""
 
-#: src/gui/MItem_menus.cpp:179
+#: src/gui/MItem_menus.cpp:187
 msgid "Printhead"
 msgstr ""
 
@@ -5268,7 +5413,13 @@ msgstr ""
 msgid "Probing bed"
 msgstr ""
 
-#: src/gui/MItem_network.cpp:228
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:27
+msgid ""
+"Probing failed. Check that the load cell is working and the bed and nozzle "
+"are clean, then retry."
+msgstr ""
+
+#: src/gui/MItem_network.cpp:281
 msgid "Protocol"
 msgstr ""
 
@@ -5280,7 +5431,7 @@ msgstr ""
 msgid "Prusa"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:98
+#: src/gui/MItem_menus.hpp:100
 msgid "Prusa Connect"
 msgstr ""
 
@@ -5294,7 +5445,7 @@ msgid ""
 "process?"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:101
+#: src/gui/MItem_menus.hpp:103
 msgid "PrusaLink"
 msgstr ""
 
@@ -5425,19 +5576,19 @@ msgstr ""
 msgid "RETRY"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:527
+#: src/gui/MItem_tools.hpp:540
 msgid "RGB Side Strip"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:541
+#: src/gui/MItem_tools.hpp:554
 msgid "RGB Side Strip Dimmed"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:555
+#: src/gui/MItem_tools.hpp:568
 msgid "RGB Side Strip Dimming"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:512
+#: src/gui/MItem_tools.hpp:525
 msgid "RGB Status Bar"
 msgstr ""
 
@@ -5447,6 +5598,10 @@ msgstr ""
 
 #: src/gui/dialogs/DialogLoadUnload.cpp:26
 msgid "Ramming"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:165
+msgid "Raw"
 msgstr ""
 
 #. Currently unreachable, always overriden by unassigned gcodes
@@ -5462,8 +5617,8 @@ msgstr ""
 msgid "Rear Side [um]"
 msgstr ""
 
-#: src/common/feature/print_status_message/print_status_message_formatter_buddy.cpp:16
 #: src/gui/dialogs/window_dlg_wait.cpp:11
+#: src/common/feature/print_status_message/print_status_message_formatter_buddy.cpp:16
 msgid "Recalibrating home. This may take some time."
 msgstr ""
 
@@ -5549,7 +5704,7 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:57
+#: src/gui/MItem_menus.hpp:59
 msgid "Reorder Filaments"
 msgstr ""
 
@@ -5577,10 +5732,10 @@ msgstr ""
 msgid "Requires Filtration"
 msgstr ""
 
-#: src/common/feature/factory_reset/factory_reset.cpp:107
-#: src/gui/screen/screen_factory_reset.cpp:59
+#: src/gui/MItem_tools.hpp:447 src/gui/screen/screen_factory_reset.cpp:59
 #: src/gui/screen_menu_bed_level_correction.hpp:92
-#: src/gui/screen_menu_steel_sheets.hpp:61 src/gui/MItem_tools.hpp:434
+#: src/gui/screen_menu_steel_sheets.hpp:61
+#: src/common/feature/factory_reset/factory_reset.cpp:107
 msgid "Reset"
 msgstr ""
 
@@ -5617,8 +5772,9 @@ msgid "Restore Calibration from USB"
 msgstr ""
 
 #: src/gui/screen/filament/screen_filaments_reorder.cpp:162
-#: src/gui/screen_menu_phase_stepping.hpp:16 src/gui/MItem_input_shaper.hpp:53
+#: src/gui/screen_menu_phase_stepping.hpp:16
 #: src/gui/screen_menu_filament_sensors.hpp:15
+#: src/gui/MItem_input_shaper.hpp:111
 msgid "Restore Defaults"
 msgstr ""
 
@@ -5647,10 +5803,10 @@ msgstr ""
 msgid "Retracting from FINDA"
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:102 src/gui/screen_network_setup.cpp:32
-#: src/gui/screen_network_setup.cpp:38 src/gui/screen_network_setup.cpp:142
 #: src/guiapi/include/WindowMenuItems.hpp:41
 #: src/guiapi/include/window_tool_action_box.hpp:100
+#: src/gui/screen_network_setup.cpp:32 src/gui/screen_network_setup.cpp:38
+#: src/gui/screen_network_setup.cpp:142 src/gui/screen/screen_preheat.cpp:142
 msgid "Return"
 msgstr ""
 
@@ -5666,6 +5822,10 @@ msgstr ""
 
 #: src/gui/screen_menu_bed_level_correction.hpp:65
 msgid "Right Side [um]"
+msgstr ""
+
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:164
+msgid "Right front"
 msgstr ""
 
 #: src/feature/gearbox_alignment/screen_gearbox_alignment.cpp:49
@@ -5727,7 +5887,7 @@ msgstr ""
 msgid "SPOOL JOIN"
 msgstr ""
 
-#: src/gui/MItem_network.hpp:58 src/gui/screen_network_setup.cpp:89
+#: src/gui/screen_network_setup.cpp:89 src/gui/MItem_network.hpp:58
 msgid "SSID"
 msgstr ""
 
@@ -5755,7 +5915,7 @@ msgstr ""
 msgid "SYSTEM"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:640
+#: src/gui/MItem_tools.cpp:649
 msgid "Sandwich 5V Current"
 msgstr ""
 
@@ -5764,11 +5924,11 @@ msgstr ""
 msgid "Sat"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:109
+#: src/gui/MItem_tools.hpp:112
 msgid "Save Crash Dump"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:922
+#: src/gui/MItem_tools.cpp:931
 msgid "Save Logs To File"
 msgstr ""
 
@@ -5776,7 +5936,7 @@ msgstr ""
 msgid "Save and return"
 msgstr ""
 
-#: src/gui/screen_home.cpp:328
+#: src/gui/screen_home.cpp:335
 msgid "Saving to USB"
 msgstr ""
 
@@ -5818,6 +5978,11 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
+#. Motor selection PHASE: select_motor
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:30
+msgid "Select Motor"
+msgstr ""
+
 #. //MSG_PROGRESS_UNLOADING_FILAMENT c=20
 #: src/mmu2/mmu2_progress_converter.cpp:23
 msgid "Selecting fil. slot"
@@ -5841,19 +6006,19 @@ msgstr ""
 msgid "Selftest FAILED. Enable logging to TXT from the settings for details."
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:69
+#: src/gui/MItem_menus.hpp:71
 msgid "Sensor Info"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:254
+#: src/gui/MItem_tools.hpp:267
 msgid "Serial Number"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:199
+#: src/gui/MItem_menus.hpp:206
 msgid "Serial Printing Screen"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:453 src/gui/ScreenPrintingModel.cpp:27
+#: src/gui/MItem_tools.hpp:466 src/gui/ScreenPrintingModel.cpp:27
 msgid "Set Ready"
 msgstr ""
 
@@ -5861,12 +6026,16 @@ msgstr ""
 msgid "Set up Prusa Connect?"
 msgstr ""
 
-#: src/gui/screen_home.cpp:138
+#: src/gui/screen_home.cpp:139
 msgid "Settings"
 msgstr ""
 
 #: src/gui/screen_network_setup.cpp:67
 msgid "Setup via NFC"
+msgstr ""
+
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:165
+msgid "Shaped"
 msgstr ""
 
 #: src/gui/MItem_steel_sheets.cpp:9
@@ -5908,7 +6077,7 @@ msgid ""
 "If the issue persists contact support."
 msgstr ""
 
-#: src/gui/screen/screen_preheat.cpp:118
+#: src/gui/screen/screen_preheat.cpp:158
 msgid "Show All"
 msgstr ""
 
@@ -5934,7 +6103,7 @@ msgid ""
 "Remap?"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:567
+#: src/gui/MItem_tools.cpp:576
 msgid "Side Filament sensor"
 msgstr ""
 
@@ -5947,7 +6116,7 @@ msgstr ""
 msgid "Signal"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:331
+#: src/gui/MItem_tools.cpp:340
 msgid "Silent"
 msgstr ""
 
@@ -5970,15 +6139,15 @@ msgid ""
 "having passed."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:373
+#: src/gui/MItem_tools.cpp:382
 msgid "Sort Files"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:343 src/gui/MItem_tools.hpp:152
+#: src/gui/MItem_tools.hpp:165 src/gui/MItem_tools.cpp:352
 msgid "Sound Mode"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:168
+#: src/gui/MItem_tools.hpp:181
 msgid "Sound Volume"
 msgstr ""
 
@@ -5992,7 +6161,7 @@ msgstr ""
 msgid "Speed"
 msgstr ""
 
-#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1862
+#: lib/Marlin/Marlin/src/feature/phase_stepping/calibration.cpp:1936
 msgid "Speed sweep movement failed."
 msgstr ""
 
@@ -6016,8 +6185,8 @@ msgstr ""
 msgid "Static-left"
 msgstr ""
 
+#: src/gui/MItem_menus.hpp:74
 #: src/common/feature/factory_reset/factory_reset.hpp:45
-#: src/gui/MItem_menus.hpp:72
 msgid "Statistics"
 msgstr ""
 
@@ -6025,11 +6194,11 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/gui/MItem_mmu.hpp:236 src/gui/MItem_tools.hpp:61
+#: src/gui/MItem_tools.hpp:63 src/gui/MItem_mmu.hpp:236
 msgid "Stealth Mode"
 msgstr ""
 
-#: src/gui/screen_menu_steel_sheets.hpp:115 src/gui/MItem_menus.hpp:172
+#: src/gui/MItem_menus.hpp:174 src/gui/screen_menu_steel_sheets.hpp:115
 msgid "Steel Sheets"
 msgstr ""
 
@@ -6043,7 +6212,7 @@ msgstr ""
 msgid "Steppers disabled due to inactivity."
 msgstr ""
 
-#: src/common/hotend_type.cpp:11 src/gui/MItem_mmu.cpp:260
+#: src/gui/MItem_mmu.cpp:260 src/common/hotend_type.cpp:11
 msgid "Stock"
 msgstr ""
 
@@ -6059,7 +6228,7 @@ msgstr ""
 msgid "Strict"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:49
+#: src/gui/MItem_tools.hpp:51
 msgid "Stuck Filament Detection"
 msgstr ""
 
@@ -6078,11 +6247,21 @@ msgid ""
 "properly."
 msgstr ""
 
+#. Sweep results PHASE: sweep_results
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:47
+msgid "Sweep Complete"
+msgstr ""
+
+#. Sweep mode selection PHASE: select_sweep_mode
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:26
+msgid "Sweep Mode"
+msgstr ""
+
 #: src/gui/screen_network_setup.cpp:287
 msgid "Switch to Wi-Fi"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:63
+#: src/gui/wizard/screen_fan_selftest.cpp:58
 msgid "Switched fans"
 msgstr ""
 
@@ -6090,7 +6269,7 @@ msgstr ""
 msgid "Syslog Port"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:130
+#: src/gui/MItem_menus.hpp:132
 msgid "System"
 msgstr ""
 
@@ -6236,7 +6415,7 @@ msgid ""
 "with the electronics. Check the wiring and connectors."
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:297
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:293
 #, c-format
 msgid "TOOL %d"
 msgstr ""
@@ -6249,7 +6428,7 @@ msgstr ""
 msgid "TOOLCHANGER ERROR"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:299
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:295
 msgid "TOOLHEAD"
 msgstr ""
 
@@ -6257,7 +6436,7 @@ msgstr ""
 msgid "TOOLS MAPPING"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:369
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:365
 msgid "TOOLS SETTINGS"
 msgstr ""
 
@@ -6289,7 +6468,7 @@ msgstr ""
 msgid "Temp. style"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:78
+#: src/gui/MItem_menus.hpp:80
 msgid "Temperature"
 msgstr ""
 
@@ -6305,7 +6484,7 @@ msgstr ""
 msgid "Test All"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:153
+#: src/gui/MItem_menus.hpp:155
 msgid "Test Errors"
 msgstr ""
 
@@ -6321,13 +6500,11 @@ msgstr ""
 msgid "Testing enclosure fan"
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:84
-#, c-format
+#: src/gui/wizard/screen_fan_selftest.cpp:79
 msgid "Testing fan rotation on 100% power, please wait."
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:85
-#, c-format
+#: src/gui/wizard/screen_fan_selftest.cpp:80
 msgid "Testing fan rotation on 40% power, please wait."
 msgstr ""
 
@@ -6380,7 +6557,7 @@ msgid ""
 "compatible version."
 msgstr ""
 
-#: src/gui/wizard/screen_fan_selftest.cpp:87
+#: src/gui/wizard/screen_fan_selftest.cpp:82
 msgid ""
 "The RPM test has failed, check both fans are free to spin and connected "
 "correctly."
@@ -6496,7 +6673,7 @@ msgstr ""
 msgid "The previous tests must be completed before this one."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:949
+#: src/gui/MItem_tools.cpp:958
 #, c-format
 msgid ""
 "The printer will now save all logs to file until restart.\n"
@@ -6581,6 +6758,15 @@ msgid ""
 "selected tool for the SPOOL JOIN functionality?"
 msgstr ""
 
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:24
+msgid ""
+"This measures the three bed mounting points and recommends shims to level "
+"the bed.\n"
+"\n"
+"The gantry is aligned, the printer homes, then each mount is probed. Make "
+"sure the bed and nozzle are clean and the temperature is stable."
+msgstr ""
+
 #: src/gui/screen/screen_factory_reset.cpp:183
 #, c-format
 msgid ""
@@ -6594,6 +6780,15 @@ msgstr ""
 msgid ""
 "This operation cannot be undone. Your data will be lost!\n"
 "Do you want to proceed with the factory reset?"
+msgstr ""
+
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:25
+msgid ""
+"This probes the whole bed and shows the distance from the nozzle at each "
+"point, helping you find high and low spots.\n"
+"\n"
+"The printer homes, then probes the bed. Make sure the bed and nozzle are "
+"clean and the temperature is stable."
 msgstr ""
 
 #. trying to assign to oneself again
@@ -6642,23 +6837,23 @@ msgid ""
 "Be careful in next step the printer will be moving"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:368 src/gui/MItem_tools.cpp:445
+#: src/gui/MItem_tools.cpp:377 src/gui/MItem_tools.cpp:454
 msgid "Time"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:433
+#: src/gui/MItem_tools.cpp:442
 msgid "Time Format"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:177
+#: src/gui/MItem_tools.hpp:190
 msgid "Time Zone Hour Offset"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:407
+#: src/gui/MItem_tools.cpp:416
 msgid "Time Zone Minute Offset"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:191
+#: src/gui/MItem_tools.hpp:204
 msgid "Time Zone Summertime"
 msgstr ""
 
@@ -6703,7 +6898,7 @@ msgstr ""
 msgid "Tool"
 msgstr ""
 
-#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:354
+#: src/gui/screen/toolhead/screen_toolhead_settings.cpp:350
 #, c-format
 msgid "Tool %d"
 msgstr ""
@@ -6805,11 +7000,11 @@ msgstr ""
 msgid "Tool 5 Loadcell Test"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:559
+#: src/gui/MItem_tools.cpp:568
 msgid "Tool Filament sensor"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:566
+#: src/gui/MItem_tools.hpp:579
 msgid "Tool Light"
 msgstr ""
 
@@ -6848,7 +7043,7 @@ msgid ""
 "and leave the carriage free."
 msgstr ""
 
-#: src/gui/MItem_menus.cpp:177
+#: src/gui/MItem_menus.cpp:185
 msgid "Toolhead"
 msgstr ""
 
@@ -6856,11 +7051,11 @@ msgstr ""
 msgid "Toolhead Filament Sensor"
 msgstr ""
 
-#: src/gui/MItem_menus.cpp:177
+#: src/gui/MItem_menus.cpp:185
 msgid "Tools"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:346
+#: src/gui/MItem_tools.hpp:359
 msgid "Tools Changed"
 msgstr ""
 
@@ -6884,7 +7079,7 @@ msgstr ""
 msgid "Touch driver failed to initialize, touch functionality disabled"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:576
+#: src/gui/MItem_tools.hpp:589
 msgid "Trigger Power Panic"
 msgstr ""
 
@@ -6928,6 +7123,12 @@ msgid ""
 "Press Continue when done."
 msgstr ""
 
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:35
+msgid ""
+"Turn the knob to adjust frequency. Look for slow belt movement with sharp, "
+"regular peaks, then click Done to stop."
+msgstr ""
+
 #: src/gui/screen/selftest/screen_manual_belt_tuning.cpp:31
 #: src/gui/screen/selftest/screen_manual_belt_tuning.cpp:34
 msgid ""
@@ -6943,7 +7144,7 @@ msgstr ""
 msgid "Turn the knob to move Z-axis"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:950
+#: src/gui/MItem_tools.cpp:959
 msgid ""
 "Turn the logging off before disconnecting the USB drive, or you risk "
 "damaging the filesystem!"
@@ -7067,7 +7268,7 @@ msgstr ""
 msgid "Uninitialized"
 msgstr ""
 
-#: src/gui/MItem_network.cpp:82 src/gui/screen_menu_connect.cpp:45
+#: src/gui/screen_menu_connect.cpp:45 src/gui/MItem_network.cpp:82
 msgid "Unknown"
 msgstr ""
 
@@ -7088,7 +7289,7 @@ msgstr ""
 msgid "Unload"
 msgstr ""
 
-#: src/gui/MItem_mmu.hpp:160 src/gui/MItem_filament.hpp:20
+#: src/gui/MItem_filament.hpp:20 src/gui/MItem_mmu.hpp:160
 msgid "Unload Filament"
 msgstr ""
 
@@ -7152,11 +7353,11 @@ msgid "Used Amount"
 msgstr ""
 
 #. Used in filament type context (user-defined preset), for example: "PCCF (User)". Please try to fit the text in 6 characters.
-#: src/common/filament.cpp:281 src/gui/screen_prusa_link.hpp:56
+#: src/gui/screen_prusa_link.hpp:56 src/common/filament.cpp:281
 msgid "User"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:113
+#: src/gui/MItem_menus.hpp:115
 msgid "User Interface"
 msgstr ""
 
@@ -7173,12 +7374,17 @@ msgstr ""
 msgid "Validity check"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:478
+#: src/gui/MItem_tools.hpp:491
 msgid "Verify GCode"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:66
+#: src/gui/MItem_menus.hpp:68
 msgid "Version Info"
+msgstr ""
+
+#. Finish screen
+#: src/gui/screen/selftest/screen_motor_vibration.cpp:50
+msgid "Vibration Complete"
 msgstr ""
 
 #: src/gui/screen/filament/screen_filament_detail.cpp:140
@@ -7195,7 +7401,7 @@ msgstr ""
 msgid "WARNING TMC TOO HOT"
 msgstr ""
 
-#: src/gui/screen_menu_network_settings.hpp:46
+#: src/gui/screen_menu_network_settings.hpp:50
 msgid "WI-FI SETTINGS"
 msgstr ""
 
@@ -7333,7 +7539,7 @@ msgstr ""
 msgid "What nozzle diameter do I have?"
 msgstr ""
 
-#: src/gui/MItem_menus.hpp:91
+#: src/gui/MItem_menus.hpp:93
 msgid "Wi-Fi"
 msgstr ""
 
@@ -7345,7 +7551,7 @@ msgstr ""
 msgid "Wi-Fi Wizard"
 msgstr ""
 
-#: src/gui/screen_home.cpp:421
+#: src/gui/screen_home.cpp:428
 msgid ""
 "Wi-Fi credentials (SSID and password) discovered on the USB flash drive. "
 "Would you like to connect your printer to Wi-Fi now?"
@@ -7396,7 +7602,11 @@ msgstr ""
 msgid "X"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:317
+#: src/gui/MItem_input_shaper.cpp:24
+msgid "X 2nd Freq."
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:330
 msgid "X Axis"
 msgstr ""
 
@@ -7408,11 +7618,19 @@ msgstr ""
 msgid "X-axis"
 msgstr ""
 
+#: src/gui/MItem_input_shaper.cpp:19
+msgid "X-axis 2nd Filter"
+msgstr ""
+
+#: src/gui/MItem_input_shaper.cpp:14
+msgid "X-axis 2nd Shaper"
+msgstr ""
+
 #: src/gui/MItem_input_shaper.cpp:9
 msgid "X-axis Filter"
 msgstr ""
 
-#: src/gui/MItem_input_shaper.hpp:35
+#: src/gui/MItem_input_shaper.hpp:73
 msgid "X-axis Freq."
 msgstr ""
 
@@ -7424,7 +7642,7 @@ msgstr ""
 msgid "X-axis steps per unit"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:645
+#: src/gui/MItem_tools.cpp:654
 msgid "XL Buddy 5V Current"
 msgstr ""
 
@@ -7448,7 +7666,11 @@ msgstr ""
 msgid "Y"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:323
+#: src/gui/MItem_input_shaper.cpp:25
+msgid "Y 2nd Freq."
+msgstr ""
+
+#: src/gui/MItem_tools.hpp:336
 msgid "Y Axis"
 msgstr ""
 
@@ -7460,11 +7682,19 @@ msgstr ""
 msgid "Y-axis"
 msgstr ""
 
+#: src/gui/MItem_input_shaper.cpp:20
+msgid "Y-axis 2nd Filter"
+msgstr ""
+
+#: src/gui/MItem_input_shaper.cpp:15
+msgid "Y-axis 2nd Shaper"
+msgstr ""
+
 #: src/gui/MItem_input_shaper.cpp:10
 msgid "Y-axis Filter"
 msgstr ""
 
-#: src/gui/MItem_input_shaper.hpp:44
+#: src/gui/MItem_input_shaper.hpp:82
 msgid "Y-axis Freq."
 msgstr ""
 
@@ -7522,7 +7752,7 @@ msgstr ""
 msgid "Z AXIS MOVE"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:329
+#: src/gui/MItem_tools.hpp:342
 msgid "Z Axis"
 msgstr ""
 
@@ -7580,29 +7810,38 @@ msgid ""
 "Please tighten the belt."
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:669
+#. "back" label, then the rows, then "front" label, with generous gaps.
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:128
+msgid "back"
+msgstr ""
+
+#: src/gui/MItem_tools.cpp:678
 msgid "closed"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:667
+#: src/gui/MItem_tools.cpp:676
 msgid "detached"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:535
+#: src/gui/MItem_tools.cpp:544
 #, c-format
 msgid "disabled / %ld"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:534
+#: src/gui/MItem_tools.cpp:543
 #, c-format
 msgid "disconnected / %ld"
+msgstr ""
+
+#: src/feature/bed_level_probe/screen_bed_level_probe.cpp:143
+msgid "front"
 msgstr ""
 
 #: src/gui/screen/selftest/screen_manual_belt_tuning.cpp:44
 msgid "loosen"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:668
+#: src/gui/MItem_tools.cpp:677
 msgid "open"
 msgstr ""
 
@@ -7618,16 +7857,16 @@ msgstr ""
 msgid "tighten"
 msgstr ""
 
-#: src/gui/MItem_tools.hpp:347
+#: src/gui/MItem_tools.hpp:360
 msgid "times"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:531
+#: src/gui/MItem_tools.cpp:540
 #, c-format
 msgid "uncalibrated / %ld"
 msgstr ""
 
-#: src/gui/MItem_tools.cpp:530
+#: src/gui/MItem_tools.cpp:539
 #, c-format
 msgid "uninitialized / %ld"
 msgstr ""

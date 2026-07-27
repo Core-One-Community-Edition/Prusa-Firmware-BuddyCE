@@ -10,6 +10,7 @@ class RadioButtonFSM : public RadioButton {
 
 public:
     RadioButtonFSM(window_t *parent, Rect16 rect, FSMAndPhase fsm_phase);
+    RadioButtonFSM(window_t *parent, Rect16 rect, FSMAndPhase fsm_phase, Responses_t resp, const PhaseTexts *labels);
 
     inline FSMAndPhase fsm_and_phase() const {
         return fsm_and_phase_;

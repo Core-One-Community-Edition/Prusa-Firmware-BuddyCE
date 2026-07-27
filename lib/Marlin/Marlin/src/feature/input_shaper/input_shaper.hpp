@@ -22,7 +22,14 @@ constexpr const uint8_t INPUT_SHAPER_MAX_LOGICAL_AXES = 2;
 constexpr const uint8_t INPUT_SHAPER_MAX_LOGICAL_AXES = 1;
 #endif
 
-constexpr const uint8_t INPUT_SHAPER_MAX_LENGTH = 5;
+// Maximum number of pulses a single (non-cascaded) shaper can produce.
+// The largest standard shaper (EI_3HUMP) has 5 pulses; a cascaded pair of two
+// 3-pulse shapers (ZVD/MZV/EI, the types offered in the UI) produces 3*3 = 9
+// pulses. Sized to 9 so the recommended 9-pulse cascades fit on a single axis
+// and, on CoreXY, two same-cascade axes merge into 9 (well within
+// INPUT_SHAPER_MAX_PULSES). Larger cascades (e.g. involving 2HUMP/3HUMP) are
+// gracefully rejected at apply time rather than crashing.
+constexpr const uint8_t INPUT_SHAPER_MAX_LENGTH = 9;
 constexpr const uint8_t INPUT_SHAPER_MAX_PULSES = INPUT_SHAPER_MAX_LENGTH * INPUT_SHAPER_MAX_LOGICAL_AXES;
 
 constexpr const double INPUT_SHAPER_VELOCITY_EPSILON = 0.0001;
@@ -51,6 +58,11 @@ struct Shaper {
 };
 
 Shaper get(float damping_ratio, float shaper_freq, float vibration_reduction, input_shaper::Type type);
+
+// Number of FIR pulses a shaper of the given type produces (depends only on the
+// type, not on frequency/damping). Used to validate cascaded configs upstream.
+//   null=0, zv=2, zvd=3, mzv=3, ei=3, ei_2hump=4, ei_3hump=5
+int num_pulses_for_type(input_shaper::Type type);
 } // namespace input_shaper
 
 typedef struct pulse_t {
@@ -110,6 +122,8 @@ typedef struct input_shaper_state_t {
 } input_shaper_state_t;
 
 void create_null_input_shaper_pulses(input_shaper_pulses_t &is_pulses);
+
+void create_cascaded_input_shaper_pulses(input_shaper_pulses_t &is_pulses, const input_shaper::AxisConfig &primary_config, const std::optional<input_shaper::AxisConfig> &cascade_config);
 
 void create_zv_input_shaper_pulses(input_shaper_pulses_t &is_pulses, float shaper_freq, float damping_ratio);
 

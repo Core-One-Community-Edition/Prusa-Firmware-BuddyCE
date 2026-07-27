@@ -15,6 +15,7 @@
 #include <option/has_e2ee_support.h>
 #include <option/has_leds_menu.h>
 #include <option/has_bed_level_probe.h>
+#include <option/has_motor_vibration.h>
 #include <img_resources.hpp>
 #include <ScreenFactory.hpp>
 
@@ -191,7 +192,7 @@ using MI_BED_LEVEL_CORRECTION
     = MI_SCREEN<N_("Bed Level Correction"), class ScreenMenuBedLevelCorrection>;
 #endif
 
-#if HAS_BED_LEVEL_PROBE()
+#if HAS_BED_LEVEL_PROBE() || HAS_MOTOR_VIBRATION()
 using MI_ADVANCED_CALIBRATION
     = MI_SCREEN<N_("Advanced Calibration"), class ScreenMenuAdvancedCalibration>;
 #endif

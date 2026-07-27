@@ -17,6 +17,7 @@
 #include <option/has_door_sensor_calibration.h>
 #include <option/has_bed_level_probe.h>
 #include <option/has_manual_belt_tuning.h>
+#include <option/has_motor_vibration.h>
 
 #include <inc/MarlinConfigPre.h>
 
@@ -52,6 +53,9 @@ enum class ClientFSM : uint8_t {
     #endif
     #if HAS_MANUAL_BELT_TUNING()
     ManualBeltTuning,
+    #endif
+    #if HAS_MOTOR_VIBRATION()
+    MotorVibration,
     #endif
     #if HAS_PHASE_STEPPING_CALIBRATION()
     PhaseSteppingCalibration,

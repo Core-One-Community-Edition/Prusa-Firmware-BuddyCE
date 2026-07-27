@@ -94,6 +94,7 @@ struct __attribute__((packed)) WeightAdjustConfig {
 
 struct Config {
     std::optional<AxisConfig> axis[3];
+    std::optional<AxisConfig> cascade[3]; ///< Cascade second shaper per axis (nullopt = disabled)
     std::optional<WeightAdjustConfig> weight_adjust_y;
 };
 
@@ -160,6 +161,14 @@ inline constexpr AxisConfig axis_z_default {
 
 inline constexpr AxisConfig axis_defaults[3] = { axis_x_default, axis_y_default, axis_z_default };
 
+/// Default for cascade second shaper: disabled (null type, zero frequency)
+inline constexpr AxisConfig cascade_disabled_default {
+    .type = Type::null,
+    .frequency = 0.,
+    .damping_ratio = 0.1f,
+    .vibration_reduction = 20.f,
+};
+
 inline constexpr bool weight_adjust_enabled_default = {
 // DO NOT CHANGE DEFAULTS WITHOUT CHANGING EEPROM CODE!
 #if PRINTER_IS_PRUSA_XL() || PRINTER_IS_PRUSA_iX() || PRINTER_IS_PRUSA_COREONE() || PRINTER_IS_PRUSA_COREONEL()
@@ -194,7 +203,15 @@ constexpr float frequency_safe_min = 10.0;
 #if PRINTER_IS_PRUSA_MINI()
 constexpr float frequency_safe_max = 150.0;
 #else
-constexpr float frequency_safe_max = 100.0;
+// Sized to cover the full motor-vibration sweep range (20-200 Hz, see
+// motor_vibration_config.hpp). Capping at 100 Hz would leave high-frequency
+// structural resonances (e.g. the ~183 Hz mode observed on CoreOne) un-notchable
+// even though the user can measure them with M963. A ZV notch at 200 Hz adds
+// only ~2.5 ms of smoothing, so there is no physics reason to clamp lower.
+// M1959 auto-calibration still only *recommends* within its own accept band
+// (low_freq_limit_hz..high_freq_limit_hz); this cap only governs what a user
+// may manually configure via the menu or M593.
+constexpr float frequency_safe_max = 200.0;
 #endif
 
 float clamp_frequency_to_safe_values(float frequency);

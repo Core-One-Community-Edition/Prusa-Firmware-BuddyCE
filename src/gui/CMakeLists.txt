@@ -221,6 +221,6 @@ if(HAS_BED_LEVEL_CORRECTION)
   target_sources(firmware PRIVATE screen_menu_bed_level_correction.cpp)
 endif()
 
-if(HAS_BED_LEVEL_PROBE)
+if(HAS_BED_LEVEL_PROBE OR HAS_MOTOR_VIBRATION)
   target_sources(firmware PRIVATE screen_menu_advanced_calibration.cpp)
 endif()

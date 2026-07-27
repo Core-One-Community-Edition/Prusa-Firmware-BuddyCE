@@ -79,6 +79,10 @@ if(HAS_MANUAL_BELT_TUNING)
   target_sources(firmware PRIVATE M961.cpp)
 endif()
 
+if(HAS_MOTOR_VIBRATION)
+  target_sources(firmware PRIVATE M962.cpp M963.cpp)
+endif()
+
 if(CONNECT)
   target_sources(firmware PRIVATE M1200.cpp)
 endif()

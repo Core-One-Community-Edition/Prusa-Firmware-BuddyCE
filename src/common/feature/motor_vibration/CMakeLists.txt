@@ -1,0 +1,1 @@
+target_sources(firmware PRIVATE motor_vibration_wizard.cpp)

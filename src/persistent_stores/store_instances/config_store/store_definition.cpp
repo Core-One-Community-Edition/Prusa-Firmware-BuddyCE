@@ -148,6 +148,13 @@ void CurrentStore::perform_config_migrations() {
         auto_chamber_vent_enabled.set(false);
     }
 #endif
+    if (should_migrate<6>()) {
+        // Cascade input shaper EEPROM items added.
+        // New items default to disabled, no data migration needed.
+        // Just ensure the cascade enabled flags are false.
+        input_shaper_axis_x_cascade_enabled.set(false);
+        input_shaper_axis_y_cascade_enabled.set(false);
+    }
 
     // To add a migration:
     // - increment newest_config_version
@@ -813,6 +820,17 @@ input_shaper::Config CurrentStore::get_input_shaper_config() {
     } else {
         config.axis[Y_AXIS] = std::nullopt;
     }
+    // Cascade configs
+    if (input_shaper_axis_x_cascade_enabled.get()) {
+        config.cascade[X_AXIS] = input_shaper_axis_x_cascade_config.get();
+    } else {
+        config.cascade[X_AXIS] = std::nullopt;
+    }
+    if (input_shaper_axis_y_cascade_enabled.get()) {
+        config.cascade[Y_AXIS] = input_shaper_axis_y_cascade_config.get();
+    } else {
+        config.cascade[Y_AXIS] = std::nullopt;
+    }
     if (input_shaper_weight_adjust_y_enabled.get()) {
         config.weight_adjust_y = input_shaper_weight_adjust_y_config.get();
     } else {
@@ -833,6 +851,19 @@ void CurrentStore::set_input_shaper_config(const input_shaper::Config &config) {
         input_shaper_axis_y_enabled.set(true);
     } else {
         input_shaper_axis_y_enabled.set(false);
+    }
+    // Cascade configs
+    if (config.cascade[X_AXIS]) {
+        input_shaper_axis_x_cascade_config.set(*config.cascade[X_AXIS]);
+        input_shaper_axis_x_cascade_enabled.set(true);
+    } else {
+        input_shaper_axis_x_cascade_enabled.set(false);
+    }
+    if (config.cascade[Y_AXIS]) {
+        input_shaper_axis_y_cascade_config.set(*config.cascade[Y_AXIS]);
+        input_shaper_axis_y_cascade_enabled.set(true);
+    } else {
+        input_shaper_axis_y_cascade_enabled.set(false);
     }
     if (config.weight_adjust_y) {
         input_shaper_weight_adjust_y_config.set(*config.weight_adjust_y);

@@ -12,6 +12,7 @@
 #include <option/has_selftest.h>
 #include <option/has_mmu2.h>
 #include <option/has_coldpull.h>
+#include <option/has_motor_vibration.h>
 #include <option/has_sheet_profiles.h>
 #include <option/has_bed_level_probe.h>
 #include <printers.h>
@@ -72,7 +73,7 @@ using ScreenMenuControlSpec = ScreenMenu<EFooter::On, MI_RETURN
     MI_SELFTEST_SNAKE
 #endif
 
-#if HAS_BED_LEVEL_PROBE()
+#if HAS_MOTOR_VIBRATION() || HAS_BED_LEVEL_PROBE()
     ,
     MI_ADVANCED_CALIBRATION
 #endif

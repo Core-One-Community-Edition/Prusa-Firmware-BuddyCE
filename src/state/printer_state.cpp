@@ -272,6 +272,9 @@ DeviceState get_state(bool ready) {
 #if HAS_BED_LEVEL_PROBE()
     case ClientFSM::BedLevelProbe:
 #endif
+#if HAS_MOTOR_VIBRATION()
+    case ClientFSM::MotorVibration:
+#endif
     case ClientFSM::Serial_printing:
         // FIXME: BFW-3893 Sadly there is no way (without saving state in this function)
         //  to distinguish between preheat from main screen,
@@ -489,6 +492,9 @@ StateWithDialog get_state_with_dialog(bool ready) {
 #endif
 #if HAS_BED_LEVEL_PROBE()
     case ClientFSM::BedLevelProbe:
+#endif
+#if HAS_MOTOR_VIBRATION()
+    case ClientFSM::MotorVibration:
 #endif
     case ClientFSM::Preheat:
     case ClientFSM::SafetyTimer:
